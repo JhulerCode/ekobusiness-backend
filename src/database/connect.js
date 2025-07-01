@@ -16,10 +16,10 @@ async function connect() {
     // await Maquina.sync({ alter: true })
     // console.log('Tabla alterada')
 
-    // await sequelize.sync({ force: true })
-    // console.log('Base de datos forzada')
+    await sequelize.sync({ force: true })
+    console.log('Base de datos forzada')
 
-    // await initData()
+    await initData()
 }
 
 export default connect

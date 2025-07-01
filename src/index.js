@@ -9,8 +9,7 @@ const app = express()
 //----- MIDDLEWARES -----//
 app.disable('x-powered-by')
 const corsOptions = {
-    // origin: [config.hostFrontend, 'http://localhost:8080']
-    origin: '*'
+    origin: [config.hostFrontend]
 }
 app.use(cors(corsOptions))
 app.use(express.json({ limit: '100mb' }))
