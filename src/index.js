@@ -9,7 +9,8 @@ const app = express()
 //----- MIDDLEWARES -----//
 app.disable('x-powered-by')
 const corsOptions = {
-    origin: [config.hostFrontend, 'http://localhost:8080']
+    // origin: [config.hostFrontend, 'http://localhost:8080']
+    origin: '*'
 }
 app.use(cors(corsOptions))
 app.use(express.json({ limit: '100mb' }))
@@ -26,5 +27,3 @@ app.listen(app.get('port'), async () => {
 
 //----- TEST CONN DB -----//
 await connDb()
-
-export default app

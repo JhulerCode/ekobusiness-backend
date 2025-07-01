@@ -31,7 +31,7 @@ const create = async (req, res) => {
         const { colaborador, permisos } = req.user
         const {
             tipo, fecha,
-            has_pedido, socio_pedido, socio, guia,
+            has_pedido, socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
             transaccion_items
@@ -40,7 +40,7 @@ const create = async (req, res) => {
         //----- CREAR ----- //
         const nuevo = await Transaccion.create({
             tipo, fecha,
-            has_pedido, socio_pedido, socio, guia,
+            has_pedido, socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
             createdBy: colaborador

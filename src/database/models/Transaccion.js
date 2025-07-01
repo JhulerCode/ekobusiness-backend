@@ -14,7 +14,8 @@ export const Transaccion = sequelize.define('transacciones', {
     has_pedido: { type: DataTypes.BOOLEAN }, //required
     socio_pedido: { type: DataTypes.STRING }, //required //linked
     socio: { type: DataTypes.STRING }, //required //linked
-    guia: { type: DataTypes.STRING }, //required //linked
+    guia: { type: DataTypes.STRING }, //required
+    factura: { type: DataTypes.STRING }, //required
 
     pago_condicion: { type: DataTypes.STRING }, //required
     moneda: { type: DataTypes.STRING }, //required //linked
