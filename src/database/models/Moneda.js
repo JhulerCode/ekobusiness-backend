@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
+import { Colaborador } from './Colaborador.js'
 
 export const Moneda = sequelize.define('monedas', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -12,3 +13,8 @@ export const Moneda = sequelize.define('monedas', {
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })
+
+Colaborador.hasMany(Moneda, {foreignKey:'createdBy', onDelete:'RESTRICT'})
+Moneda.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
+Colaborador.hasMany(Moneda, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
+Moneda.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})

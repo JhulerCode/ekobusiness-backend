@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Articulo } from './Articulo.js'
 import { PrecioLista } from './PrecioLista.js'
+import { Colaborador } from './Colaborador.js'
 
 export const PrecioListaItem = sequelize.define('precio_lista_items', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -18,3 +19,8 @@ PrecioListaItem.belongsTo(PrecioLista, { foreignKey: 'precio_lista', as: 'precio
 
 Articulo.hasMany(PrecioListaItem, { foreignKey: 'articulo', as: 'precio_lista_items', onDelete: 'RESTRICT' })
 PrecioListaItem.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
+
+Colaborador.hasMany(PrecioListaItem, {foreignKey:'createdBy', onDelete:'RESTRICT'})
+PrecioListaItem.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
+Colaborador.hasMany(PrecioListaItem, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
+PrecioListaItem.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})

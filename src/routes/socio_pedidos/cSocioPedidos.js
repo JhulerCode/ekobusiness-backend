@@ -8,6 +8,7 @@ import { Articulo } from '../../database/models/Articulo.js'
 import { Transaccion } from '../../database/models/Transaccion.js'
 import { applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
+import { PrecioLista } from '../../database/models/PrecioLista.js'
 
 const attributes = [
     'id'
@@ -286,7 +287,12 @@ const findById = async (req, res) => {
                 {
                     model: Socio,
                     as: 'socio1',
-                    attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'doc_numero', 'contactos', 'direcciones']
+                    attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'doc_numero', 'contactos', 'direcciones', 'precio_lista'],
+                    include: {
+                        model: PrecioLista,
+                        as: 'precio_lista1',
+                        attributes: ['id', 'moneda']
+                    }
                 },
                 {
                     model: Moneda,

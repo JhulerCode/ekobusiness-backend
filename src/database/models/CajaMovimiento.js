@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { CajaApertura } from './CajaApertura.js'
+import { Colaborador } from './Colaborador.js'
 
 export const CajaMovimiento = sequelize.define('caja_movimientos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -17,3 +18,8 @@ export const CajaMovimiento = sequelize.define('caja_movimientos', {
 
 CajaApertura.hasMany(CajaMovimiento, { foreignKey: 'caja_apertura', as: 'caja_movimientos', onDelete: 'RESTRICT' })
 CajaMovimiento.belongsTo(CajaApertura, { foreignKey: 'caja_apertura', as: 'caja_apertura1' })
+
+Colaborador.hasMany(CajaMovimiento, {foreignKey:'createdBy', onDelete:'RESTRICT'})
+CajaMovimiento.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
+Colaborador.hasMany(CajaMovimiento, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
+CajaMovimiento.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})

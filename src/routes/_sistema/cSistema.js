@@ -6,7 +6,7 @@ const sistemaData = {
         correo: 'comercial@sunka.com',
         igv_porcentaje: 18,
         direcciones: [
-            { id: 1, nombre: 'PLANTA', direccion: 'Calle 7 Mz 5 Urb Los Productores', principal: true }
+            { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'Calle 7 Mz 5 Urb Los Productores', principal: true }
         ],
     },
     documentos_identidad: [

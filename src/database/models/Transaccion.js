@@ -5,6 +5,7 @@ import { Articulo } from './Articulo.js'
 import { Moneda } from './Moneda.js'
 import { SocioPedido } from './SocioPedido.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
+import { Colaborador } from './Colaborador.js'
 
 export const Transaccion = sequelize.define('transacciones', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -85,3 +86,8 @@ TransaccionItem.belongsTo(Transaccion, { foreignKey: 'transaccion', as: 'transac
 
 Moneda.hasMany(TransaccionItem, { foreignKey: 'moneda', as: 'transaccion_items', onDelete: 'RESTRICT' })
 TransaccionItem.belongsTo(Moneda, { foreignKey: 'moneda', as: 'moneda1' })
+
+Colaborador.hasMany(Transaccion, {foreignKey:'createdBy', onDelete:'RESTRICT'})
+Transaccion.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
+Colaborador.hasMany(Transaccion, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
+Transaccion.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})

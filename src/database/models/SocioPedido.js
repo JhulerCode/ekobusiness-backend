@@ -3,6 +3,7 @@ import sequelize from '../sequelize.js'
 import { Socio } from './Socio.js'
 import { Moneda } from './Moneda.js'
 import { Articulo } from './Articulo.js'
+import { Colaborador } from './Colaborador.js'
 
 export const SocioPedido = sequelize.define('socio_pedidos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -64,3 +65,8 @@ SocioPedidoItem.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 
 SocioPedido.hasMany(SocioPedidoItem, { foreignKey: 'socio_pedido', as: 'socio_pedido_items', onDelete: 'RESTRICT' })
 SocioPedidoItem.belongsTo(SocioPedido, { foreignKey: 'socio_pedido', as: 'socio_pedido1' })
+
+Colaborador.hasMany(SocioPedido, {foreignKey:'createdBy', onDelete:'RESTRICT'})
+SocioPedido.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
+Colaborador.hasMany(SocioPedido, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
+SocioPedido.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})

@@ -43,3 +43,8 @@ FormatoValue.belongsTo(Colaborador, { foreignKey: 'colaborador', as: 'colaborado
 
 CuarentenaProducto.hasMany(FormatoValue, { foreignKey: 'cuarentena_producto', as: 'formato_values', onDelete: 'RESTRICT' })
 FormatoValue.belongsTo(CuarentenaProducto, { foreignKey: 'cuarentena_producto', as: 'cuarentena_producto1' })
+
+Colaborador.hasMany(FormatoValue, {foreignKey:'createdBy', onDelete:'RESTRICT'})
+FormatoValue.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
+Colaborador.hasMany(FormatoValue, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
+FormatoValue.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})

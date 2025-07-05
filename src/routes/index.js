@@ -24,7 +24,7 @@ import tipo_cambios from './tipo_cambios/rTipoCambios.js'
 import transacciones from './transacciones/rTransacciones.js'
 
 function routes(app) {
-    app.get('/', (req, res) => res.status(200).send(`Server is running`))
+    app.get('/', (req, res) => res.status(200).send(`Server Eko Business is running`))
 
     app.use('/signin', signin)
 
