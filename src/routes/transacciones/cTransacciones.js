@@ -100,6 +100,21 @@ const create = async (req, res) => {
     }
 }
 
+const update = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+        const { factura } = req.body
+
+        await Transaccion.update({ factura, updatedBy: colaborador }, { where: { id } })
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 async function loadOne(id) {
     let data = await Transaccion.findByPk(id, {
         include: [includes.socio1, includes.moneda1]
@@ -782,7 +797,7 @@ const findItems = async (req, res) => {
                 {
                     model: Transaccion,
                     as: 'transaccion1',
-                    attributes: ['id', 'tipo', 'fecha', 'socio', 'guia'],
+                    attributes: ['id', 'tipo', 'fecha', 'socio', 'guia', 'factura'],
                     where: {},
                     include: [
                         {
@@ -812,6 +827,7 @@ const findItems = async (req, res) => {
                 if (qry.fltr.transaccion_fecha) fltr_transaccion.fecha = qry.fltr.transaccion_fecha
                 if (qry.fltr.transaccion_socio) fltr_transaccion.socio = qry.fltr.transaccion_socio
                 if (qry.fltr.transaccion_guia) fltr_transaccion.guia = qry.fltr.transaccion_guia
+                if (qry.fltr.transaccion_factura) fltr_transaccion.guia = qry.fltr.transaccion_factura
                 if (qry.fltr.transaccion_produccion_orden) fltr_transaccion.produccion_orden = qry.fltr.transaccion_produccion_orden
                 Object.assign(findProps.include[0].where, applyFilters(fltr_transaccion))
 
@@ -819,6 +835,7 @@ const findItems = async (req, res) => {
                 delete qry.fltr.transaccion_fecha
                 delete qry.fltr.transaccion_socio
                 delete qry.fltr.transaccion_guia
+                delete qry.fltr.transaccion_factura
                 delete qry.fltr.transaccion_produccion_orden
                 Object.assign(findProps.where, applyFilters(qry.fltr))
             }
@@ -898,6 +915,7 @@ const ajusteStock = async (req, res) => {
 
 export default {
     create,
+    update,
     find,
     findById,
     delet,

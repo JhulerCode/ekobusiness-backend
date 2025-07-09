@@ -6026,44 +6026,6 @@ export const calidad_formatos = [
     },
 
     {
-        id: 'RE-PHS-14',
-        tipo: 'PHS',
-        nombre: 'CONTROL DE LAVADO DE MANOS',
-        columns: [
-            {
-                id: 'fecha',
-                title: 'Fecha',
-                type: 'date',
-                width: '8rem',
-                show: true,
-                seek: true,
-                sort: true,
-            },
-            {
-                id: 'hora',
-                title: 'Hora',
-                type: 'time',
-                width: '8rem',
-                show: true,
-                seek: true,
-                sort: true,
-            },
-            {
-                id: 'colaborador',
-                title: 'Colaborador',
-                type: 'select',
-                prop: 'colaborador1.nombres_apellidos',
-                relacion: 'colaboradores',
-                mostrar: 'nombres_apellidos',
-                width: '8rem',
-                show: true,
-                seek: true,
-                sort: true,
-            },
-        ]
-    },
-
-    {
         id: 'RE-PHS-15',
         tipo: 'PHS',
         nombre: 'CONTROL DEL REGISTRO DE VISITANTES',
