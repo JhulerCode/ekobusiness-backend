@@ -100,7 +100,15 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await Inspeccion.findByPk(id)
+        const data = await Inspeccion.findByPk(id, {
+            include: [
+                {
+                    model: Socio,
+                    as: 'socio1',
+                    attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+                },
+            ]
+        })
 
         res.json({ code: 0, data })
     }

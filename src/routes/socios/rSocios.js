@@ -40,8 +40,8 @@ router.patch(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vProveedores_editar',
-        'vClientes_editar'
+        'vProveedores_ver', 'vProveedores_editar',
+        'vClientes_ver', 'vClientes_editar'
     ]),
     controller.findById
 )

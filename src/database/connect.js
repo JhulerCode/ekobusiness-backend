@@ -1,3 +1,4 @@
+import { Colaborador } from './models/Colaborador.js'
 import sequelize from './sequelize.js'
 // import './models/_all.js'
 // import initData from './initData.js'
@@ -11,7 +12,7 @@ async function connect() {
         console.log('Unable to connect to the database:', error.message)
     }
 
-    // await Maquina.sync({ alter: true })
+    // await Colaborador.sync({ alter: true })
     // console.log('Tabla alterada')
 
     // await sequelize.sync({ alter: true })

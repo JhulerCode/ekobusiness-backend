@@ -267,12 +267,12 @@ const delet = async (req, res) => {
 const preferencias = async (req, res) => {
     try {
         const { id } = req.params
-        const { color, format_date } = req.body
-
-        await Colaborador.update({ color, format_date }, { where: { id } })
+        const { theme, color, format_date } = req.body
+        console.log(theme, color, format_date)
+        await Colaborador.update({ theme, color, format_date }, { where: { id }, logging: console.log })
 
         //----- ACTUALIZAR SESION ----- //
-        actualizarSesion(id, { color, format_date })
+        actualizarSesion(id, { theme, color, format_date })
 
         res.json({ code: 0 })
     }

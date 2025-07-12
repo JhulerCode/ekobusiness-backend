@@ -13,7 +13,7 @@ const includes = {
     precio_lista1: {
         model: PrecioLista,
         as: 'precio_lista1',
-        attributes: ['nombre', 'moneda']
+        attributes: ['id', 'nombre', 'moneda']
     }
 }
 
@@ -169,7 +169,9 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await Socio.findByPk(id)
+        const data = await Socio.findByPk(id, {
+            include: [includes.precio_lista1]
+        })
 
         res.json({ code: 0, data })
     }

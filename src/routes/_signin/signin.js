@@ -14,7 +14,7 @@ const signin = async (req, res) => {
 
         const data = await Colaborador.findOne({
             where: { usuario },
-            attributes: ['id', 'contrasena', 'nombres', 'apellidos', 'cargo', 'permisos', 'vista_inicial', 'color', 'format_date'],
+            attributes: ['id', 'contrasena', 'nombres', 'apellidos', 'cargo', 'permisos', 'vista_inicial', 'theme', 'color', 'format_date'],
         })
 
         if (data == null) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
@@ -32,6 +32,7 @@ const signin = async (req, res) => {
             apellidos: data.apellidos,
             cargo: data.cargo,
             vista_inicial: data.vista_inicial,
+            theme: data.theme,
             color: data.color,
             format_date: data.format_date,
             permisos: data.permisos,

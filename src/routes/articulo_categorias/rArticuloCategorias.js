@@ -27,8 +27,8 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vArticuloCategorias_editar',
-        'vProductoCategorias_editar'
+        'vArticuloCategorias_ver', 'vArticuloCategorias_editar',
+        'vProductoCategorias_ver', 'vProductoCategorias_editar',
     ]),
     controller.findById
 )

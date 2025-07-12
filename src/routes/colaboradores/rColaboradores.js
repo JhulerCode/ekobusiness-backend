@@ -22,7 +22,7 @@ router.post(
 
 router.get(
     '/uno/:id',
-    verifyPermiso(['vColaboradores_editar']),
+    verifyPermiso(['vColaboradores_ver', 'vColaboradores_editar']),
     controller.findById
 )
 
