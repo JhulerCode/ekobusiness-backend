@@ -3,7 +3,7 @@ import sequelize from '../../database/sequelize.js'
 import { Articulo } from '../../database/models/Articulo.js'
 import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
-import { existe, applyFilters, hasPermiso } from '../../utils/mine.js'
+import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 //----- PARA INCLUDES EN SELECT ----- //

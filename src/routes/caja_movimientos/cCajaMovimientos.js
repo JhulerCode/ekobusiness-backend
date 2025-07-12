@@ -1,26 +1,6 @@
 import { CajaMovimiento } from '../../database/models/CajaMovimiento.js'
 import { applyFilters } from '../../utils/mine.js'
 
-const create = async (req, res) => {
-    try {
-        const { colaborador } = req.user
-        const { fecha, tipo, detalle, monto, caja_apertura } = req.body
-
-        //----- CREAR ----- //
-        const nuevo = await CajaMovimiento.create({
-            fecha, tipo, detalle, monto, caja_apertura,
-            createdBy: colaborador
-        })
-
-        const data = await CajaMovimiento.findByPk(nuevo.id)
-        
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
 const find = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
@@ -50,6 +30,55 @@ const find = async (req, res) => {
     }
 }
 
+const create = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { fecha, tipo, detalle, monto, caja_apertura } = req.body
+
+        //----- CREAR ----- //
+        const nuevo = await CajaMovimiento.create({
+            fecha, tipo, detalle, monto, caja_apertura,
+            createdBy: colaborador
+        })
+
+        const data = await CajaMovimiento.findByPk(nuevo.id)
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const update = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { colaborador } = req.user
+        const { fecha, detalle, monto } = req.body
+
+        //----- ACTUALIZAR ----- //
+        const [affectedRows] = await CajaMovimiento.update(
+            {
+                fecha, detalle, monto,
+                updatedBy: colaborador
+            },
+            { where: { id }, logging: console.log }
+        )
+
+        if (affectedRows > 0) {
+            const data = await CajaMovimiento.findByPk(id)
+
+            res.json({ code: 0, data })
+        }
+        else {
+            res.json({ code: 1, msg: 'No se actualizó ningú registro' })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const delet = async (req, res) => {
     try {
         const { id } = req.params
@@ -68,5 +97,6 @@ const delet = async (req, res) => {
 export default {
     find,
     create,
+    update,
     delet,
 }

@@ -300,10 +300,10 @@ const login = async (req, res) => {
 }
 
 export default {
-    create,
-    update,
     find,
+    create,
     findById,
+    update,
     delet,
 
     preferencias,

@@ -89,19 +89,8 @@ function cleanFloat(num) {
     return Math.round((num + Number.EPSILON) * 1e12) / 1e12;
 }
 
-function hasPermiso(permiso, permisos, res) {
-    if (permiso.some(p => permisos.includes(p))) {
-        return true
-    }
-    else {
-        res.status(403).json({ code: 403, msg: 'No tienes permiso para realizar esta acción' })
-        return false
-    }
-}
-
 export {
     existe,
     applyFilters,
     cleanFloat,
-    hasPermiso
 }

@@ -13,7 +13,7 @@ const create = async (req, res) => {
         //----- CREAR ----- //
         const nuevo = await ArticuloCategoria.create({
             tipo, nombre, descripcion, activo,
-            createdBy: colaborador
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
@@ -64,7 +64,7 @@ async function loadOne(id) {
         data = data.toJSON()
 
         const estadosMap = cSistema.arrayMap('estados')
-        
+
         data.activo1 = estadosMap[data.activo]
     }
 
@@ -92,7 +92,7 @@ const find = async (req, res) => {
         }
 
         let data = await ArticuloCategoria.findAll(findProps)
-        
+
         if (data.length > 0 && qry.cols) {
             data = data.map(a => a.toJSON())
 

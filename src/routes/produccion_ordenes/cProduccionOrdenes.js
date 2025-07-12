@@ -14,7 +14,7 @@ const includes = {
     maquina1: {
         model: Maquina,
         as: 'maquina1',
-        attributes: ['nombre'],
+        attributes: ['nombre', 'produccion_tipo'],
     },
 }
 
@@ -157,7 +157,9 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await ProduccionOrden.findByPk(id)
+        const data = await ProduccionOrden.findByPk(id, {
+            include: [includes.maquina1]
+        })
 
         res.json({ code: 0, data })
     }

@@ -61,7 +61,7 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
-            attributes: ['id'],
+            attributes: ['id', 'cf_liberacion_lote'],
             where: {},
             include: [
                 {
@@ -108,7 +108,7 @@ const find = async (req, res) => {
                 findProps.attributes = findProps.attributes.concat(cols1)
             }
         }
-        console.log(findProps.include[0])
+        
         let data = await CuarentenaProducto.findAll(findProps)
 
         if (data.length > 0) {

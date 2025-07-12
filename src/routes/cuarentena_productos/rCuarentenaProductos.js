@@ -1,12 +1,44 @@
 import { Router } from "express"
 import controller from "./cCuarentenaProductos.js"
+import verifyPermiso from '../../middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.post('/', controller.create)
-router.patch('/:id', controller.update)
-router.get('/', controller.find)
-router.get('/uno/:id', controller.findById)
-router.delete('/:id', controller.delet)
+router.get(
+    '/',
+    verifyPermiso([
+        'vProductosCuarentena',
+        'vPtsIngresos_verCuarentena',
+        'vProgramaFiltrantes_productosCuarentena',
+        'vProgramaGranel_productosCuarentena',
+        'vProgramaLuxury_productosCuarentena',
+        'vProduccionHistorial_productosCuarentena',
+    ]),
+    controller.find
+)
+
+router.post(
+    '/',
+    verifyPermiso(['vProductosCuarentena:crear']),
+    controller.create
+)
+
+// router.get(
+//     '/uno/:id',
+//     verifyPermiso(['vProductosCuarentena:ver']),
+//     controller.findById
+// )
+
+router.patch(
+    '/:id',
+    verifyPermiso(['vProductosCuarentena:editar']),
+    controller.update
+)
+
+router.delete(
+    '/:id',
+    verifyPermiso(['vProductosCuarentena:eliminar']),
+    controller.delet
+)
 
 export default router

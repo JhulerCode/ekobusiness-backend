@@ -5,7 +5,7 @@ const conn = mysql // Es necesario esta variable
 
 const options = {
     dialect: 'mysql',
-    // logging: false,
+    logging: false,
 }
 
 const sequelize = new Sequelize(config.dbUri, options)

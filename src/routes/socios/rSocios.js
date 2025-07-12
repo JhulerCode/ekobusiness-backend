@@ -1,15 +1,70 @@
 import { Router } from "express"
 import controller from "./cSocios.js"
+import verifyPermiso from '../../middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.post('/', controller.create)
-router.get('/', controller.find)
-router.get('/uno/:id', controller.findById)
-router.delete('/:id', controller.delet)
-router.patch('/:id', controller.update)
+router.get(
+    '/',
+    verifyPermiso([
+        'vProveedores',
+        'vCompraPedidos', 'vCompraPedidos_crear', 'vCompraPedidos_ingresarMercaderia',
+        'vCompras', 'vCompras_crear',
+        'vCompraItems',
+        'vClientes',
+        'vVentaPedidos', 'vVentaPedidos_crear', 'vVentaPedidos_entregarMercaderia', 'vVentaPedidos_verProductosPedidos',
+        'vVentas', 'vVentas_crear',
+        'vInspecciones_crear', 'vInspecciones_editar',
+    ]),
+    controller.find
+)
 
-router.delete('/bulk/:id', controller.deleteBulk)
-router.patch('/bulk/:id', controller.updateBulk)
+router.post(
+    '/',
+    verifyPermiso([
+        'vProveedores_crear',
+        'vClientes_crear'
+    ]),
+    controller.create
+)
+
+router.patch(
+    '/:id',
+    verifyPermiso([
+        'vProveedores_editar',
+        'vClientes_editar'
+    ]),
+    controller.update
+)
+
+router.get(
+    '/uno/:id',
+    verifyPermiso([
+        'vProveedores_editar',
+        'vClientes_editar'
+    ]),
+    controller.findById
+)
+
+router.delete(
+    '/:id',
+    verifyPermiso([
+        'vProveedores_eliminar',
+        'vClientes_eliminar'
+    ]),
+    controller.delet
+)
+
+router.patch(
+    '/bulk/:id',
+    verifyPermiso(['vProveedores_editarBulk']),
+    controller.updateBulk
+)
+
+router.delete(
+    '/bulk/:id',
+    verifyPermiso(['vProveedores_eliminarBulk']),
+    controller.deleteBulk
+)
 
 export default router

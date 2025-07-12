@@ -1,6 +1,6 @@
 import sequelize from '../../database/sequelize.js'
 import { Transaccion, TransaccionItem } from '../../database/models/Transaccion.js'
-import { Op, Sequelize, where } from 'sequelize'
+import { Op } from 'sequelize'
 import { Socio } from '../../database/models/Socio.js'
 import { SocioPedido, SocioPedidoItem } from '../../database/models/SocioPedido.js'
 import { Articulo } from '../../database/models/Articulo.js'
@@ -8,7 +8,7 @@ import { Maquina } from '../../database/models/Maquina.js'
 import { Moneda } from '../../database/models/Moneda.js'
 import { ProduccionOrden } from '../../database/models/ProduccionOrden.js'
 import { CuarentenaProducto } from '../../database/models/CuarentenaProducto.js'
-import { applyFilters, cleanFloat, hasPermiso } from '../../utils/mine.js'
+import { applyFilters, cleanFloat } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 const includes = {
@@ -456,7 +456,7 @@ const createProduccionSalida = async (req, res) => {
         }))
 
         await TransaccionItem.bulkCreate(items, { transaction })
-
+        
         //----- ACTUALIZAR STOCK ----- //
         for (const a of transaccion_items) {
             await TransaccionItem.update(
@@ -469,12 +469,13 @@ const createProduccionSalida = async (req, res) => {
                 }
             )
         }
-
+        
         await transaction.commit()
 
         //----- DEVOLVER ----- //
         let data = await TransaccionItem.findOne({
-            attributes: ['id', 'cantidad'],
+            where: { transaccion: nuevo.id },
+            attributes: ['id', 'articulo', 'lote_padre', 'cantidad'],
             include: [
                 {
                     model: Transaccion,
@@ -524,7 +525,7 @@ const findItemsProduccion = async (req, res) => {
         const { id } = req.params
 
         const findProps = {
-            attributes: ['id', 'cantidad'],
+            attributes: ['id', 'articulo', 'lote_padre', 'cantidad'],
             order: [['createdAt', 'DESC']],
             include: [
                 {
@@ -541,12 +542,12 @@ const findItemsProduccion = async (req, res) => {
                 {
                     model: Articulo,
                     as: 'articulo1',
-                    attributes: ['id', 'nombre', 'unidad']
+                    attributes: ['nombre', 'unidad']
                 },
                 {
                     model: TransaccionItem,
                     as: 'lote_padre1',
-                    attributes: ['id', 'lote', 'pu', 'moneda', 'fv'],
+                    attributes: ['lote', 'pu', 'moneda', 'fv'],
                 },
             ]
         }

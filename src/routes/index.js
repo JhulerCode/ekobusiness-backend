@@ -1,6 +1,6 @@
 import signin from './_signin/signin.js'
-import verifyToken from './_signin/verifyToken.js'
 import sistema from './_sistema/rSistema.js'
+import verifyToken from '../middlewares/verifyToken.js'
 
 import articulo_categorias from './articulo_categorias/rArticuloCategorias.js'
 import articulos from './articulos/rArticulos.js'

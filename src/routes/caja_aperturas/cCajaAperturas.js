@@ -23,7 +23,7 @@ const create = async (req, res) => {
     }
 }
 
-const update = async (req, res) => {
+const cerrar = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
@@ -145,5 +145,5 @@ export default {
     findById,
     create,
     delet,
-    update
+    cerrar
 }
