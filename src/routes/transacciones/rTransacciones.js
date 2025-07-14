@@ -7,8 +7,8 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vCompras',
-        'vVentas'
+        'vCompras:listar',
+        'vVentas:listar'
     ]),
     controller.find
 )
@@ -16,10 +16,10 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vCompraPedidos_ingresarMercaderia',
-        'vCompras_crear',
-        'vVentaPedidos_entregarMercaderia',
-        'vVentas_crear',
+        'vCompraPedidos:ingresarMercaderia',
+        'vCompras:crear',
+        'vVentaPedidos:entregarMercaderia',
+        'vVentas:crear',
     ]),
     controller.create
 )
@@ -27,8 +27,8 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vCompras_ver',
-        'vVentas_ver',
+        'vCompras:ver',
+        'vVentas:ver',
     ]),
     controller.findById
 )
@@ -46,8 +46,8 @@ router.get(
 router.patch(
     '/anular/:id',
     verifyPermiso([
-        'vCompras_anular',
-        'vVentas_anular',
+        'vCompras:anular',
+        'vVentas:anular',
     ]),
     controller.anular
 )
@@ -55,14 +55,14 @@ router.patch(
 router.get(
     '/lotes/:id',
     verifyPermiso([
-        'vArticulos_ajusteStock',
-        'vProductosTerminados_ajusteStock',
-        'vVentaPedidos_entregarMercaderia',
-        'vVentas_crear',
-        'vProgramaFiltrantes_salidaInsumos',
-        'vProgramaGranel_salidaInsumos',
-        'vProgramaLuxury_salidaInsumos',
-        'vProduccionHistorial_salidaInsumos',
+        'vArticulos:ajusteStock',
+        'vProductosTerminados:ajusteStock',
+        'vVentaPedidos:entregarMercaderia',
+        'vVentas:crear',
+        'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:salidaInsumos',
     ]),
     controller.findLotes
 )
@@ -70,10 +70,10 @@ router.get(
 router.post(
     '/produccion-salida',
     verifyPermiso([
-        'vProgramaFiltrantes_salidaInsumos',
-        'vProgramaGranel_salidaInsumos',
-        'vProgramaLuxury_salidaInsumos',
-        'vProduccionHistorial_salidaInsumos',
+        'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:salidaInsumos',
     ]),
     controller.createProduccionSalida
 )
@@ -81,31 +81,31 @@ router.post(
 router.get(
     '/items-produccion/:id',
     verifyPermiso([
-        'vProgramaFiltrantes_salidaInsumos',
-        'vProgramaGranel_salidaInsumos',
-        'vProgramaLuxury_salidaInsumos',
-        'vProduccionHistorial_salidaInsumos',
+        'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:salidaInsumos',
     ]),
     controller.findItemsProduccion
 )
 
 router.post(
     '/productos-terminados',
-    verifyPermiso(['vPtsIngresos_ingresarPts']),
+    verifyPermiso(['vPtsIngresos:ingresarPts']),
     controller.createProductosTerminados
 )
 
 router.get(
     '/productos-terminados',
-    verifyPermiso(['']),
+    verifyPermiso(['vPtsIngresos:listar']),
     controller.findProductosTerminados
 )
 
 router.get(
     '/kardex/:id',
     verifyPermiso([
-        'vArticulos_kardex',
-        'vProductosTerminados_kardex',
+        'vArticulos:kardex',
+        'vProductosTerminados:kardex',
     ]),
     controller.findKardex
 )
@@ -113,7 +113,7 @@ router.get(
 router.get(
     '/items',
     verifyPermiso([
-        'vProduccionHistorial_productosTerminados',
+        'vProduccionHistorial:productosTerminados',
     ]),
     controller.findItems
 )
@@ -121,8 +121,8 @@ router.get(
 router.post(
     '/ajuste',
     verifyPermiso([
-        'vArticulos_ajusteStock',
-        'vProductosTerminados_ajusteStock',
+        'vArticulos:ajusteStock',
+        'vProductosTerminados:ajusteStock',
     ]),
     controller.ajusteStock
 )

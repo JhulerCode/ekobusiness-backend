@@ -6,35 +6,35 @@ const router = Router()
 
 router.get(
     '/',
-    verifyPermiso(['vCajaAperturas']),
+    verifyPermiso(['vCajaAperturas:listar']),
     controller.find
 )
 
 router.post(
     '/',
-    verifyPermiso(['vCajaAperturas_aperturarCaja']),
+    verifyPermiso(['vCajaAperturas:aperturarCaja']),
     controller.create
 )
 
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vCajaAperturas_ver',
-        'vCajaAperturas_cerrarCaja',
-        'vCajaMovimientos',
+        'vCajaAperturas:ver',
+        'vCajaAperturas:cerrarCaja',
+        'vCajaMovimientos:listar',
     ]),
     controller.findById
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vCajaAperturas_cerrarCaja']),
+    verifyPermiso(['vCajaAperturas:cerrarCaja']),
     controller.cerrar
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(['vCajaAperturas_eliminar']),
+    verifyPermiso(['vCajaAperturas:eliminar']),
     controller.delet
 )
 

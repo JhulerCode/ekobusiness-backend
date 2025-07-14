@@ -7,7 +7,7 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vColaboradores',
+        'vColaboradores:listar',
         'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
         'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',
     ]),
@@ -16,25 +16,25 @@ router.get(
 
 router.post(
     '/',
-    verifyPermiso(['vColaboradores_crear']),
+    verifyPermiso(['vColaboradores:crear']),
     controller.create
 )
 
 router.get(
     '/uno/:id',
-    verifyPermiso(['vColaboradores_ver', 'vColaboradores_editar']),
+    verifyPermiso(['vColaboradores:ver', 'vColaboradores:editar']),
     controller.findById
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vColaboradores_editar']),
+    verifyPermiso(['vColaboradores:editar']),
     controller.update
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(['vColaboradores_eliminar']),
+    verifyPermiso(['vColaboradores:eliminar']),
     controller.delet
 )
 

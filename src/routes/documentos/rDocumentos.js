@@ -7,8 +7,8 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vRegistrosSanitarios',
-        'vDocumentos',
+        'vRegistrosSanitarios:listar',
+        'vDocumentos:listar',
     ]),
     controller.find
 )
@@ -16,8 +16,8 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vRegistrosSanitarios_crear',
-        'vDocumentos_crear',
+        'vRegistrosSanitarios:crear',
+        'vDocumentos:crear',
     ]),
     controller.create
 )
@@ -25,8 +25,8 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vRegistrosSanitarios_editar',
-        'vDocumentos_editar',
+        'vRegistrosSanitarios:editar',
+        'vDocumentos:editar',
     ]),
     controller.findById
 )
@@ -34,8 +34,8 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vRegistrosSanitarios_editar',
-        'vDocumentos_editar',
+        'vRegistrosSanitarios:editar',
+        'vDocumentos:editar',
     ]),
     controller.update
 )
@@ -43,8 +43,8 @@ router.patch(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vRegistrosSanitarios_eliminar',
-        'vDocumentos_eliminar',
+        'vRegistrosSanitarios:eliminar',
+        'vDocumentos:eliminar',
     ]),
     controller.delet
 )

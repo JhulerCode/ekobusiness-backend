@@ -7,28 +7,28 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vPrecioListaItems',
-        'vCompraPedidos_crear', 'vCompraPedidos_editar', 'vCompraPedidos_ingresarMercaderia',
-        'vCompras_crear',
+        'vPrecioListaItems:listar',
+        'vCompraPedidos:crear', 'vCompraPedidos:editar', 'vCompraPedidos:ingresarMercaderia',
+        'vCompras:crear',
     ]),
     controller.find
 )
 
 router.post(
     '/',
-    verifyPermiso(['vPrecioListaItems_crear']),
+    verifyPermiso(['vPrecioListaItems:crear']),
     controller.create
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vPrecioListaItems_editar']),
+    verifyPermiso(['vPrecioListaItems:editar']),
     controller.update
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(['vPrecioListaItems_eliminar']),
+    verifyPermiso(['vPrecioListaItems:eliminar']),
     controller.delet
 )
 

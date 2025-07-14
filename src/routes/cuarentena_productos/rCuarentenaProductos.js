@@ -7,12 +7,12 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vProductosCuarentena',
-        'vPtsIngresos_verCuarentena',
-        'vProgramaFiltrantes_productosCuarentena',
-        'vProgramaGranel_productosCuarentena',
-        'vProgramaLuxury_productosCuarentena',
-        'vProduccionHistorial_productosCuarentena',
+        'vProductosCuarentena:listar',
+        'vPtsIngresos:verCuarentena',
+        'vProgramaFiltrantes:productosCuarentena',
+        'vProgramaGranel:productosCuarentena',
+        'vProgramaLuxury:productosCuarentena',
+        'vProduccionHistorial:productosCuarentena',
     ]),
     controller.find
 )

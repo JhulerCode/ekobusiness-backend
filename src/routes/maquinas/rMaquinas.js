@@ -7,11 +7,11 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vMaquinas',
-        'vEquipos',
-        'vProgramaFiltrantes',
-        'vProgramaLuxury',
-        'vProduccionHistorial',
+        'vMaquinas:listar',
+        'vEquipos:listar',
+        'vProgramaFiltrantes:listar',
+        'vProgramaLuxury:listar',
+        'vProduccionHistorial:listar',
         'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
         'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',
     ]),
@@ -21,8 +21,8 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vMaquinas_crear',
-        'vEquipos_crear',
+        'vMaquinas:crear',
+        'vEquipos:crear',
     ]),
     controller.create
 )
@@ -30,8 +30,8 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vMaquinas_editar',
-        'vEquipos_editar',
+        'vMaquinas:editar',
+        'vEquipos:editar',
     ]),
     controller.findById
 )
@@ -39,8 +39,8 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vMaquinas_editar',
-        'vEquipos_editar',
+        'vMaquinas:editar',
+        'vEquipos:editar',
     ]),
     controller.update
 )
@@ -48,8 +48,8 @@ router.patch(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vMaquinas_eliminar',
-        'vEquipos_eliminar',
+        'vMaquinas:eliminar',
+        'vEquipos:eliminar',
     ]),
     controller.delet
 )

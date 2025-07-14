@@ -7,10 +7,10 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vArticuloCategorias',
-        'vArticulos', 'vArticulos_crear', 'vArticulos_editar', 'vArticulos_clonar', 'vArticulos_importar', 'vArticulos_editarBulk',
-        'vProductoCategorias',
-        'vProductosTerminados', 'vProductosTerminados_crear', 'vProductosTerminados_editar', 'vProductosTerminados_clonar', 'vProductosTerminados_crearCombo', 'vProductosTerminados_importar', 'vProductosTerminados_editarBulk',
+        'vArticuloCategorias:listar',
+        'vArticulos:listar', 'vArticulos:crear', 'vArticulos:editar', 'vArticulos:clonar', 'vArticulos:importar', 'vArticulos:editarBulk',
+        'vProductoCategorias:listar',
+        'vProductosTerminados:listar', 'vProductosTerminados:crear', 'vProductosTerminados:editar', 'vProductosTerminados:clonar', 'vProductosTerminados:crearCombo', 'vProductosTerminados:importar', 'vProductosTerminados:editarBulk',
     ]),
     controller.find
 )
@@ -18,8 +18,8 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vArticuloCategorias_crear',
-        'vProductoCategorias_crear'
+        'vArticuloCategorias:crear',
+        'vProductoCategorias:crear'
     ]),
     controller.create
 )
@@ -27,8 +27,8 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vArticuloCategorias_ver', 'vArticuloCategorias_editar',
-        'vProductoCategorias_ver', 'vProductoCategorias_editar',
+        'vArticuloCategorias_ver', 'vArticuloCategorias:editar',
+        'vProductoCategorias_ver', 'vProductoCategorias:editar',
     ]),
     controller.findById
 )
@@ -36,8 +36,8 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vArticuloCategorias_editar',
-        'vProductoCategorias_editar'
+        'vArticuloCategorias:editar',
+        'vProductoCategorias:editar'
     ]),
     controller.update
 )
@@ -45,8 +45,8 @@ router.patch(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vArticuloCategorias_eliminar',
-        'vProductoCategorias_eliminar'
+        'vArticuloCategorias:eliminar',
+        'vProductoCategorias:eliminar'
     ]),
     controller.delet
 )

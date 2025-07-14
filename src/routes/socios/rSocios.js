@@ -7,14 +7,14 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vProveedores',
-        'vCompraPedidos', 'vCompraPedidos_crear', 'vCompraPedidos_ingresarMercaderia',
-        'vCompras', 'vCompras_crear',
-        'vCompraItems',
-        'vClientes',
-        'vVentaPedidos', 'vVentaPedidos_crear', 'vVentaPedidos_entregarMercaderia', 'vVentaPedidos_verProductosPedidos',
-        'vVentas', 'vVentas_crear',
-        'vInspecciones_crear', 'vInspecciones_editar',
+        'vProveedores:listar',
+        'vCompraPedidos:listar', 'vCompraPedidos:crear', 'vCompraPedidos:ingresarMercaderia',
+        'vCompras:listar', 'vCompras:crear',
+        'vCompraItems:listar',
+        'vClientes:listar',
+        'vVentaPedidos', 'vVentaPedidos:crear', 'vVentaPedidos:entregarMercaderia', 'vVentaPedidos:verProductosPedidos',
+        'vVentas:listar', 'vVentas:crear',
+        'vInspecciones:crear', 'vInspecciones:editar',
     ]),
     controller.find
 )
@@ -22,8 +22,8 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vProveedores_crear',
-        'vClientes_crear'
+        'vProveedores:crear',
+        'vClientes:crear'
     ]),
     controller.create
 )
@@ -31,8 +31,8 @@ router.post(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vProveedores_editar',
-        'vClientes_editar'
+        'vProveedores:editar',
+        'vClientes:editar'
     ]),
     controller.update
 )
@@ -40,8 +40,8 @@ router.patch(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vProveedores_ver', 'vProveedores_editar',
-        'vClientes_ver', 'vClientes_editar'
+        'vProveedores:ver', 'vProveedores:editar',
+        'vClientes:ver', 'vClientes:editar'
     ]),
     controller.findById
 )
@@ -49,21 +49,21 @@ router.get(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vProveedores_eliminar',
-        'vClientes_eliminar'
+        'vProveedores:eliminar',
+        'vClientes:eliminar'
     ]),
     controller.delet
 )
 
 router.patch(
     '/bulk/:id',
-    verifyPermiso(['vProveedores_editarBulk']),
+    verifyPermiso(['vProveedores:editarBulk']),
     controller.updateBulk
 )
 
 router.delete(
     '/bulk/:id',
-    verifyPermiso(['vProveedores_eliminarBulk']),
+    verifyPermiso(['vProveedores:eliminarBulk']),
     controller.deleteBulk
 )
 

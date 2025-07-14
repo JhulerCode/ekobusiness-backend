@@ -7,33 +7,33 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vTipoCambios',
-        'vVentas_crear',
+        'vTipoCambios:listar',
+        'vVentas:crear',
     ]),
     controller.find
 )
 
 router.post(
     '/',
-    verifyPermiso(['vTipoCambios_crear']),
+    verifyPermiso(['vTipoCambios:crear']),
     controller.create
 )
 
 router.get(
     '/uno/:id',
-    verifyPermiso(['vTipoCambios_ver', 'vTipoCambios_editar']),
+    verifyPermiso(['vTipoCambios_ver', 'vTipoCambios:editar']),
     controller.findById
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vTipoCambios_editar']),
+    verifyPermiso(['vTipoCambios:editar']),
     controller.update
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(['vTipoCambios_eliminar']),
+    verifyPermiso(['vTipoCambios:eliminar']),
     controller.delet
 )
 

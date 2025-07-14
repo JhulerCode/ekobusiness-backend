@@ -7,8 +7,8 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vCompraPedidos',
-        'vVentaPedidos',
+        'vCompraPedidos:listar',
+        'vVentaPedidos:listar',
     ]),
     controller.find
 )
@@ -16,8 +16,8 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vCompraPedidos_crear',
-        'vVentaPedidos_crear',
+        'vCompraPedidos:crear',
+        'vVentaPedidos:crear',
     ]),
     controller.create
 )
@@ -25,8 +25,8 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vCompraPedidos_ver', 'vCompraPedidos_editar', 'vCompraPedidos_generarPdf', 'vCompraPedidos_ingresarMercaderia',
-        'vVentaPedidos_ver', 'vVentaPedidos_editar', 'vVentaPedidos_entregarMercaderia',
+        'vCompraPedidos:ver', 'vCompraPedidos:editar', 'vCompraPedidos:generarPdf', 'vCompraPedidos:ingresarMercaderia',
+        'vVentaPedidos:ver', 'vVentaPedidos:editar', 'vVentaPedidos:entregarMercaderia',
     ]),
     controller.findById
 )
@@ -34,8 +34,8 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vCompraPedidos_editar',
-        'vVentaPedidos_editar',
+        'vCompraPedidos:editar',
+        'vVentaPedidos:editar',
     ]),
     controller.update
 )
@@ -48,8 +48,8 @@ router.patch(
 router.patch(
     '/anular/:id',
     verifyPermiso([
-        'vCompraPedidos_anular',
-        'vVentaPedidos_anular',
+        'vCompraPedidos:anular',
+        'vVentaPedidos:anular',
     ]),
     controller.anular
 )
@@ -57,10 +57,10 @@ router.patch(
 router.get(
     '/pendientes',
     verifyPermiso([
-        'vVentaPedidos_verProductosPedidos',
-        'vProgramaFiltrantes_verProductosPedidos',
-        'vProgramaGranel_verProductosPedidos',
-        'vProgramaLuxury_verProductosPedidos',
+        'vVentaPedidos:verProductosPedidos',
+        'vProgramaFiltrantes:verProductosPedidos',
+        'vProgramaGranel:verProductosPedidos',
+        'vProgramaLuxury:verProductosPedidos',
     ]),
     controller.findDetail
 )

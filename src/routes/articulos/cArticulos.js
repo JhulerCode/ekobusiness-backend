@@ -149,8 +149,6 @@ const find = async (req, res) => {
         const { colaborador, permisos } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        // if (hasPermiso(['vArticulos', 'vCompras_crear'], permisos, res) == false) return
-
         const findProps = {
             attributes,
             order: [['tipo', 'ASC'], ['nombre', 'ASC']],

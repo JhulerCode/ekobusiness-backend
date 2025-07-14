@@ -7,18 +7,18 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vArticulos',
-        'vPrecioListaItems_crear',
-        'vCompraPedidos_crear', 'vCompraPedidos_editar', 'vCompraPedidos_ingresarMercaderia',
-        'vCompras_crear',
-        'vProductosTerminados', 'vProductosTerminados_crearCombo',
-        'vReceta_crear',
-        'vVentaPedidos_crear', 'vVentaPedidos_editar', 'vVentaPedidos_entregarMercaderia',
-        'vVentas_crear',
-        'vProgramaFiltrantes_crear', 'vProgramaFiltrantes_editar', 'vProgramaFiltrantes_salidaInsumos',
-        'vProgramaGranel_crear', 'vProgramaGranel_editar', 'vProgramaGranel_salidaInsumos',
-        'vProgramaLuxury_crear', 'vProgramaLuxury_editar', 'vProgramaLuxury_salidaInsumos',
-        'vProduccionHistorial_salidaInsumos',
+        'vArticulos:listar',
+        'vPrecioListaItems:crear',
+        'vCompraPedidos:crear', 'vCompraPedidos:editar', 'vCompraPedidos:ingresarMercaderia',
+        'vCompras:crear',
+        'vProductosTerminados:listar', 'vProductosTerminados:crearCombo',
+        'vReceta:crear',
+        'vVentaPedidos:crear', 'vVentaPedidos:editar', 'vVentaPedidos:entregarMercaderia',
+        'vVentas:crear',
+        'vProgramaFiltrantes:crear', 'vProgramaFiltrantes:editar', 'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:crear', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:crear', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:salidaInsumos',
         'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
         'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',
     ]),
@@ -28,8 +28,8 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vArticulos_crear', 'vArticulos_clonar',
-        'vProductosTerminados_crear', 'vProductosTerminados_clonar', 'vProductosTerminados_crearCombo',
+        'vArticulos:crear', 'vArticulos:clonar',
+        'vProductosTerminados:crear', 'vProductosTerminados:clonar', 'vProductosTerminados:crearCombo',
     ]),
     controller.create
 )
@@ -37,8 +37,8 @@ router.post(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vArticulos_editar',
-        'vProductosTerminados_editar',
+        'vArticulos:editar',
+        'vProductosTerminados:editar',
     ]),
     controller.update
 )
@@ -46,8 +46,8 @@ router.patch(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vArticulos_editar', 'vArticulos_clonar',
-        'vProductosTerminados_editar', 'vProductosTerminados_clonar',
+        'vArticulos:editar', 'vArticulos:clonar',
+        'vProductosTerminados:editar', 'vProductosTerminados:clonar',
     ]),
     controller.findById
 )
@@ -55,8 +55,8 @@ router.get(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vArticulos_eliminar',
-        'vProductosTerminados_eliminar',
+        'vArticulos:eliminar',
+        'vProductosTerminados:eliminar',
     ]),
     controller.delet
 )
@@ -64,8 +64,8 @@ router.delete(
 router.post(
     '/bulk',
     verifyPermiso([
-        'vArticulos_importar',
-        'vProductosTerminados_importar',
+        'vArticulos:importar',
+        'vProductosTerminados:importar',
     ]),
     controller.createBulk
 )
@@ -73,8 +73,8 @@ router.post(
 router.patch(
     '/bulk/:id',
     verifyPermiso([
-        'vArticulos_editarBulk',
-        'vProductosTerminados_editarBulk'
+        'vArticulos:editarBulk',
+        'vProductosTerminados:editarBulk'
     ]),
     controller.updateBulk
 )
@@ -82,8 +82,8 @@ router.patch(
 router.delete(
     '/bulk/:id',
     verifyPermiso([
-        'vArticulos_eliminarBulk',
-        'vProductosTerminados_eliminarBulk'
+        'vArticulos:eliminarBulk',
+        'vProductosTerminados:eliminarBulk'
     ]),
     controller.deleteBulk
 )

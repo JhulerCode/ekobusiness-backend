@@ -9,7 +9,7 @@ function verifyPermiso(requiredPermissions = []) {
         )
 
         if (!hasPermission) {
-            return res.status(403).json({ error: 'Acceso denegado: permisos insuficientes' })
+            return res.status(403).json({ msg: 'Acceso denegado: permisos insuficientes' })
         }
 
         next()

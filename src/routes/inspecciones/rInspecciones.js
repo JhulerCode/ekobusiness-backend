@@ -6,31 +6,31 @@ const router = Router()
 
 router.get(
     '/',
-    verifyPermiso(['vInspecciones']),
+    verifyPermiso(['vInspecciones:listar']),
     controller.find
 )
 
 router.post(
     '/',
-    verifyPermiso(['vInspecciones_crear']),
+    verifyPermiso(['vInspecciones:crear']),
     controller.create
 )
 
 router.get(
     '/uno/:id',
-    verifyPermiso(['vInspecciones_ver', 'vInspecciones_editar']),
+    verifyPermiso(['vInspecciones:ver', 'vInspecciones:editar']),
     controller.findById
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vInspecciones_editar']),
+    verifyPermiso(['vInspecciones:editar']),
     controller.update
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(['vInspecciones_eliminar']),
+    verifyPermiso(['vInspecciones:eliminar']),
     controller.delet
 )
 

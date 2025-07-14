@@ -7,10 +7,10 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vProgramaFiltrantes',
-        'vProgramaGranel',
-        'vProgramaLuxury',
-        'vProduccionHistorial',
+        'vProgramaFiltrantes:listar',
+        'vProgramaGranel:listar',
+        'vProgramaLuxury:listar',
+        'vProduccionHistorial:listar',
     ]),
     controller.find
 )
@@ -18,9 +18,9 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vProgramaFiltrantes_crear',
-        'vProgramaGranel_crear',
-        'vProgramaLuxury_crear'
+        'vProgramaFiltrantes:crear',
+        'vProgramaGranel:crear',
+        'vProgramaLuxury:crear'
     ]),
     controller.create
 )
@@ -28,10 +28,10 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vProgramaFiltrantes_ver', 'vProgramaFiltrantes_editar', 'vProgramaFiltrantes_salidaInsumos',
-        'vProgramaGranel_ver', 'vProgramaGranel_editar', 'vProgramaGranel_salidaInsumos',
-        'vProgramaLuxury_ver', 'vProgramaLuxury_editar', 'vProgramaLuxury_salidaInsumos',
-        'vProduccionHistorial_ver', 'vProduccionHistorial_salidaInsumos',
+        'vProgramaFiltrantes:ver', 'vProgramaFiltrantes:editar', 'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:ver', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:ver', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:ver', 'vProduccionHistorial:salidaInsumos',
     ]),
     controller.findById
 )
@@ -39,9 +39,9 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vProgramaFiltrantes_editar',
-        'vProgramaGranel_editar',
-        'vProgramaLuxury_editar'
+        'vProgramaFiltrantes:editar',
+        'vProgramaGranel:editar',
+        'vProgramaLuxury:editar'
     ]),
     controller.update
 )
@@ -49,9 +49,9 @@ router.patch(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vProgramaFiltrantes_eliminar',
-        'vProgramaGranel_eliminar',
-        'vProgramaLuxury_eliminar'
+        'vProgramaFiltrantes:eliminar',
+        'vProgramaGranel:eliminar',
+        'vProgramaLuxury:eliminar'
     ]),
     controller.delet
 )

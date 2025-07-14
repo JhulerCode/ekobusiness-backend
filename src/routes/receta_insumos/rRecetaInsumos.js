@@ -7,26 +7,26 @@ const router = Router()
 router.get(
     '/:id',
     verifyPermiso([
-        'vReceta'
+        'vReceta:listar',
     ]),
     controller.find
 )
 
 router.post(
     '/',
-    verifyPermiso(['vReceta_crear']),
+    verifyPermiso(['vReceta:crear']),
     controller.create
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vReceta_editar']),
+    verifyPermiso(['vReceta:editar']),
     controller.update
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(['vReceta_eliminar']),
+    verifyPermiso(['vReceta:eliminar']),
     controller.delet
 )
 

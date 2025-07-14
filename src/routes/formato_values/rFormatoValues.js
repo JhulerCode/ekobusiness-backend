@@ -7,9 +7,9 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vFormatosBpm',
-        'vFormatosPhs',
-        'vFormatosHaccp'
+        'vFormatosBpm:listar',
+        'vFormatosPhs:listar',
+        'vFormatosHaccp:listar'
     ]),
     controller.find
 )
@@ -17,10 +17,10 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vCompraItems_inspeccion',
-        'vVentas_controlDespacho',
-        'vProduccionHistorial_controlPesos',
-        'vProduccionHistorial_controlPpc',
+        'vCompraItems:inspeccion',
+        'vVentas:controlDespacho',
+        'vProduccionHistorial:controlPesos',
+        'vProduccionHistorial:controlPpc',
         'vProductosCuarentena:liberar_lote',
         'vFormatosBpm:crear',
         'vFormatosPhs:crear',
@@ -32,10 +32,10 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vCompraItems_inspeccion',
-        'vVentas_controlDespacho',
-        'vProduccionHistorial_controlPesos',
-        'vProduccionHistorial_controlPpc',
+        'vCompraItems:inspeccion',
+        'vVentas:controlDespacho',
+        'vProduccionHistorial:controlPesos',
+        'vProduccionHistorial:controlPpc',
         'vProductosCuarentena:liberar_lote',
         'vFormatosBpm:ver', 'vFormatosBpm:editar',
         'vFormatosPhs:ver', 'vFormatosPhs:editar',
@@ -47,10 +47,10 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vCompraItems_inspeccion',
-        'vVentas_controlDespacho',
-        'vProduccionHistorial_controlPesos',
-        'vProduccionHistorial_controlPpc',
+        'vCompraItems:inspeccion',
+        'vVentas:controlDespacho',
+        'vProduccionHistorial:controlPesos',
+        'vProduccionHistorial:controlPpc',
         'vProductosCuarentena:liberar_lote',
         'vFormatosBpm:editar',
         'vFormatosPhs:editar',
