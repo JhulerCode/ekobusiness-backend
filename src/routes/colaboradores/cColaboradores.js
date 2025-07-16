@@ -255,6 +255,8 @@ const delet = async (req, res) => {
 
         const deletedCount = await Colaborador.destroy({ where: { id } })
 
+        borrarSesion(id)
+
         const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
 
         res.json(send)
