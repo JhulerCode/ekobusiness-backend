@@ -29,9 +29,9 @@ export const Colaborador = sequelize.define('colaboradores', {
     permisos: { type: DataTypes.JSON }, //required
     vista_inicial: { type: DataTypes.STRING },
 
-    theme: { type: DataTypes.STRING },
+    theme: { type: DataTypes.STRING, defaultValue: '1' },
     color: { type: DataTypes.STRING },
-    format_date: { type: DataTypes.STRING, defaultValue: '1' },
+    format_date: { type: DataTypes.STRING },
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },

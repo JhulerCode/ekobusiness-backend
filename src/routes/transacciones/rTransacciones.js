@@ -38,10 +38,10 @@ router.get(
 //     controller.update
 // )
 
-// router.delete(
-//     '/:id',
-//     controller.delet
-// )
+router.delete(
+    '/:id',
+    controller.delet
+)
 
 router.patch(
     '/anular/:id',
