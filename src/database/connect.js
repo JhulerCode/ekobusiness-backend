@@ -1,7 +1,7 @@
-import { Colaborador } from './models/Colaborador.js'
 import sequelize from './sequelize.js'
 // import './models/_all.js'
 // import initData from './initData.js'
+// import { Colaborador } from './models/Colaborador.js'
 
 async function connect() {
     try {

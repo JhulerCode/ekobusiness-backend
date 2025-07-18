@@ -1,3 +1,4 @@
+import { ActivityLog } from './ActivityLog.js'
 import { Articulo } from './Articulo.js'
 import { ArticuloCategoria } from './ArticuloCategoria.js'
 import { CajaApertura } from './CajaApertura.js'

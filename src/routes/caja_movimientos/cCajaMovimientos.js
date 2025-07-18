@@ -62,7 +62,7 @@ const update = async (req, res) => {
                 fecha, detalle, monto,
                 updatedBy: colaborador
             },
-            { where: { id }, logging: console.log }
+            { where: { id } }
         )
 
         if (affectedRows > 0) {

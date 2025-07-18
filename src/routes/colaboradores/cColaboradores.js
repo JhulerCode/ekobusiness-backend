@@ -271,7 +271,7 @@ const preferencias = async (req, res) => {
         const { id } = req.params
         const { theme, color, format_date } = req.body
         console.log(theme, color, format_date)
-        await Colaborador.update({ theme, color, format_date }, { where: { id }, logging: console.log })
+        await Colaborador.update({ theme, color, format_date }, { where: { id } })
 
         //----- ACTUALIZAR SESION ----- //
         actualizarSesion(id, { theme, color, format_date })
