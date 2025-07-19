@@ -48,10 +48,12 @@ const create = async (req, res) => {
 
         //----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
+            tipo, fecha,
             ...a,
             is_lote_padre: tipo == 1 ? true : false,
             stock: tipo == 1 ? a.cantidad : tipo == 5 ? a.stock : null,
-            transaccion: nuevo.id
+            transaccion: nuevo.id,
+            createdBy: colaborador
         }))
 
         await TransaccionItem.bulkCreate(items, { transaction })
@@ -451,12 +453,15 @@ const createProduccionSalida = async (req, res) => {
 
         //----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
+            tipo, fecha,
+            produccion_orden,
             ...a,
-            transaccion: nuevo.id
+            transaccion: nuevo.id,
+            createdBy: colaborador
         }))
 
         await TransaccionItem.bulkCreate(items, { transaction })
-        
+
         //----- ACTUALIZAR STOCK ----- //
         for (const a of transaccion_items) {
             await TransaccionItem.update(
@@ -469,7 +474,7 @@ const createProduccionSalida = async (req, res) => {
                 }
             )
         }
-        
+
         await transaction.commit()
 
         //----- DEVOLVER ----- //
@@ -595,6 +600,9 @@ const createProductosTerminados = async (req, res) => {
 
             //----- GUARDAR ITEMS ----- //
             await TransaccionItem.create({
+                tipo, fecha,
+                produccion_orden: a.produccion_orden1.id,
+
                 articulo: a.produccion_orden1.articulo,
                 cantidad: a.cantidad_real,
 
@@ -604,7 +612,8 @@ const createProductosTerminados = async (req, res) => {
                 is_lote_padre: true,
                 stock: a.cantidad_real,
 
-                transaccion: nuevo.id
+                transaccion: nuevo.id,
+                createdBy: colaborador
             }, { transaction })
 
             //----- ACTUALIZAR ORDEN PRODUCCIÓN ----- //
@@ -616,9 +625,12 @@ const createProductosTerminados = async (req, res) => {
                 },
                 {
                     where: { id: a.id },
-                    transaction
+                    transaction,
+                    logging: console.log
                 }
             )
+
+            throw error
         }
 
         transaction.commit()
@@ -886,8 +898,10 @@ const ajusteStock = async (req, res) => {
 
         //----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
+            tipo, fecha,
             ...a,
-            transaccion: nuevo.id
+            transaccion: nuevo.id,
+            createdBy: colaborador
         }))
 
         await TransaccionItem.bulkCreate(items, { transaction })

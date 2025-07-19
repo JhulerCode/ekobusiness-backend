@@ -10,6 +10,7 @@ router.get(
         'vColaboradores:listar',
         'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
         'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',
+        'vActivityLogs:listar',
     ]),
     controller.find
 )

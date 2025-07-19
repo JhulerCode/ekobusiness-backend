@@ -5,7 +5,7 @@ import { Colaborador } from './Colaborador.js'
 
 export const Socio = sequelize.define('socios', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tipo: { type: DataTypes.TINYINT }, //required
+    tipo: { type: DataTypes.SMALLINT }, //required
 
     doc_tipo: { type: DataTypes.STRING }, //required
     doc_numero: { type: DataTypes.STRING }, //required

@@ -1,7 +1,8 @@
 import sequelize from './sequelize.js'
-// import './models/_all.js'
+import './models/_all.js'
 // import initData from './initData.js'
 // import { Colaborador } from './models/Colaborador.js'
+// import { TransaccionItem } from './models/Transaccion.js'
 
 async function connect() {
     try {
@@ -12,11 +13,11 @@ async function connect() {
         console.log('Unable to connect to the database:', error.message)
     }
 
-    // await Colaborador.sync({ alter: true })
+    // await TransaccionItem.sync({ alter: true })
     // console.log('Tabla alterada')
 
     // await sequelize.sync({ alter: true })
-    // console.log('Base de datos forzada')
+    // console.log('Base de datos alterada')
 
     // await initData()
 }

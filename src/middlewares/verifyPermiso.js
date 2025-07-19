@@ -11,7 +11,7 @@ function verifyPermiso(requiredPermissions = []) {
         const log = {
             colaborador: req.user.colaborador,
             method: req.method,
-            baseUrl: req.baseUrl,
+            baseUrl: req.baseUrl + req.path,
             detail: {
                 params: req.params,
                 query: req.query,
@@ -20,7 +20,7 @@ function verifyPermiso(requiredPermissions = []) {
             ip: req.ip,
             hasPermission
         }
-        console.log(log)
+        console.log(req.user.nombres, log.method, log.baseUrl, log.detail.params, hasPermission)
         if (log.method != 'GET') ActivityLog.create(log)
 
         if (!hasPermission) return res.status(403).json({ msg: 'Acceso denegado: permisos insuficientes' })

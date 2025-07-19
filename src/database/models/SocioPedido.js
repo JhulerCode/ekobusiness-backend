@@ -7,7 +7,7 @@ import { Colaborador } from './Colaborador.js'
 
 export const SocioPedido = sequelize.define('socio_pedidos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tipo: { type: DataTypes.TINYINT }, //required
+    tipo: { type: DataTypes.SMALLINT }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
     codigo: { type: DataTypes.STRING }, //required
 
@@ -24,7 +24,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     direccion_entrega: { type: DataTypes.STRING }, //required
 
     observacion: { type: DataTypes.STRING },
-    estado: { type: DataTypes.TINYINT }, //required
+    estado: { type: DataTypes.STRING }, //required
 
     anulado_motivo: { type: DataTypes.STRING },
     empresa_datos: { type: DataTypes.JSON },
