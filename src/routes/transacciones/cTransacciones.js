@@ -629,8 +629,6 @@ const createProductosTerminados = async (req, res) => {
                     logging: console.log
                 }
             )
-
-            throw error
         }
 
         transaction.commit()
