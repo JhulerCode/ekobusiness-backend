@@ -375,6 +375,27 @@ const anular = async (req, res) => {
     }
 }
 
+const terminar = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        //----- ANULAR ----- //
+        await SocioPedido.update(
+            {
+                estado: 2,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const findDetail = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
@@ -404,14 +425,14 @@ const findDetail = async (req, res) => {
             ]
         }
 
-        console.log(qry)
+        // console.log(qry)
         if (qry) {
             if (qry.socio) {
                 findProps.include[0].where.socio = qry.socio
             }
         }
 
-        console.log(findProps.include[0])
+        // console.log(findProps.include[0])
         let socioPedidoItems = await SocioPedidoItem.findAll(findProps)
 
         if (socioPedidoItems.length == 0) {
@@ -523,5 +544,6 @@ export default {
     delet,
     update,
     anular,
+    terminar,
     findDetail
 }

@@ -54,6 +54,15 @@ router.patch(
     controller.anular
 )
 
+router.patch(
+    '/terminar/:id',
+    verifyPermiso([
+        'vCompraPedidos:terminar',
+        'vVentaPedidos:terminar',
+    ]),
+    controller.terminar
+)
+
 router.get(
     '/pendientes',
     verifyPermiso([

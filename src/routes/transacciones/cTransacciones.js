@@ -28,7 +28,7 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
-        const { colaborador, permisos } = req.user
+        const { colaborador } = req.user
         const {
             tipo, fecha,
             has_pedido, socio_pedido, socio, guia, factura,
