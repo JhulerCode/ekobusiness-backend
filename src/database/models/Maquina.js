@@ -7,6 +7,7 @@ export const Maquina = sequelize.define('maquinas', {
     tipo: { type: DataTypes.STRING }, //required
     codigo: { type: DataTypes.STRING }, //required
     nombre: { type: DataTypes.STRING }, //required
+    fecha_compra: { type: DataTypes.DATEONLY }, //required
     
     produccion_tipo: { type: DataTypes.STRING }, //required
     velocidad: { type: DataTypes.DOUBLE },

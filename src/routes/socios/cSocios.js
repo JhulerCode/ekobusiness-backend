@@ -25,7 +25,7 @@ const create = async (req, res) => {
             telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
-            precio_lista, credito, bancos,
+            precio_lista, pago_condicion, bancos,
             documentos,
         } = req.body
 
@@ -38,7 +38,7 @@ const create = async (req, res) => {
             telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
-            precio_lista, credito, bancos,
+            precio_lista, pago_condicion, bancos,
             documentos,
             createdBy: colaborador
         })
@@ -61,7 +61,7 @@ const update = async (req, res) => {
             telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
-            precio_lista, credito, bancos,
+            precio_lista, pago_condicion, bancos,
             documentos,
         } = req.body
 
@@ -75,7 +75,7 @@ const update = async (req, res) => {
                 telefono1, telefono2, correo, web, activo,
                 direcciones,
                 contactos,
-                precio_lista, credito, bancos,
+                precio_lista, pago_condicion, bancos,
                 documentos,
                 updatedBy: colaborador
             },

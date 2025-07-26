@@ -23,7 +23,8 @@ export const Socio = sequelize.define('socios', {
     contactos: { type: DataTypes.JSON },
 
     precio_lista: { type: DataTypes.STRING },
-    credito: { type: DataTypes.DOUBLE },
+    pago_condicion: { type: DataTypes.STRING },
+    // credito: { type: DataTypes.DOUBLE },
     bancos: { type: DataTypes.JSON },
 
     documentos: { type: DataTypes.JSON },

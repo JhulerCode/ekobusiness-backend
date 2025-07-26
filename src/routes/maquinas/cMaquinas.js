@@ -5,14 +5,14 @@ import cSistema from "../_sistema/cSistema.js"
 const create = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { tipo, codigo, nombre, produccion_tipo, velocidad, limpieza_tiempo } = req.body
+        const { tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo } = req.body
 
         //----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Maquina, { nombre }, res) == true) return
 
         //----- CREAR ----- //
         const nuevo = await Maquina.create({
-            tipo, codigo, nombre, produccion_tipo, velocidad, limpieza_tiempo,
+            tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo,
             createdBy: colaborador
         })
 
@@ -29,7 +29,7 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { tipo, codigo, nombre, produccion_tipo, velocidad, limpieza_tiempo } = req.body
+        const { tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo } = req.body
 
         //----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Maquina, { nombre, id }, res) == true) return
@@ -37,7 +37,7 @@ const update = async (req, res) => {
         //----- ACTUALIZAR ----- //
         const [affectedRows] = await Maquina.update(
             {
-                tipo, codigo, nombre, produccion_tipo, velocidad, limpieza_tiempo,
+                tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo,
                 updatedBy: colaborador
             },
             { where: { id } }
