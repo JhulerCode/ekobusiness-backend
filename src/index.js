@@ -12,7 +12,7 @@ const corsOptions = {
     origin: [config.hostFrontend]
 }
 app.use(cors(corsOptions))
-app.use(express.json({ limit: '100mb' }))
+app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.set('port', process.env.PORT || 4000)
 

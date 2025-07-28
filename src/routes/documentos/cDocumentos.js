@@ -1,9 +1,7 @@
 import { Documento } from '../../database/models/Documento.js'
-import { existe, applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import axios from 'axios'
-import { deleteFile, saveFile } from '../../utils/uploadFiles.js'
-import { format, tzDate } from '@formkit/tempo'
+import { deleteFile, getFile, getFilePath } from '../../utils/uploadFiles.js'
 
 const create = async (req, res) => {
     try {
@@ -11,7 +9,7 @@ const create = async (req, res) => {
         const {
             tipo, nombre, descripcion,
             denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias, documento
+            fecha_emision, fecha_vencimiento, recordar_dias,
         } = req.body
 
         //----- CREAR ----- //
@@ -19,6 +17,7 @@ const create = async (req, res) => {
             tipo, nombre, descripcion,
             denominacion_legal, denominacion_comercial, registro_sanitario,
             fecha_emision, fecha_vencimiento, recordar_dias,
+            file_name: req.file ? req.file.filename : undefined,
             createdBy: colaborador
         })
 
@@ -38,21 +37,30 @@ const update = async (req, res) => {
         const {
             tipo, nombre, descripcion,
             denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias, documento
+            fecha_emision, fecha_vencimiento, recordar_dias, file_name, previous_file_name
         } = req.body
 
         //----- ACTUALIZAR ----- //
+        const send = {
+            tipo, nombre, descripcion,
+            denominacion_legal, denominacion_comercial, registro_sanitario,
+            fecha_emision, fecha_vencimiento, recordar_dias,
+            updatedBy: colaborador
+        }
+
+        if (req.file) send.file_name = req.file.filename
+        if (file_name == null) send.file_name = null
+
         const [affectedRows] = await Documento.update(
-            {
-                tipo, nombre, descripcion,
-                denominacion_legal, denominacion_comercial, registro_sanitario,
-                fecha_emision, fecha_vencimiento, recordar_dias,
-                updatedBy: colaborador
-            },
+            send,
             { where: { id } }
         )
 
         if (affectedRows > 0) {
+            if (req.file || file_name == null) {
+                deleteFile(previous_file_name)
+            }
+
             const data = await loadOne(id)
 
             res.json({ code: 0, data })
@@ -74,7 +82,6 @@ async function loadOne(id) {
 
         const estadosMap = cSistema.arrayMap('documentos_estados')
 
-        data.estado = setEstado(data.fecha_vencimiento, data.recordar_dias)
         data.estado1 = estadosMap[data.estado]
     }
 
@@ -86,7 +93,7 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
-            attributes: ['id'],
+            attributes: ['id', 'file_name'],
             order: [['nombre', 'ASC']],
             where: {},
         }
@@ -97,7 +104,7 @@ const find = async (req, res) => {
             }
 
             if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols.filter(c => c !== 'estado'))
+                findProps.attributes = findProps.attributes.concat(qry.cols)
             }
         }
 
@@ -109,7 +116,6 @@ const find = async (req, res) => {
             const estadosMap = cSistema.arrayMap('documentos_estados')
 
             for (const a of data) {
-                a.estado = setEstado(a.fecha_vencimiento, a.recordar_dias)
                 a.estado1 = estadosMap[a.estado]
             }
         }
@@ -121,37 +127,16 @@ const find = async (req, res) => {
     }
 }
 
-function setEstado(fecha_vencimiento, recordar_dias) {
-    // const hoy = new Date()
-    // hoy.setHours(10, 0, 0, 0)
-    const hoy = tzDate(new Date(), 'America/Lima')
-    hoy.setHours(10, 0, 0, 0)
-
-    const vencimiento = new Date(fecha_vencimiento + " 10:00:00")
-
-    const fechaRecordatorio = new Date(vencimiento)
-    fechaRecordatorio.setDate(vencimiento.getDate() - recordar_dias)
-
-    if (hoy > vencimiento) {
-        return 0
-    } else if (
-        hoy.getFullYear() === vencimiento.getFullYear() &&
-        hoy.getMonth() === vencimiento.getMonth() &&
-        hoy.getDate() === vencimiento.getDate()
-    ) {
-        return 0.1
-    } else if (hoy >= fechaRecordatorio) {
-        return 1
-    } else {
-        return 2
-    }
-}
-
 const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await Documento.findByPk(id)
+        let data = await Documento.findByPk(id)
+
+        if (data) {
+            data = data.toJSON()
+            data.previous_file_name = data.file_name
+        }
 
         res.json({ code: 0, data })
     }
@@ -175,39 +160,15 @@ const delet = async (req, res) => {
     }
 }
 
-const uploadDoc = async (req, res) => {
-    try {
-        const { id } = req.params
-        const { files } = req.body
-        console.log({ id, files })
+const verfile = async (req, res) => {
+    const { id } = req.params
+    const file = getFile(id)
+    const rutaArchivo = getFilePath(id)
 
-        const uploaded = []
-
-        for (const a of files) {
-            const fileName = saveFile(a.b64)
-
-            await Documento.update(
-                { documento: fileName },
-                { where: { id } }
-            )
-
-            uploaded.push({
-                name: a.name,
-                fileName
-            })
-        }
-
-        res.json({ code: 0, uploaded })
-        // await axios.post(
-        //     'https://hook.us2.make.com/r4t9ut706j622rrg60npp54o657x18g5',
-        //     {
-        //         nombre,
-        //         documento // aquí asumo que 'documento' es el contenido base64 o la URL temporal del archivo
-        //     }
-        // )
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
+    if (file) {
+        res.sendFile(rutaArchivo)
+    } else {
+        res.status(404).json({ msg: 'Archivo no encontrado' })
     }
 }
 
@@ -217,5 +178,5 @@ export default {
     find,
     findById,
     delet,
-    uploadDoc,
+    verfile,
 }
