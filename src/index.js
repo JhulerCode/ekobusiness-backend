@@ -25,4 +25,4 @@ app.listen(app.get('port'), async () => {
 })
 
 //----- TEST CONN DB -----//
-await connDb()
+// await connDb()

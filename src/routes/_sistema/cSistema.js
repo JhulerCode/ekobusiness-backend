@@ -81,6 +81,10 @@ const sistemaData = {
         { id: '1', nombre: 'PENDIENTE' },
         { id: '2', nombre: 'ACEPTADO' }
     ],
+    cumplidado_estados: [
+        {id: 1, nombre: 'PENDIENTE'},
+        {id: 2, nombre: 'COMPLETADO'},
+    ],
 
     conformidad_estados: [
         { id: '1', nombre: 'CONFORME' },

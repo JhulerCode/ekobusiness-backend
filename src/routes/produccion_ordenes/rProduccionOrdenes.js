@@ -46,6 +46,16 @@ router.patch(
     controller.update
 )
 
+router.patch(
+    '/terminar/:id',
+    verifyPermiso([
+        'vProgramaFiltrantes:terminar',
+        'vProgramaGranel:terminar',
+        'vProgramaLuxury:terminar'
+    ]),
+    controller.terminar
+)
+
 router.delete(
     '/:id',
     verifyPermiso([

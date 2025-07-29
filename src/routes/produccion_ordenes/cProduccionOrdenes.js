@@ -4,6 +4,7 @@ import { Articulo } from '../../database/models/Articulo.js'
 import { Maquina } from '../../database/models/Maquina.js'
 import { applyFilters } from '../../utils/mine.js'
 import cSistema from '../_sistema/cSistema.js'
+import { CuarentenaProducto } from '../../database/models/CuarentenaProducto.js'
 
 const includes = {
     articulo1: {
@@ -96,7 +97,7 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
-            attributes: ['id', 'fecha', 'calidad_revisado'],
+            attributes: ['id', 'fecha', 'calidad_revisado', 'cf_ppc'],
             order: [['fecha', 'ASC'], ['maquina', 'ASC'], ['orden', 'ASC']],
             where: {},
             include: [
@@ -106,7 +107,12 @@ const find = async (req, res) => {
                     attributes: ['nombre', 'unidad'],
                     where: {},
                 },
-                includes.maquina1
+                includes.maquina1,
+                {
+                    model: CuarentenaProducto,
+                    as: 'cuarentena_productos',
+                    attributes: ['cantidad'],
+                }
             ]
         }
 
@@ -122,7 +128,7 @@ const find = async (req, res) => {
             }
 
             if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
+                findProps.attributes = findProps.attributes.concat(qry.cols.filter(c => c != 'productos_terminados'))
             }
 
             if (qry.incl) {
@@ -139,10 +145,19 @@ const find = async (req, res) => {
 
             const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
             const produccion_orden_estadosMap = cSistema.arrayMap('produccion_orden_estados')
+            const cumplidado_estadosMap = cSistema.arrayMap('cumplidado_estados')
 
             for (const a of data) {
                 if (qry.cols.includes('tipo')) a.tipo1 = produccion_tiposMap[a.tipo]
                 if (qry.cols.includes('estado')) a.estado1 = produccion_orden_estadosMap[a.estado]
+                if (a.estado_calidad_revisado) a.estado_calidad_revisado1 = cumplidado_estadosMap[a.estado_calidad_revisado]
+                if (a.estado_cf_ppc) a.estado_cf_ppc1 = cumplidado_estadosMap[a.estado_cf_ppc]
+
+                a.productos_terminados = 0
+
+                for (const b of a.cuarentena_productos) {
+                    a.productos_terminados += b.cantidad
+                }
             }
         }
 
@@ -184,10 +199,32 @@ const delet = async (req, res) => {
     }
 }
 
+const terminar = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        //----- ANULAR ----- //
+        await ProduccionOrden.update(
+            {
+                estado: 2,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 export default {
     find,
     findById,
     create,
     update,
     delet,
+    terminar,
 }

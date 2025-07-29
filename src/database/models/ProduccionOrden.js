@@ -20,9 +20,24 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     estado: { type: DataTypes.STRING },
 
     calidad_revisado: { type: DataTypes.STRING },
+    cf_ppc: { type: DataTypes.STRING },
 
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
+
+    estado_calidad_revisado: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this.calidad_revisado ? 2 : 1
+        }
+    },
+
+    estado_cf_ppc: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this.cf_ppc ? 2 : 1
+        }
+    }
 })
 
 Articulo.hasMany(ProduccionOrden, { foreignKey: 'articulo', as: 'produccion_ordenes', onDelete: 'RESTRICT' })
@@ -31,7 +46,7 @@ ProduccionOrden.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 Maquina.hasMany(ProduccionOrden, { foreignKey: 'maquina', as: 'produccion_ordenes', onDelete: 'RESTRICT' })
 ProduccionOrden.belongsTo(Maquina, { foreignKey: 'maquina', as: 'maquina1' })
 
-Colaborador.hasMany(ProduccionOrden, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-ProduccionOrden.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(ProduccionOrden, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-ProduccionOrden.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(ProduccionOrden, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+ProduccionOrden.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(ProduccionOrden, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+ProduccionOrden.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

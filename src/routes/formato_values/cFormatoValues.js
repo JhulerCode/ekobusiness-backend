@@ -128,10 +128,23 @@ const create = async (req, res) => {
             )
         }
 
-        if (produccion_orden) {
+        if (codigo == 'RE-BPM-06' || codigo == 'RE-BPM-07' || codigo == 'RE-BPM-08') {
             await ProduccionOrden.update(
                 {
                     calidad_revisado: nuevo.id,
+                    updatedBy: colaborador
+                },
+                {
+                    where: { id: produccion_orden },
+                    transaction
+                }
+            )
+        }
+
+        if (codigo == 'RE-HACCP 03') {
+            await ProduccionOrden.update(
+                {
+                    cf_ppc: nuevo.id,
                     updatedBy: colaborador
                 },
                 {
