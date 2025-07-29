@@ -133,20 +133,20 @@ const find = async (req, res) => {
     }
 }
 
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
+// const findById = async (req, res) => {
+//     try {
+//         const { id } = req.params
 
-        const findProps = {}
+//         const findProps = {}
 
-        const data = await CuarentenaProducto.findByPk(id, findProps)
+//         const data = await CuarentenaProducto.findByPk(id, findProps)
 
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
+//         res.json({ code: 0, data })
+//     }
+//     catch (error) {
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
 
 const delet = async (req, res) => {
     try {
@@ -167,6 +167,6 @@ export default {
     create,
     update,
     find,
-    findById,
+    // findById,
     delet
 }

@@ -66,4 +66,12 @@ router.delete(
     controller.delet
 )
 
+router.get(
+    '/trazabilidad/:id',
+    verifyPermiso([
+        'vProductosCuarentena:trazabilidad',
+    ]),
+    controller.findTrazabilidad
+)
+
 export default router
