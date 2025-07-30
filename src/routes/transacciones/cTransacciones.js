@@ -37,7 +37,7 @@ const create = async (req, res) => {
             transaccion_items
         } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await Transaccion.create({
             tipo, fecha,
             has_pedido, socio_pedido, socio, guia, factura,
@@ -46,7 +46,7 @@ const create = async (req, res) => {
             createdBy: colaborador
         }, { transaction })
 
-        //----- GUARDAR ITEMS ----- //
+        // ----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
             tipo, fecha,
             ...a,
@@ -58,7 +58,7 @@ const create = async (req, res) => {
 
         await TransaccionItem.bulkCreate(items, { transaction })
 
-        //----- ACTUALIZAR CANTIDAD ENTREGADA ----- //
+        // ----- ACTUALIZAR CANTIDAD ENTREGADA ----- //
         if (socio_pedido) {
             for (const a of transaccion_items) {
                 await SocioPedidoItem.update(
@@ -73,7 +73,7 @@ const create = async (req, res) => {
             }
         }
 
-        //----- SI ES UNA VENTA ----- //
+        // ----- SI ES UNA VENTA ----- //
         if (tipo == 5) {
             for (const a of transaccion_items) {
                 await TransaccionItem.update(
@@ -91,7 +91,7 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        //----- DEVOLVER ----- //
+        // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     }
@@ -154,7 +154,7 @@ const find = async (req, res) => {
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
 
-                //----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('socio')) findProps.include.push(includes.socio1)
                 if (qry.cols.includes('moneda')) findProps.include.push(includes.moneda1)
             }
@@ -352,7 +352,7 @@ const anular = async (req, res) => {
             }
         }
 
-        //----- GUARDAR EL ANULADO ----- //
+        // ----- GUARDAR EL ANULADO ----- //
         transaccionData.estado = 0
         transaccionData.anulado_motivo = anulado_motivo
         transaccionData.updatedBy = colaborador
@@ -377,355 +377,7 @@ const anular = async (req, res) => {
 }
 
 
-/////----- PARA PRODUCCIÓN ----- /////
-const findLotes = async (req, res) => {
-    try {
-        const { id } = req.params
 
-        const findProps = {
-            attributes: ['id', 'igv_afectacion', 'igv_porcentaje', 'pu', 'moneda', 'tipo_cambio', 'fv', 'lote', 'stock'],
-            order: [['createdAt', 'ASC']],
-            where: {
-                articulo: id,
-                is_lote_padre: true,
-            },
-            include: [
-                {
-                    model: Transaccion,
-                    as: 'transaccion1',
-                    attributes: ['id', 'fecha'],
-                    where: {
-                        estado: {
-                            [Op.in]: [1, 2]
-                        }
-                    }
-                },
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad']
-                },
-            ],
-        }
-
-        let data = await TransaccionItem.findAll(findProps)
-
-        if (data.length > 0) {
-            data = data.map(a => a.toJSON())
-
-            const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
-
-            for (const a of data) {
-                a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-
-                a.pu_real = a.tipo_cambio == null ? 'error' : cleanFloat(a.pu * a.tipo_cambio)
-
-                a.lote_fv_stock = a.lote + (a.fv ? ` | ${a.fv}` : '') + (` | ${a.stock.toLocaleString('es-US', { maximumFractionDigits: 2 })}`)
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const createProduccionSalida = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
-    try {
-        const { colaborador } = req.user
-        const {
-            tipo, fecha,
-            produccion_orden,
-            estado,
-            transaccion_items
-        } = req.body
-
-        //----- CREAR ----- //
-        const nuevo = await Transaccion.create({
-            tipo, fecha,
-            produccion_orden,
-            estado,
-            createdBy: colaborador
-        }, { transaction })
-
-        //----- GUARDAR ITEMS ----- //
-        const items = transaccion_items.map(a => ({
-            tipo, fecha,
-            produccion_orden,
-            ...a,
-            transaccion: nuevo.id,
-            createdBy: colaborador
-        }))
-
-        await TransaccionItem.bulkCreate(items, { transaction })
-
-        //----- ACTUALIZAR STOCK ----- //
-        for (const a of transaccion_items) {
-            await TransaccionItem.update(
-                {
-                    stock: sequelize.literal(`COALESCE(stock, 0) ${tipo == 2 ? '-' : '+'} ${a.cantidad}`)
-                },
-                {
-                    where: { id: a.lote_padre },
-                    transaction
-                }
-            )
-        }
-
-        await transaction.commit()
-
-        //----- DEVOLVER ----- //
-        let data = await TransaccionItem.findOne({
-            where: { transaccion: nuevo.id },
-            attributes: ['id', 'articulo', 'lote_padre', 'cantidad'],
-            include: [
-                {
-                    model: Transaccion,
-                    as: 'transaccion1',
-                    attributes: ['id', 'fecha', 'tipo'],
-                    where: {
-                        id: nuevo.id,
-                    },
-                },
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad']
-                },
-                {
-                    model: TransaccionItem,
-                    as: 'lote_padre1',
-                    attributes: ['pu', 'moneda', 'lote', 'fv'],
-                },
-                {
-                    model: Moneda,
-                    as: 'moneda1',
-                    attributes: ['nombre']
-                },
-            ]
-        })
-
-        if (data) {
-            data = data.toJSON()
-
-            const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
-
-            data.cantidad = transaccion_tiposMap[data.transaccion1.tipo]?.operacion * data.cantidad
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        await transaction.rollback()
-
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findItemsProduccion = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const findProps = {
-            attributes: ['id', 'articulo', 'lote_padre', 'cantidad'],
-            order: [['createdAt', 'DESC']],
-            include: [
-                {
-                    model: Transaccion,
-                    as: 'transaccion1',
-                    attributes: ['id', 'tipo', 'fecha'],
-                    where: {
-                        produccion_orden: id,
-                        tipo: {
-                            [Op.in]: [2, 3]
-                        }
-                    },
-                },
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad']
-                },
-                {
-                    model: TransaccionItem,
-                    as: 'lote_padre1',
-                    attributes: ['lote', 'pu', 'moneda', 'fv'],
-                },
-            ]
-        }
-
-        let data = await TransaccionItem.findAll(findProps)
-
-        if (data.length > 0) {
-            data = data.map(a => a.toJSON())
-
-            const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
-
-            for (const a of data) {
-                a.cantidad = transaccion_tiposMap[a.transaccion1.tipo]?.operacion * a.cantidad
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-
-/////----- PARA PRODUCTOS TERMINADOS ----- /////
-const createProductosTerminados = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
-    try {
-        const { colaborador } = req.user
-        const {
-            tipo, fecha,
-            estado,
-            transaccion_items
-        } = req.body
-
-        for (const a of transaccion_items) {
-            //----- CREAR ----- //
-            const nuevo = await Transaccion.create({
-                tipo, fecha,
-                produccion_orden: a.produccion_orden1.id,
-                estado,
-                createdBy: colaborador
-            }, { transaction })
-
-            //----- GUARDAR ITEMS ----- //
-            await TransaccionItem.create({
-                tipo, fecha,
-                produccion_orden: a.produccion_orden1.id,
-
-                articulo: a.produccion_orden1.articulo,
-                cantidad: a.cantidad_real,
-
-                lote: a.lote,
-                fv: a.fv,
-
-                is_lote_padre: true,
-                stock: a.cantidad_real,
-
-                transaccion: nuevo.id,
-                createdBy: colaborador
-            }, { transaction })
-
-            //----- ACTUALIZAR ORDEN PRODUCCIÓN ----- //
-            await CuarentenaProducto.update(
-                {
-                    cantidad: a.cantidad_real,
-                    cantidad_inicial: a.cantidad,
-                    estado: 2
-                },
-                {
-                    where: { id: a.id },
-                    transaction,
-                    logging: console.log
-                }
-            )
-        }
-
-        transaction.commit()
-
-        res.json({ code: 0 })
-    }
-    catch (error) {
-        await transaction.rollback()
-
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findProductosTerminados = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id', 'fv', 'lote', 'cantidad'],
-            order: [['createdAt', 'DESC']],
-            where: {},
-            include: [
-                {
-                    model: Transaccion,
-                    as: 'transaccion1',
-                    attributes: ['fecha'],
-                    where: {
-                        tipo: 4,
-                    },
-                    include: {
-                        model: ProduccionOrden,
-                        as: 'produccion_orden1',
-                        attributes: ['tipo', 'maquina'],
-                        where: {},
-                        include: {
-                            model: Maquina,
-                            as: 'maquina1',
-                            attributes: ['nombre'],
-                        }
-                    }
-                },
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad'],
-                    where: {}
-                },
-            ]
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                const allowedFields = ['cantidad', 'lote', 'fv']
-                const filteredProps = Object.keys(qry.fltr)
-                    .filter(key => allowedFields.includes(key))
-                    .reduce((obj, key) => {
-                        obj[key] = qry.fltr[key]
-                        return obj
-                    }, {})
-                Object.assign(findProps.where, applyFilters(filteredProps))
-
-                if (qry.fltr.fecha) {
-                    Object.assign(findProps.include[0].where, applyFilters({ fecha: qry.fltr.fecha }))
-                }
-
-                if (qry.fltr.articulo) {
-                    Object.assign(findProps.include[1].where, applyFilters({ nombre: qry.fltr.articulo }))
-                }
-
-                if (qry.fltr.tipo) {
-                    Object.assign(findProps.include[0].include.where, applyFilters({ tipo: qry.fltr.tipo }))
-                }
-
-                if (qry.fltr.maquina) {
-                    Object.assign(findProps.include[0].include.where, applyFilters({ maquina: qry.fltr.maquina }))
-                }
-            }
-        }
-
-        let data = await TransaccionItem.findAll(findProps)
-
-        if (data.length > 0) {
-            data = data.map(a => a.toJSON())
-
-            const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
-
-            for (const a of data) {
-                a.transaccion1.produccion_orden1.tipo1 = produccion_tiposMap[a.transaccion1.produccion_orden1.tipo]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
 
 
 const findKardex = async (req, res) => {
@@ -794,7 +446,7 @@ const findKardex = async (req, res) => {
 }
 
 
-/////----- TRANSACCION ITEMS ----- /////
+///// ----- TRANSACCION ITEMS ----- /////
 const findItems = async (req, res) => {
     try {
         const { id } = req.params
@@ -874,7 +526,7 @@ const findItems = async (req, res) => {
 }
 
 
-/////----- AJUSTE STOCK ----- /////
+///// ----- AJUSTE STOCK ----- /////
 const ajusteStock = async (req, res) => {
     const transaction = await sequelize.transaction()
 
@@ -887,14 +539,14 @@ const ajusteStock = async (req, res) => {
             transaccion_items
         } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await Transaccion.create({
             tipo, fecha,
             estado,
             createdBy: colaborador
         }, { transaction })
 
-        //----- GUARDAR ITEMS ----- //
+        // ----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
             tipo, fecha,
             ...a,
@@ -904,7 +556,7 @@ const ajusteStock = async (req, res) => {
 
         await TransaccionItem.bulkCreate(items, { transaction })
 
-        //----- ACTUALIZAR STOCK ----- //
+        // ----- ACTUALIZAR STOCK ----- //
         for (const a of transaccion_items) {
             await TransaccionItem.update(
                 {
@@ -917,7 +569,7 @@ const ajusteStock = async (req, res) => {
             )
         }
 
-        transaction.commit()
+        await transaction.commit()
 
         res.json({ code: 0 })
     }
@@ -933,13 +585,6 @@ export default {
     findById,
     delet,
     anular,
-
-    findLotes,
-    createProduccionSalida,
-    findItemsProduccion,
-
-    createProductosTerminados,
-    findProductosTerminados,
 
     findKardex,
 

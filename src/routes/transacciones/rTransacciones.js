@@ -53,55 +53,6 @@ router.patch(
 )
 
 router.get(
-    '/lotes/:id',
-    verifyPermiso([
-        'vArticulos:ajusteStock',
-        'vProductosTerminados:ajusteStock',
-        'vVentaPedidos:entregarMercaderia',
-        'vVentas:crear',
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
-    ]),
-    controller.findLotes
-)
-
-router.post(
-    '/produccion-salida',
-    verifyPermiso([
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
-    ]),
-    controller.createProduccionSalida
-)
-
-router.get(
-    '/items-produccion/:id',
-    verifyPermiso([
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
-    ]),
-    controller.findItemsProduccion
-)
-
-router.post(
-    '/productos-terminados',
-    verifyPermiso(['vPtsIngresos:ingresarPts']),
-    controller.createProductosTerminados
-)
-
-router.get(
-    '/productos-terminados',
-    verifyPermiso(['vPtsIngresos:listar']),
-    controller.findProductosTerminados
-)
-
-router.get(
     '/kardex/:id',
     verifyPermiso([
         'vArticulos:kardex',

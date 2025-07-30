@@ -69,6 +69,7 @@ router.delete(
 router.get(
     '/trazabilidad/:id',
     verifyPermiso([
+        'vProduccionHistorial:trazabilidad',
         'vProductosCuarentena:trazabilidad',
     ]),
     controller.findTrazabilidad

@@ -27,7 +27,7 @@ const update = async (req, res) => {
         const { id } = req.params
         const { fecha, socio, puntuacion, puntuacion_maxima, correcciones, documento } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await Inspeccion.update(
             {
                 fecha, socio, puntuacion, puntuacion_maxima, correcciones,

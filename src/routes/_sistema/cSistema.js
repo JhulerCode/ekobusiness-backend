@@ -77,7 +77,7 @@ const sistemaData = {
         { id: '2', nombre: 'CERRADO' },
     ],
     cuarentena_productos_estados: [
-        { id: '0', nombre: 'ANULADO' },
+        // { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'PENDIENTE' },
         { id: '2', nombre: 'ACEPTADO' }
     ],

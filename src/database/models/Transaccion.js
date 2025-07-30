@@ -69,8 +69,8 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     igv_afectacion: { type: DataTypes.STRING }, //required
     igv_porcentaje: { type: DataTypes.DOUBLE }, //required
 
-    fv: { type: DataTypes.DATEONLY },
     lote: { type: DataTypes.STRING },
+    fv: { type: DataTypes.DATEONLY },
 
     is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked
     stock: { type: DataTypes.DOUBLE },

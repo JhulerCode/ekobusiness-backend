@@ -11,16 +11,16 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const { fecha, compra, venta, moneda } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(TipoCambio, { fecha, moneda }, res, 'Ya existe') == true) return
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await TipoCambio.create({
             fecha, compra, venta, moneda,
             createdBy: colaborador
         }, { transaction })
 
-        //----- ACTUALIZAR TRANSACCIONES ----- //
+        // ----- ACTUALIZAR TRANSACCIONES ----- //
         const updatedIds = await Transaccion.findAll({
             where: { fecha, moneda },
             attributes: ['id'],
@@ -54,7 +54,7 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        //----- DEVOLVER ----- //
+        // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     }
@@ -73,10 +73,10 @@ const update = async (req, res) => {
         const { id } = req.params
         const { fecha, compra, venta, moneda } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(TipoCambio, { fecha, moneda, id }, res, 'Ya existe') == true) return
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await TipoCambio.update(
             {
                 fecha, compra, venta, moneda,
@@ -86,7 +86,7 @@ const update = async (req, res) => {
         )
 
         if (affectedRows > 0) {
-            //----- ACTUALIZAR TRANSACCIONES ----- //
+            // ----- ACTUALIZAR TRANSACCIONES ----- //
             const updatedIds = await Transaccion.findAll({
                 where: { fecha, moneda },
                 attributes: ['id'],
@@ -120,7 +120,7 @@ const update = async (req, res) => {
 
             await transaction.commit()
 
-            //----- DEVOLVER ----- //
+            // ----- DEVOLVER ----- //
             const data = await loadOne(id)
             res.json({ code: 0, data })
         }

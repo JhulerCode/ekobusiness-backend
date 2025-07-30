@@ -20,10 +20,10 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const { nombre, descripcion, moneda, activo } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(PrecioLista, { nombre }, res) == true) return
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await PrecioLista.create({
             nombre, descripcion, moneda, activo,
             createdBy: colaborador
@@ -44,10 +44,10 @@ const update = async (req, res) => {
         const { id } = req.params
         const { nombre, descripcion, moneda, activo } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(PrecioLista, { nombre, id }, res) == true) return
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await PrecioLista.update(
             {
                 nombre, descripcion, moneda, activo,
@@ -105,7 +105,7 @@ const find = async (req, res) => {
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
 
-                //----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('moneda')) findProps.include.push(includes.moneda1)
             }
         }
@@ -146,7 +146,7 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        //----- ELIMINAR ----- //
+        // ----- ELIMINAR ----- //
         const deletedCount = await PrecioLista.destroy({ where: { id } })
 
         const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }

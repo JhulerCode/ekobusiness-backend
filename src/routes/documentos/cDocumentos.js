@@ -12,7 +12,7 @@ const create = async (req, res) => {
             fecha_emision, fecha_vencimiento, recordar_dias,
         } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await Documento.create({
             tipo, nombre, descripcion,
             denominacion_legal, denominacion_comercial, registro_sanitario,
@@ -40,7 +40,7 @@ const update = async (req, res) => {
             fecha_emision, fecha_vencimiento, recordar_dias, file_name, previous_file_name
         } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const send = {
             tipo, nombre, descripcion,
             denominacion_legal, denominacion_comercial, registro_sanitario,

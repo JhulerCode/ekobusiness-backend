@@ -15,10 +15,10 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const { nombre, codigo, simbolo, plural, estandar } = req.body
 
-        //----- VERIFY SI EXISTE ----- //
+        // ----- VERIFY SI EXISTE ----- //
         if (await existe(Moneda, { nombre }, res) == true) return
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await Moneda.create({
             nombre, codigo, simbolo, plural, estandar,
             createdBy: colaborador
@@ -39,10 +39,10 @@ const update = async (req, res) => {
         const { id } = req.params
         const { nombre, codigo, simbolo, plural, estandar } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Moneda, { nombre, id }, res) == true) return
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await Moneda.update(
             {
                 nombre, codigo, simbolo, plural, estandar,

@@ -109,7 +109,7 @@ const create = async (req, res) => {
     try {
         const { codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await FormatoValue.create({
             codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador,
             createdBy: req.user.colaborador
@@ -197,7 +197,7 @@ const update = async (req, res) => {
         const { id } = req.params
         const { codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         await FormatoValue.update(
             {
                 codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador,
@@ -292,7 +292,7 @@ const find = async (req, res) => {
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
 
-                //----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('transaccion_item')) findProps.include.push(includes.transaccion_item1)
                 if (qry.cols.includes('produccion_orden')) findProps.include.push(includes.produccion_orden1)
                 if (qry.cols.includes('transaccion')) findProps.include.push(includes.transaccion1)

@@ -6,7 +6,7 @@ import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
-//----- PARA INCLUDES EN SELECT ----- //
+// ----- PARA INCLUDES EN SELECT ----- //
 const attributes = ['id', 'nombre', 'unidad']
 
 const stock1 = [Sequelize.literal(`(
@@ -56,11 +56,11 @@ const create = async (req, res) => {
             is_combo, combo_articulos,
         } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Articulo, { nombre, codigo_barra }, res) == true) return
 
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await Articulo.create({
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
@@ -91,10 +91,10 @@ const update = async (req, res) => {
             is_combo, combo_articulos,
         } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Articulo, { nombre, codigo_barra, id }, res) == true) return
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await Articulo.update(
             {
                 codigo, codigo_barra, nombre, unidad, marca,
@@ -167,7 +167,7 @@ const find = async (req, res) => {
                 if (qry.cols.includes('stock')) findProps.attributes.push(sqlStock)
                 if (qry.cols.includes('valor')) findProps.attributes.push(sqlValor)
 
-                //----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('categoria')) findProps.include.push(includes.categoria1)
             }
 
@@ -180,7 +180,7 @@ const find = async (req, res) => {
 
         let data = await Articulo.findAll(findProps)
 
-        //----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
+        // ----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
         if (data.length > 0 && qry.cols) {
             data = data.map(a => a.toJSON())
 
@@ -220,7 +220,7 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        //----- ELIMINAR ----- //
+        // ----- ELIMINAR ----- //
         const deletedCount = await Articulo.destroy({ where: { id } })
 
         const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
@@ -278,7 +278,7 @@ const deleteBulk = async (req, res) => {
     try {
         const { ids } = req.body
 
-        //----- ELIMINAR ----- //
+        // ----- ELIMINAR ----- //
         const deletedCount = await Articulo.destroy({
             where: {
                 id: {
@@ -309,7 +309,7 @@ const updateBulk = async (req, res) => {
 
         const edit = { [prop]: val }
 
-        //----- MODIFICAR ----- //
+        // ----- MODIFICAR ----- //
         await Articulo.update(
             edit,
             {

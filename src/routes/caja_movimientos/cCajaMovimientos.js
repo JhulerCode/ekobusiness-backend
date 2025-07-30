@@ -35,7 +35,7 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const { fecha, tipo, detalle, monto, caja_apertura } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await CajaMovimiento.create({
             fecha, tipo, detalle, monto, caja_apertura,
             createdBy: colaborador
@@ -56,7 +56,7 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { fecha, detalle, monto } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await CajaMovimiento.update(
             {
                 fecha, detalle, monto,

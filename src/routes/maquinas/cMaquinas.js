@@ -7,10 +7,10 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const { tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Maquina, { nombre }, res) == true) return
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await Maquina.create({
             tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo,
             createdBy: colaborador
@@ -31,10 +31,10 @@ const update = async (req, res) => {
         const { id } = req.params
         const { tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo } = req.body
 
-        //----- VERIFY SI EXISTE NOMBRE ----- //
+        // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(Maquina, { nombre, id }, res) == true) return
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await Maquina.update(
             {
                 tipo, codigo, nombre, fecha_compra, produccion_tipo, velocidad, limpieza_tiempo,

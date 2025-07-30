@@ -8,7 +8,7 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const { fecha_apertura, fecha_cierre, monto_apertura, monto_cierre, estado } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await CajaApertura.create({
             fecha_apertura, monto_apertura, estado,
             createdBy: colaborador
@@ -29,7 +29,7 @@ const cerrar = async (req, res) => {
         const { id } = req.params
         const { fecha_apertura, fecha_cierre, monto_apertura, monto_cierre, estado } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await CajaApertura.update(
             {
                 fecha_cierre, monto_cierre, estado: 2,

@@ -27,7 +27,7 @@ const create = async (req, res) => {
             articulo, articulo_info, cantidad, estado,
         } = req.body
 
-        //----- CREAR ----- //
+        // ----- CREAR ----- //
         const nuevo = await ProduccionOrden.create({
             fecha, tipo, orden, maquina, maquina_info,
             articulo, articulo_info, cantidad, estado,
@@ -52,7 +52,7 @@ const update = async (req, res) => {
             articulo, articulo_info, cantidad, estado,
         } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await ProduccionOrden.update(
             {
                 fecha, tipo, orden, maquina, maquina_info,
@@ -97,7 +97,7 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
-            attributes: ['id', 'fecha', 'calidad_revisado', 'cf_ppc'],
+            attributes: ['id', 'calidad_revisado', 'cf_ppc'],
             order: [['fecha', 'ASC'], ['maquina', 'ASC'], ['orden', 'ASC']],
             where: {},
             include: [
@@ -107,28 +107,38 @@ const find = async (req, res) => {
                     attributes: ['nombre', 'unidad'],
                     where: {},
                 },
-                includes.maquina1,
                 {
-                    model: CuarentenaProducto,
-                    as: 'cuarentena_productos',
-                    attributes: ['cantidad'],
+                    model: Maquina,
+                    as: 'maquina1',
+                    attributes: ['nombre', 'produccion_tipo'],
+                },
+                {
+                    model: TransaccionItem,
+                    as: 'transaccion_items',
+                    attributes: ['tipo', 'cantidad'],
+                    where: {
+                        tipo: 4
+                    },
+                    required: false,
                 }
             ]
         }
 
         if (qry) {
             if (qry.fltr) {
-                const newfltr = JSON.parse(JSON.stringify(qry.fltr))
+                const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
                 delete qry.fltr.articulo
                 Object.assign(findProps.where, applyFilters(qry.fltr))
 
-                if (newfltr.articulo) {
-                    Object.assign(findProps.include[0].where, applyFilters({ nombre: newfltr.articulo }))
+                if (fltr1.articulo) {
+                    Object.assign(findProps.include[0].where, applyFilters({ nombre: fltr1.articulo }))
                 }
             }
 
             if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols.filter(c => c != 'productos_terminados'))
+                const excludeCols = ['productos_terminados']
+                const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
+                findProps.attributes = findProps.attributes.concat(cols1)
             }
 
             if (qry.incl) {
@@ -140,7 +150,7 @@ const find = async (req, res) => {
 
         let data = await ProduccionOrden.findAll(findProps)
 
-        if (data.length > 0 && qry.cols) {
+        if (data.length > 0) {
             data = data.map(a => a.toJSON())
 
             const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
@@ -155,7 +165,7 @@ const find = async (req, res) => {
 
                 a.productos_terminados = 0
 
-                for (const b of a.cuarentena_productos) {
+                for (const b of a.transaccion_items) {
                     a.productos_terminados += b.cantidad
                 }
             }
@@ -173,7 +183,7 @@ const findById = async (req, res) => {
         const { id } = req.params
 
         const data = await ProduccionOrden.findByPk(id, {
-            include: [includes.maquina1]
+            include: [includes.maquina1, includes.articulo1]
         })
 
         res.json({ code: 0, data })
@@ -187,7 +197,7 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        //----- ELIMINAR ----- //
+        // ----- ELIMINAR ----- //
         const deletedCount = await ProduccionOrden.destroy({ where: { id } })
 
         const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
@@ -204,7 +214,7 @@ const terminar = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        //----- ANULAR ----- //
+        // ----- ANULAR ----- //
         await ProduccionOrden.update(
             {
                 estado: 2,
@@ -226,7 +236,17 @@ const findTrazabilidad = async (req, res) => {
 
         let data = await ProduccionOrden.findByPk(id, {
             include: [
-                includes.maquina1,
+                {
+                    model: Articulo,
+                    as: 'articulo1',
+                    attributes: ['nombre', 'unidad'],
+                    where: {},
+                },
+                {
+                    model: Maquina,
+                    as: 'maquina1',
+                    attributes: ['nombre', 'produccion_tipo'],
+                },
                 {
                     model: TransaccionItem,
                     as: 'transaccion_items',
@@ -234,7 +254,7 @@ const findTrazabilidad = async (req, res) => {
                         {
                             model: TransaccionItem,
                             as: 'lote_padre1',
-                            attributes: ['pu', 'moneda', 'tipo_cambio', 'fv', 'lote', 'igv_afectacion', 'igv_porcentaje'],
+                            attributes: ['moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote'],
                         },
                         {
                             model: Articulo,

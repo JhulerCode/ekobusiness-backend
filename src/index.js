@@ -6,7 +6,7 @@ import connDb from './database/connect.js'
 
 const app = express()
 
-//----- MIDDLEWARES -----//
+// ----- MIDDLEWARES -----//
 app.disable('x-powered-by')
 const corsOptions = {
     origin: [config.hostFrontend]
@@ -16,13 +16,13 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.set('port', process.env.PORT || 4000)
 
-//----- RUTAS -----//
+// ----- RUTAS -----//
 routes(app)
 
-//----- START SERVER -----//
+// ----- START SERVER -----//
 app.listen(app.get('port'), async () => {
     console.log('Server on port', app.get('port'))
 })
 
-//----- TEST CONN DB -----//
+// ----- TEST CONN DB -----//
 // await connDb()

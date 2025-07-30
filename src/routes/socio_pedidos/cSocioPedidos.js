@@ -50,7 +50,7 @@ const create = async (req, res) => {
         } = req.body
 
 
-        //----- GUARDAR ----- //
+        // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
             tipo, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
@@ -59,14 +59,14 @@ const create = async (req, res) => {
             createdBy: colaborador
         }, { transaction })
 
-        //----- GUARDAR ITEMS ----- //
+        // ----- GUARDAR ITEMS ----- //
         const items = socio_pedido_items.map(a => ({ ...a, socio_pedido: nuevo.id, }))
 
         await SocioPedidoItem.bulkCreate(items, { transaction })
 
         await transaction.commit()
 
-        //----- DEVOLVER ----- //
+        // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     }
@@ -91,7 +91,7 @@ const update = async (req, res) => {
             socio_pedido_items,
         } = req.body
 
-        //----- ACTUALIZAR ----- //
+        // ----- ACTUALIZAR ----- //
         const [affectedRows] = await SocioPedido.update(
             {
                 tipo, fecha, codigo,
@@ -107,12 +107,12 @@ const update = async (req, res) => {
         )
 
         if (affectedRows > 0) {
-            //----- OBTENER ITEMS QUE ESTABAN ----- //
+            // ----- OBTENER ITEMS QUE ESTABAN ----- //
             const socio_pedido_items_past = await SocioPedidoItem.findAll({
                 where: { socio_pedido: id }
             })
 
-            //----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
+            // ----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
             const idsItemsNew = socio_pedido_items.map(a => a.articulo)
 
             const idsItemsGone = socio_pedido_items_past
@@ -136,7 +136,7 @@ const update = async (req, res) => {
                 const i = socio_pedido_items_past.findIndex(b => b.articulo == a.articulo)
 
                 if (i === -1) {
-                    //----- CREAR ARRAY DE ITEMS NUEVOS ----- //
+                    // ----- CREAR ARRAY DE ITEMS NUEVOS ----- //
                     agregarItems.push({
                         articulo: a.articulo,
                         nombre: a.nombre,
@@ -154,7 +154,7 @@ const update = async (req, res) => {
                     })
                 }
                 else {
-                    //----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
+                    // ----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
                     await SocioPedidoItem.update(
                         {
                             nombre: a.nombre,
@@ -175,14 +175,14 @@ const update = async (req, res) => {
                 }
             }
 
-            //----- CREAR ITEMS NUEVOS ----- //
+            // ----- CREAR ITEMS NUEVOS ----- //
             if (agregarItems.length > 0) {
                 await SocioPedidoItem.bulkCreate(agregarItems, { transaction })
             }
 
             await transaction.commit()
 
-            //----- DEVOLVER ----- //
+            // ----- DEVOLVER ----- //
             const data = await loadOne(id)
             res.json({ code: 0, data })
         }
@@ -236,7 +236,7 @@ const find = async (req, res) => {
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
 
-                //----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('socio')) findProps.include.push(includes.socio1)
                 if (qry.cols.includes('moneda')) findProps.include.push(includes.moneda1)
             }
@@ -320,7 +320,7 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        //----- ELIMINAR ----- //
+        // ----- ELIMINAR ----- //
         await SocioPedidoItem.destroy({
             where: { socio_pedido: id },
             transaction
@@ -348,7 +348,7 @@ const anular = async (req, res) => {
         const { id } = req.params
         const { anulado_motivo } = req.body
 
-        //----- VERIFY SI YA TIENE TRANSACCIONES ----- //
+        // ----- VERIFY SI YA TIENE TRANSACCIONES ----- //
         const hasTransacciones = await Transaccion.findAll({
             where: { socio_pedido: id }
         })
@@ -358,7 +358,7 @@ const anular = async (req, res) => {
             return
         }
 
-        //----- ANULAR ----- //
+        // ----- ANULAR ----- //
         await SocioPedido.update(
             {
                 estado: 0,
@@ -380,7 +380,7 @@ const terminar = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        //----- ANULAR ----- //
+        // ----- ANULAR ----- //
         await SocioPedido.update(
             {
                 estado: 2,

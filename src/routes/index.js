@@ -13,6 +13,7 @@ import documentos from './documentos/rDocumentos.js'
 import formatos from './formatos/rFormatos.js'
 import formato_values from './formato_values/rFormatoValues.js'
 import inspecciones from './inspecciones/rInspecciones.js'
+import kardex from './kardex/rKardex.js'
 import maquinas from './maquinas/rMaquinas.js'
 import monedas from './monedas/rMonedas.js'
 import precio_listas from './precio_listas/rPrecioListas.js'
@@ -44,6 +45,7 @@ function routes(app) {
     app.use('/api/formatos', formatos)
     app.use('/api/formato_values', formato_values)
     app.use('/api/inspecciones', inspecciones)
+    app.use('/api/kardex', kardex)
     app.use('/api/maquinas', maquinas)
     app.use('/api/monedas', monedas)
     app.use('/api/precio_listas', precio_listas)
