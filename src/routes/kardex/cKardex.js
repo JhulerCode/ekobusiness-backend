@@ -163,7 +163,7 @@ const findLotes = async (req, res) => {
 
         const findProps = {
             attributes: ['id', 'fecha', 'moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote', 'stock'],
-            order: [['createdAt', 'ASC']],
+            order: [['createdAt', 'DESC']],
             where: {
                 articulo: id,
                 is_lote_padre: true,

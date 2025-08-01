@@ -27,7 +27,10 @@ import tipo_cambios from './tipo_cambios/rTipoCambios.js'
 import transacciones from './transacciones/rTransacciones.js'
 
 function routes(app) {
-    app.get('/', (req, res) => res.status(200).send(`Server Eko Business is running`))
+    app.get('/', (req, res) => {
+        // const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress
+        res.send(`Eko Business's server is running`)
+    })
 
     app.use('/signin', signin)
 
