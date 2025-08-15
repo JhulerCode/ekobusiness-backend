@@ -52,7 +52,7 @@ const create = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, produccion_tipo, filtrantes,
+            tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
         } = req.body
 
@@ -65,7 +65,7 @@ const create = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, produccion_tipo, filtrantes,
+            tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             createdBy: colaborador
         })
@@ -87,7 +87,7 @@ const update = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, produccion_tipo, filtrantes,
+            tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
         } = req.body
 
@@ -100,7 +100,7 @@ const update = async (req, res) => {
                 codigo, codigo_barra, nombre, unidad, marca,
                 vende, has_fv, activo,
                 igv_afectacion,
-                tipo, categoria, produccion_tipo, filtrantes,
+                tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
                 is_combo, combo_articulos,
                 updatedBy: colaborador
             },

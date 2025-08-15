@@ -20,6 +20,8 @@ export const Articulo = sequelize.define('articulos', {
     categoria: { type: DataTypes.STRING }, //required //linked
     produccion_tipo: { type: DataTypes.STRING },
     filtrantes: { type: DataTypes.INTEGER },
+    contenido_neto: { type: DataTypes.DOUBLE },
+
     is_combo: { type: DataTypes.BOOLEAN },
     combo_articulos: { type: DataTypes.JSON },
 
