@@ -52,11 +52,18 @@ const find = async (req, res) => {
             where: {},
             order: [['createdAt', 'DESC']],
             include: [
-                // {
-                //     model: Transaccion,
-                //     as: 'transaccion1',
-                //     attributes: ['id', 'fecha', 'tipo', 'estado'],
-                // },
+                {
+                    model: Transaccion,
+                    as: 'transaccion1',
+                    attributes: ['id', 'socio'],
+                    include: [
+                        {
+                            model: Socio,
+                            as: 'socio1',
+                            attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+                        }
+                    ]
+                },
                 {
                     model: TransaccionItem,
                     as: 'lote_padre1',
@@ -72,6 +79,7 @@ const find = async (req, res) => {
 
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
+                console.log(findProps.attributes)
             }
         }
 
@@ -387,7 +395,7 @@ const findProductosTerminados = async (req, res) => {
         }
 
         const findProps = {
-            attributes: ['id'],
+            attributes: ['id', 'is_lote_padre'],
             order: [['createdAt', 'DESC']],
             where: {
                 tipo: 4

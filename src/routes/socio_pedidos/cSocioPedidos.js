@@ -414,6 +414,7 @@ const findDetail = async (req, res) => {
                     attributes: ['id'],
                     where: {
                         tipo: 2,
+                        estado: 1
                     }
                 },
                 {
