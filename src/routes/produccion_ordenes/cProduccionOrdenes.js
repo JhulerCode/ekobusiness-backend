@@ -136,11 +136,7 @@ const find = async (req, res) => {
             }
 
             if (qry.cols) {
-<<<<<<< HEAD
-                const excludeCols = ['productos_terminados']
-=======
                 const excludeCols = ['productos_terminados', 'tiempo']
->>>>>>> 9344a3f (duplicar item en venta y producción filtrar por fecha)
                 const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
                 findProps.attributes = findProps.attributes.concat(cols1)
             }
