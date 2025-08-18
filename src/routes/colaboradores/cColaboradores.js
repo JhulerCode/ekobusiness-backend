@@ -218,7 +218,10 @@ const find = async (req, res) => {
                 if (qry.cols.includes('sexo')) a.sexo1 = generosMap[a.sexo]
                 if (qry.cols.includes('doc_tipo')) a.doc_tipo1 = documentos_identidadMap[a.doc_tipo]
                 if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
+<<<<<<< HEAD
                 if (qry.cols.includes('has_signin')) a.has_signin1 = estadosMap[a.has_signin]
+=======
+>>>>>>> 9344a3f (duplicar item en venta y producción filtrar por fecha)
             }
         }
 
@@ -271,7 +274,11 @@ const preferencias = async (req, res) => {
     try {
         const { id } = req.params
         const { theme, color, format_date } = req.body
+<<<<<<< HEAD
         console.log(theme, color, format_date)
+=======
+        // console.log(theme, color, format_date)
+>>>>>>> 9344a3f (duplicar item en venta y producción filtrar por fecha)
         await Colaborador.update({ theme, color, format_date }, { where: { id } })
 
         // ----- ACTUALIZAR SESION ----- //

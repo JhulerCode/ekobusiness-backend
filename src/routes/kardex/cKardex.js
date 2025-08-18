@@ -79,7 +79,7 @@ const find = async (req, res) => {
 
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
-                console.log(findProps.attributes)
+                // console.log(findProps.attributes)
             }
         }
 

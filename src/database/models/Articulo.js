@@ -20,8 +20,11 @@ export const Articulo = sequelize.define('articulos', {
     categoria: { type: DataTypes.STRING }, //required //linked
     produccion_tipo: { type: DataTypes.STRING },
     filtrantes: { type: DataTypes.INTEGER },
+<<<<<<< HEAD
     contenido_neto: { type: DataTypes.DOUBLE },
 
+=======
+>>>>>>> 9344a3f (duplicar item en venta y producción filtrar por fecha)
     is_combo: { type: DataTypes.BOOLEAN },
     combo_articulos: { type: DataTypes.JSON },
 

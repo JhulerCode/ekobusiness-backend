@@ -238,7 +238,7 @@ const createBulk = async (req, res) => {
     try {
         const { tipo, articulos } = req.body
         const { colaborador } = req.user
-        console.log(articulos)
+        // console.log(articulos)
         const send = articulos.map(a => ({
             codigo_barra: a.EAN,
             nombre: a.Nombre,
