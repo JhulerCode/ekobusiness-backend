@@ -3,12 +3,16 @@ const sistemaData = {
         ruc: '20557053213',
         nombre: 'EKO BUSINESS S.A.C.',
         telefono: '01 432 865',
-        correo: 'comercial@sunka.com',
+        correo: 'comercial@sunkatea.com',
         igv_porcentaje: 18,
         direcciones: [
-            { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'CAL.7 MZA. D LOTE. 10 URB. LOS PRODUCTORES LIMA - LIMA - SANTA ANITA', principal: true },
-            { id: 2, nombre: 'OFICINA', direccion: 'AV. MARISCAL LA MAR 638, MIRAFLORES, LIMA', principal: false },
+            { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'Cal.7 Mza. D Lote. 10 Urb. Los Productores', distrito: 'Santa Anita - Lima - Lima', principal: true },
+            { id: 2, nombre: 'OFICINA', direccion: 'Av. Mariscal La Mar 638', distrito: 'Miraflores - Lima - Lima', principal: false },
         ],
+        bancos: [
+            { id: 1, nombre: 'SCOTIABANK PERU S.A.A.', moneda: 'SOL', nc: '000-1927574', cci: '009-230-000001927574-42', principal: true },
+            { id: 2, nombre: 'BANCO DE CRÉDITO DEL PERÚ - BCP', moneda: 'SOL', nc: '191-2611781-0-25', cci: '002-191002611781-025-54', principal: false },
+        ]
     },
     documentos_identidad: [
         { id: 6, nombre: 'RUC' },

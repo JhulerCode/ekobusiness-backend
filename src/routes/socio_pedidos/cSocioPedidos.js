@@ -302,11 +302,20 @@ const findById = async (req, res) => {
                 {
                     model: Colaborador,
                     as: 'createdBy1',
-                    attributes: ['nombres', 'apellidos', 'telefono', 'cargo']
+                    attributes: ['nombres', 'apellidos', 'nombres_apellidos', 'telefono', 'cargo']
                 }
             ]
         })
 
+        if (data) {
+            data = data.toJSON()
+
+            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
+            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+
+            data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
+            data.estado1 = pedido_estadosMap[data.estado]
+        }
         res.json({ code: 0, data })
     }
     catch (error) {
