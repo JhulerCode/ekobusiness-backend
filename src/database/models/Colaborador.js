@@ -31,7 +31,7 @@ export const Colaborador = sequelize.define('colaboradores', {
 
     theme: { type: DataTypes.STRING, defaultValue: '1' },
     color: { type: DataTypes.STRING },
-    format_date: { type: DataTypes.STRING },
+    format_date: { type: DataTypes.STRING, defaultValue: 'DD-MM-YYYY' },
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },

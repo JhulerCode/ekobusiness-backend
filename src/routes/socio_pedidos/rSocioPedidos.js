@@ -42,6 +42,10 @@ router.patch(
 
 router.delete(
     '/:id',
+    verifyPermiso([
+        'vCompraPedidos:eliminar',
+        'vVentaPedidos:eliminar',
+    ]),
     controller.delet
 )
 

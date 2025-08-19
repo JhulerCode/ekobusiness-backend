@@ -9,6 +9,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.SMALLINT }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
+    fecha_entrega: { type: DataTypes.DATEONLY }, //required
     codigo: { type: DataTypes.STRING }, //required
 
     socio: { type: DataTypes.STRING }, //required //linked

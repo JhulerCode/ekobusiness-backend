@@ -1,12 +1,13 @@
 const sistemaData = {
     empresa: {
-        ruc: 20601670560,
+        ruc: '20557053213',
         nombre: 'EKO BUSINESS S.A.C.',
         telefono: '01 432 865',
         correo: 'comercial@sunka.com',
         igv_porcentaje: 18,
         direcciones: [
-            { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'Calle 7 Mz 5 Urb Los Productores', principal: true }
+            { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'CAL.7 MZA. D LOTE. 10 URB. LOS PRODUCTORES LIMA - LIMA - SANTA ANITA', principal: true },
+            { id: 2, nombre: 'OFICINA', direccion: 'AV. MARISCAL LA MAR 638, MIRAFLORES, LIMA', principal: false },
         ],
     },
     documentos_identidad: [
@@ -82,8 +83,8 @@ const sistemaData = {
         { id: '2', nombre: 'ACEPTADO' }
     ],
     cumplidado_estados: [
-        {id: 1, nombre: 'PENDIENTE'},
-        {id: 2, nombre: 'COMPLETADO'},
+        { id: 1, nombre: 'PENDIENTE' },
+        { id: 2, nombre: 'COMPLETADO' },
     ],
 
     conformidad_estados: [
@@ -6363,7 +6364,7 @@ export const calidad_formatos = [
                 seek: true,
                 sort: true,
             },
-            
+
             {
                 id: 'uno',
                 title: 'Descarte de TBC (Baciloscopía de BK)',

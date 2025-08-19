@@ -42,7 +42,7 @@ const create = async (req, res) => {
     try {
         const { colaborador } = req.user
         const {
-            tipo, fecha, codigo,
+            tipo, fecha, fecha_entrega, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
             observacion, estado, empresa_datos,
@@ -52,7 +52,7 @@ const create = async (req, res) => {
 
         // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
-            tipo, fecha, codigo,
+            tipo, fecha, fecha_entrega, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
             observacion, estado, empresa_datos,
@@ -84,7 +84,7 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            tipo, fecha, codigo,
+            tipo, fecha, fecha_entrega, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
             observacion, estado, empresa_datos,
@@ -94,7 +94,7 @@ const update = async (req, res) => {
         // ----- ACTUALIZAR ----- //
         const [affectedRows] = await SocioPedido.update(
             {
-                tipo, fecha, codigo,
+                tipo, fecha, fecha_entrega, codigo,
                 socio, socio_datos, contacto, contacto_datos,
                 pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
                 observacion, estado, empresa_datos,
