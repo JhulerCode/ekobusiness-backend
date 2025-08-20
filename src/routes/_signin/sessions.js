@@ -25,6 +25,7 @@ function actualizarSesion(id, values) {
         if (values.theme) sesion.theme = values.theme
         if (values.color) sesion.color = values.color
         if (values.format_date) sesion.format_date = values.format_date
+        if (values.menu_visible != null) sesion.menu_visible = values.menu_visible
         if (values.permisos) sesion.permisos = values.permisos
     }
 }

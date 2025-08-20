@@ -19,7 +19,7 @@ const create = async (req, res) => {
             correo, telefono,
             ubigeo, direccion,
             cargo, sueldo, activo,
-            has_signin, permisos, vista_inicial, color, format_date
+            has_signin, permisos, vista_inicial,
         } = req.body
 
         let { usuario, contrasena } = req.body
@@ -44,7 +44,7 @@ const create = async (req, res) => {
             correo, telefono,
             ubigeo, direccion,
             cargo, sueldo, activo,
-            has_signin, usuario, permisos, vista_inicial, color, format_date,
+            has_signin, usuario, permisos, vista_inicial,
             createdBy: colaborador
         }, { transaction })
 
@@ -270,12 +270,12 @@ const delet = async (req, res) => {
 const preferencias = async (req, res) => {
     try {
         const { id } = req.params
-        const { theme, color, format_date } = req.body
-        // console.log(theme, color, format_date)
-        await Colaborador.update({ theme, color, format_date }, { where: { id } })
+        const { theme, color, format_date, menu_visible } = req.body
+
+        await Colaborador.update({ theme, color, format_date, menu_visible }, { where: { id } })
 
         // ----- ACTUALIZAR SESION ----- //
-        actualizarSesion(id, { theme, color, format_date })
+        actualizarSesion(id, { theme, color, format_date, menu_visible })
 
         res.json({ code: 0 })
     }
