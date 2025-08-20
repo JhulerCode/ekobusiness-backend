@@ -180,6 +180,7 @@ async function loadOne(id) {
         data.sexo1 = generosMap[data.sexo]
         data.doc_tipo1 = documentos_identidadMap[data.doc_tipo]
         data.activo1 = estadosMap[data.activo]
+        data.has_signin1 = estadosMap[data.has_signin]
     }
 
     return data

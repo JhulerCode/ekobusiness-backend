@@ -49,12 +49,14 @@ router.post(
 )
 
 router.get(
-    '/produccion-insumos/:id',
+    '/produccion-insumos',
     verifyPermiso([
         'vProgramaFiltrantes:salidaInsumos',
         'vProgramaGranel:salidaInsumos',
         'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:salidaInsumos',
+        
+        'vProgramaFiltrantes:salidaInsumosCompartidos',
     ]),
     controller.findProduccionProductos
 )

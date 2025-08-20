@@ -20,7 +20,7 @@ const update = async (req, res) => {
             lote, fv,
             is_lote_padre, stock,
             calidad_revisado,
-            lote_padre, transaccion, produccion_orden
+            lote_padre, transaccion, produccion_orden, maquina
         } = req.body
 
         await TransaccionItem.update({
@@ -30,7 +30,7 @@ const update = async (req, res) => {
             lote, fv,
             is_lote_padre, stock,
             calidad_revisado,
-            lote_padre, transaccion, produccion_orden,
+            lote_padre, transaccion, produccion_orden, maquina,
             updatedBy: colaborador
         }, { where: { id } })
 
@@ -226,13 +226,13 @@ const createProduccionInsumo = async (req, res) => {
     try {
         const { colaborador } = req.user
         const {
-            tipo, fecha, produccion_orden,
+            tipo, fecha, produccion_orden, maquina,
             articulo, lote_padre, cantidad,
         } = req.body
 
         // ----- CREAR ----- //
         const nuevo = await TransaccionItem.create({
-            tipo, fecha, produccion_orden,
+            tipo, fecha, produccion_orden, maquina,
             articulo, lote_padre, cantidad,
             createdBy: colaborador
         }, { transaction })
@@ -286,13 +286,12 @@ const createProduccionInsumo = async (req, res) => {
 
 const findProduccionProductos = async (req, res) => {
     try {
-        const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
             attributes: ['id', 'tipo', 'fecha', 'articulo', 'lote_padre', 'cantidad'],
             order: [['createdAt', 'DESC']],
             where: {
-                produccion_orden: id,
                 tipo: {
                     [Op.in]: [2, 3]
                 }
@@ -309,6 +308,14 @@ const findProduccionProductos = async (req, res) => {
                     attributes: ['pu', 'moneda', 'lote', 'fv'],
                 },
             ]
+        }
+        
+        if (qry) {
+            if (qry.fltr) {
+                console.log(1)
+                Object.assign(findProps.where, applyFilters(qry.fltr))
+                console.log(2)
+            }
         }
 
         let data = await TransaccionItem.findAll(findProps)
@@ -329,6 +336,52 @@ const findProduccionProductos = async (req, res) => {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
+
+// const findProduccionProductos = async (req, res) => {
+//     try {
+//         const { id } = req.params
+
+//         const findProps = {
+//             attributes: ['id', 'tipo', 'fecha', 'articulo', 'lote_padre', 'cantidad'],
+//             order: [['createdAt', 'DESC']],
+//             where: {
+//                 produccion_orden: id,
+//                 tipo: {
+//                     [Op.in]: [2, 3]
+//                 }
+//             },
+//             include: [
+//                 {
+//                     model: Articulo,
+//                     as: 'articulo1',
+//                     attributes: ['nombre', 'unidad']
+//                 },
+//                 {
+//                     model: TransaccionItem,
+//                     as: 'lote_padre1',
+//                     attributes: ['pu', 'moneda', 'lote', 'fv'],
+//                 },
+//             ]
+//         }
+
+//         let data = await TransaccionItem.findAll(findProps)
+
+//         if (data.length > 0) {
+//             data = data.map(a => a.toJSON())
+
+//             const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
+
+//             for (const a of data) {
+//                 a.cantidad = transaccion_tiposMap[a.tipo]?.operacion * a.cantidad
+//             }
+//         }
+
+//         res.json({ code: 0, data })
+//     }
+//     catch (error) {
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
 
 
 ///// ----- PARA PRODUCCION PRODUCTOS ----- /////
