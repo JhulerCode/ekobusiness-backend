@@ -33,6 +33,11 @@ const includes = {
             as: 'articulo1',
             attributes: ['nombre', 'unidad']
         }
+    },
+    createdBy1: {
+        model: Colaborador,
+        as: 'createdBy1',
+        attributes: ['nombres', 'apellidos', 'nombres_apellidos']
     }
 }
 
@@ -168,7 +173,7 @@ const update = async (req, res) => {
                             nota: a.nota,
                         },
                         {
-                            where: { articulo: a.articulo },
+                            where: { id: a.id },
                             transaction
                         }
                     )
@@ -188,7 +193,7 @@ const update = async (req, res) => {
         }
         else {
             await transaction.commit()
-            
+
             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
         }
     }
@@ -239,6 +244,7 @@ const find = async (req, res) => {
                 // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('socio')) findProps.include.push(includes.socio1)
                 if (qry.cols.includes('moneda')) findProps.include.push(includes.moneda1)
+                if (qry.cols.includes('createdBy')) findProps.include.push(includes.createdBy1)
             }
 
             if (qry.incl) {
@@ -435,14 +441,12 @@ const findDetail = async (req, res) => {
             ]
         }
 
-        // console.log(qry)
         if (qry) {
             if (qry.socio) {
                 findProps.include[0].where.socio = qry.socio
             }
         }
 
-        // console.log(findProps.include[0])
         let socioPedidoItems = await SocioPedidoItem.findAll(findProps)
 
         if (socioPedidoItems.length == 0) {
