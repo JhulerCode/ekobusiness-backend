@@ -98,7 +98,7 @@ const find = async (req, res) => {
 
         const findProps = {
             attributes: ['id', 'calidad_revisado', 'cf_ppc'],
-            order: [['fecha', 'ASC'], ['maquina', 'ASC'], ['orden', 'ASC']],
+            order: [['fecha', 'DESC'], ['maquina', 'ASC'], ['orden', 'ASC']],
             where: {},
             include: [
                 {

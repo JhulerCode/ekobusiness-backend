@@ -52,30 +52,4 @@ router.patch(
     controller.anular
 )
 
-router.get(
-    '/kardex/:id',
-    verifyPermiso([
-        'vArticulos:kardex',
-        'vProductosTerminados:kardex',
-    ]),
-    controller.findKardex
-)
-
-router.get(
-    '/items',
-    verifyPermiso([
-        'vProduccionHistorial:productosTerminados',
-    ]),
-    controller.findItems
-)
-
-router.post(
-    '/ajuste',
-    verifyPermiso([
-        'vArticulos:ajusteStock',
-        'vProductosTerminados:ajusteStock',
-    ]),
-    controller.ajusteStock
-)
-
 export default router

@@ -6,16 +6,19 @@ const router = Router()
 
 router.get(
     '/',
+    verifyPermiso(),
     controller.find
 )
 
 router.patch(
     '/:id',
+    verifyPermiso(),
     controller.update
 )
 
 router.delete(
     '/:id',
+    verifyPermiso(),
     controller.delet
 )
 
@@ -31,6 +34,8 @@ router.get(
         'vProgramaGranel:salidaInsumos',
         'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:salidaInsumos',
+
+        'vProgramaFiltrantes:salidaInsumosCompartidos',
     ]),
     controller.findLotes
 )
@@ -48,19 +53,6 @@ router.post(
     controller.createProduccionInsumo
 )
 
-router.get(
-    '/produccion-insumos',
-    verifyPermiso([
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
-        
-        'vProgramaFiltrantes:salidaInsumosCompartidos',
-    ]),
-    controller.findProduccionProductos
-)
-
 
 ///// ----- PARA PRODUCCION PRODUCTOS ----- /////
 router.post(
@@ -74,19 +66,6 @@ router.post(
     controller.createProduccionProductos
 )
 
-router.get(
-    '/produccion-productos',
-    verifyPermiso([
-        'vProgramaFiltrantes:productosTerminados',
-        'vProgramaGranel:productosTerminados',
-        'vProgramaLuxury:productosTerminados',
-        'vProduccionHistorial:productosTerminados',
-        'vProductosCuarentena:listar',
-        'vPtsIngresos:listar'
-    ]),
-    controller.findProductosTerminados
-)
-
 router.post(
     '/produccion-productos-terminados',
     verifyPermiso([
@@ -94,7 +73,6 @@ router.post(
     ]),
     controller.updateProduccionProductos
 )
-
 
 
 
