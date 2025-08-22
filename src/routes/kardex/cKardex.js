@@ -276,21 +276,21 @@ const find = async (req, res) => {
                     a.tipo1 = tipoInfo
                     a.cantidad *= tipoInfo.operacion
 
-                    a.pu = loteFuente.pu
+                    a.vu = loteFuente.pu
                     a.tipo_cambio = loteFuente.tipo_cambio
                     a.igv_afectacion = loteFuente.igv_afectacion
                     a.igv_porcentaje = loteFuente.igv_porcentaje
                     a.lote = loteFuente.lote
                     a.fv = loteFuente.fv
 
-                    a.pu_real = a.tipo_cambio == null ? 'error' : cleanFloat((a.pu || 0) * a.tipo_cambio)
+                    a.vu_real = a.tipo_cambio == null ? 'error' : cleanFloat((a.vu || 0) * a.tipo_cambio)
 
                     if (a.igv_afectacion === '10') {
-                        a.pu_igv = a.pu_real === 'error'
-                            ? a.pu_real
-                            : cleanFloat(a.pu_real / (1 + (a.igv_porcentaje / 100)))
+                        a.pu = a.vu_real === 'error'
+                            ? a.vu_real
+                            : cleanFloat(a.vu_real * (1 + (a.igv_porcentaje / 100)))
                     } else {
-                        a.pu_igv = a.pu_real
+                        a.pu = a.vu_real
                     }
                 }
 
@@ -402,7 +402,7 @@ const findLotes = async (req, res) => {
             for (const a of data) {
                 a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
 
-                a.pu_real = a.tipo_cambio == null ? 'error' : cleanFloat(a.pu * a.tipo_cambio)
+                // a.pu_real = a.tipo_cambio == null ? 'error' : cleanFloat(a.pu * a.tipo_cambio)
 
                 a.lote_fv_stock = a.lote + (a.fv ? ` | ${a.fv}` : '') + (` | ${a.stock.toLocaleString('es-US', { maximumFractionDigits: 2 })}`)
             }
