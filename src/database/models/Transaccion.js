@@ -64,21 +64,21 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     articulo: { type: DataTypes.STRING }, //required //linked
     cantidad: { type: DataTypes.DOUBLE }, //required
 
-    moneda: { type: DataTypes.STRING }, //required //linked
-    tipo_cambio: { type: DataTypes.DOUBLE }, //required
     pu: { type: DataTypes.DOUBLE }, //required
     igv_afectacion: { type: DataTypes.STRING }, //required
     igv_porcentaje: { type: DataTypes.DOUBLE }, //required
+    moneda: { type: DataTypes.STRING }, //required //linked
+    tipo_cambio: { type: DataTypes.DOUBLE }, //required
 
     lote: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
 
     is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked
     stock: { type: DataTypes.DOUBLE },
+    lote_padre: { type: DataTypes.STRING }, //required //linked
 
     calidad_revisado: { type: DataTypes.STRING },
 
-    lote_padre: { type: DataTypes.STRING }, //required //linked
     transaccion: { type: DataTypes.STRING }, //required //linked
     produccion_orden: { type: DataTypes.STRING }, //required //linked
     maquina: { type: DataTypes.STRING },

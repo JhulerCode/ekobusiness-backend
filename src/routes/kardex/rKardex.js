@@ -10,15 +10,53 @@ router.get(
     controller.find
 )
 
+router.post(
+    '/',
+    verifyPermiso([
+        'vArticulos:ajusteStock',
+        'vProductosTerminados:ajusteStock',
+
+        'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:salidaInsumos',
+
+        'vProgramaFiltrantes:productosTerminados',
+        'vProgramaGranel:productosTerminados',
+        'vProgramaLuxury:productosTerminados',
+        'vProduccionHistorial:productosTerminados',
+
+        'vProgramaFiltrantes:salidaInsumosCompartidos',
+    ]),
+    controller.create
+)
+
 router.patch(
     '/:id',
-    verifyPermiso(),
+    verifyPermiso(
+        'vProgramaFiltrantes:productosTerminados',
+        'vProgramaGranel:productosTerminados',
+        'vProgramaLuxury:productosTerminados',
+        'vProduccionHistorial:productosTerminados',
+    ),
     controller.update
 )
 
 router.delete(
     '/:id',
-    verifyPermiso(),
+    verifyPermiso([
+        'vProgramaFiltrantes:salidaInsumos',
+        'vProgramaGranel:salidaInsumos',
+        'vProgramaLuxury:salidaInsumos',
+        'vProduccionHistorial:salidaInsumos',
+
+        'vProgramaFiltrantes:productosTerminados',
+        'vProgramaGranel:productosTerminados',
+        'vProgramaLuxury:productosTerminados',
+        'vProduccionHistorial:productosTerminados',
+
+        'vProgramaFiltrantes:salidaInsumosCompartidos',
+    ]),
     controller.delet
 )
 
@@ -30,6 +68,7 @@ router.get(
         'vProductosTerminados:ajusteStock',
         'vVentaPedidos:entregarMercaderia',
         'vVentas:crear',
+        
         'vProgramaFiltrantes:salidaInsumos',
         'vProgramaGranel:salidaInsumos',
         'vProgramaLuxury:salidaInsumos',
@@ -41,56 +80,14 @@ router.get(
 )
 
 
-///// ----- PARA PRODUCCION INSUMOS ----- /////
-router.post(
-    '/produccion-insumos',
-    verifyPermiso([
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
-    ]),
-    controller.createProduccionInsumo
-)
-
 
 ///// ----- PARA PRODUCCION PRODUCTOS ----- /////
-router.post(
-    '/produccion-productos',
-    verifyPermiso([
-        'vProgramaFiltrantes:productosTerminados',
-        'vProgramaGranel:productosTerminados',
-        'vProgramaLuxury:productosTerminados',
-        'vProduccionHistorial:productosTerminados',
-    ]),
-    controller.createProduccionProductos
-)
-
 router.post(
     '/produccion-productos-terminados',
     verifyPermiso([
         'vPtsIngresos:listar'
     ]),
     controller.updateProduccionProductos
-)
-
-
-
-router.get(
-    '/items',
-    verifyPermiso([
-        'vProduccionHistorial:productosTerminados',
-    ]),
-    controller.findItems
-)
-
-router.post(
-    '/ajuste',
-    verifyPermiso([
-        'vArticulos:ajusteStock',
-        'vProductosTerminados:ajusteStock',
-    ]),
-    controller.ajusteStock
 )
 
 export default router

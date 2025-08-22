@@ -270,12 +270,12 @@ const delet = async (req, res) => {
         })
 
         if (estado != 0) {
-            const postivos = cSistema.sistemaData.transaccion_tipos
+            const positivos = cSistema.sistemaData.transaccion_tipos
                 .filter(a => a.operacion == 1)
                 .map(a => a.id)
 
             for (const a of transaccion_items) {
-                const signo = postivos.includes(tipo.toString()) ? '-' : '+'
+                const signo = positivos.includes(tipo.toString()) ? '-' : '+'
                 await TransaccionItem.update(
                     {
                         stock: sequelize.literal(`COALESCE(stock, 0) ${signo} ${a.cantidad}`)

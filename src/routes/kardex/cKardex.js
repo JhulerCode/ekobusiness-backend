@@ -8,6 +8,93 @@ import { ProduccionOrden } from '../../database/models/ProduccionOrden.js'
 import { applyFilters, cleanFloat } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
+const create = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
+    try {
+        const { colaborador } = req.user
+        const {
+            tipo, fecha,
+            articulo, cantidad,
+            moneda, tipo_cambio, pu, igv_afectacion, igv_porcentaje,
+            lote, fv,
+            is_lote_padre, stock,
+            calidad_revisado,
+            lote_padre, transaccion, produccion_orden, maquina,
+        } = req.body
+
+        // ----- CREAR ----- //
+        const nuevo = await TransaccionItem.create({
+            tipo, fecha,
+            articulo, cantidad,
+            moneda, tipo_cambio, pu, igv_afectacion, igv_porcentaje,
+            lote, fv,
+            is_lote_padre, stock,
+            calidad_revisado,
+            lote_padre, transaccion, produccion_orden, maquina,
+            createdBy: colaborador
+        }, { transaction })
+
+        const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
+        const tipoInfo = transaccion_tiposMap[tipo]
+
+        // ----- ACTUALIZAR STOCK ----- //
+        if ([2, 3, 6, 7].includes(Number(tipo))) {
+            if (lote_padre) {
+                await TransaccionItem.update(
+                    {
+                        stock: sequelize.literal(`COALESCE(stock, 0) ${tipoInfo.operacion == 1 ? '+' : '-'} ${cantidad}`)
+                    },
+                    {
+                        where: { id: lote_padre },
+                        transaction
+                    }
+                )
+            }
+        }
+
+        await transaction.commit()
+
+        // ----- DEVOLVER ----- //
+        const findProps = { include: [] }
+
+        if ([2, 3].includes(Number(tipo))) {
+            findProps.include.push(
+                {
+                    model: Articulo,
+                    as: 'articulo1',
+                    attributes: ['nombre', 'unidad']
+                },
+                {
+                    model: TransaccionItem,
+                    as: 'lote_padre1',
+                    attributes: ['pu', 'moneda', 'lote', 'fv'],
+                },
+            )
+        }
+
+        let data = await TransaccionItem.findByPk(nuevo.id, findProps)
+
+        if (data) {
+            data = data.toJSON()
+
+            data.cantidad = tipoInfo.operacion * data.cantidad
+
+            if (tipo == 4) {
+                const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
+                data.producto_estado = 1
+                data.producto_estado1 = cuarentena_productos_estadosMap[data.producto_estado]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        await transaction.rollback()
+
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
 
 const update = async (req, res) => {
     try {
@@ -67,7 +154,7 @@ const find = async (req, res) => {
             transaccion1: {
                 model: Transaccion,
                 as: 'transaccion1',
-                attributes: ['id', 'socio'],
+                attributes: ['id', 'socio', 'guia', 'factura'],
                 where: {},
                 required: false,
                 include: [
@@ -115,39 +202,55 @@ const find = async (req, res) => {
             }
 
             if (qry.fltr) {
-                // Object.assign(findProps.where, applyFilters(qry.fltr))
                 const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
+
                 delete qry.fltr.articulo_nombre
                 delete qry.fltr.produccion_orden_tipo
                 delete qry.fltr.produccion_orden_maquina
-                // delete qry.fltr.articulo_unidad
+
+                delete qry.fltr.transaccion_guia
+                delete qry.fltr.transaccion_factura
+                delete qry.fltr.transaccion_socio
+
                 Object.assign(findProps.where, applyFilters(qry.fltr))
 
                 if (fltr1.articulo_nombre) {
                     const a = findProps.include.find(b => b.as == 'articulo1')
-                    console.log(1)
-                    console.log(a)
                     Object.assign(a.where, applyFilters({ nombre: fltr1.articulo_nombre }))
                 }
 
                 if (fltr1.produccion_orden_tipo) {
                     const a = findProps.include.find(b => b.as == 'produccion_orden1')
-                    console.log(2)
-                    console.log(a)
                     Object.assign(a.where, applyFilters({ tipo: fltr1.produccion_orden_tipo }))
                 }
 
                 if (fltr1.produccion_orden_maquina) {
                     const a = findProps.include.find(b => b.as == 'produccion_orden1')
-                    console.log(3)
-                    console.log(a)
                     Object.assign(a.where, applyFilters({ maquina: fltr1.produccion_orden_maquina }))
+                }
+
+                if (fltr1.transaccion_guia) {
+                    const a = findProps.include.find(b => b.as == 'transaccion1')
+                    Object.assign(a.where, applyFilters({ guia: fltr1.transaccion_guia }))
+                }
+
+                if (fltr1.transaccion_factura) {
+                    const a = findProps.include.find(b => b.as == 'transaccion1')
+                    Object.assign(a.where, applyFilters({ factura: fltr1.transaccion_factura }))
+                }
+
+                if (fltr1.transaccion_socio) {
+                    const a = findProps.include.find(b => b.as == 'transaccion1')
+                    Object.assign(a.where, applyFilters({ socio: fltr1.transaccion_socio }))
                 }
             }
 
             if (qry.cols) {
-                // findProps.attributes = findProps.attributes.concat(qry.cols)
-                const excludeCols = ['articulo_nombre', 'produccion_orden_tipo', 'produccion_orden_maquina', 'producto_estado']
+                const excludeCols = [
+                    'articulo_nombre',
+                    'produccion_orden_tipo', 'produccion_orden_maquina', 'producto_estado',
+                    'transaccion_guia', 'transaccion_factura', 'transaccion_socio',
+                ]
                 const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
                 findProps.attributes = findProps.attributes.concat(cols1)
             }
@@ -162,6 +265,8 @@ const find = async (req, res) => {
             const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
             const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
             const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
+            const estadosMap = cSistema.arrayMap('estados')
+
             for (const a of data) {
                 // DATOS DE LOTE PADRE
                 if (a.tipo) {
@@ -190,7 +295,7 @@ const find = async (req, res) => {
                 }
 
                 // DATOS PARA PRODUCTOS TERMINADOS
-                if (a.is_lote_padre != null) {
+                if (qry.cols.includes('producto_estado')) {
                     a.producto_estado = a.is_lote_padre ? 2 : 1
                     a.producto_estado1 = cuarentena_productos_estadosMap[a.producto_estado]
                 }
@@ -200,6 +305,11 @@ const find = async (req, res) => {
                         a.produccion_orden1.tipo1 = produccion_tiposMap[a.produccion_orden1.tipo]
                     }
                 }
+
+                if (qry.cols.includes('calidad_revisado')) {
+                    a.calidad_revisado1 = estadosMap[a.calidad_revisado]
+                }
+
             }
         }
 
@@ -306,111 +416,7 @@ const findLotes = async (req, res) => {
 }
 
 
-///// ----- PARA PRODUCCION INSUMOS ----- /////
-const createProduccionInsumo = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
-    try {
-        const { colaborador } = req.user
-        const {
-            tipo, fecha, produccion_orden, maquina,
-            articulo, lote_padre, cantidad,
-        } = req.body
-
-        // ----- CREAR ----- //
-        const nuevo = await TransaccionItem.create({
-            tipo, fecha, produccion_orden, maquina,
-            articulo, lote_padre, cantidad,
-            createdBy: colaborador
-        }, { transaction })
-
-        // ----- ACTUALIZAR STOCK ----- //
-        await TransaccionItem.update(
-            {
-                stock: sequelize.literal(`COALESCE(stock, 0) ${tipo == 2 ? '-' : '+'} ${cantidad}`)
-            },
-            {
-                where: { id: lote_padre },
-                transaction
-            }
-        )
-
-        await transaction.commit()
-
-        // ----- DEVOLVER ----- //
-        let data = await TransaccionItem.findByPk(nuevo.id, {
-            attributes: ['id', 'tipo', 'fecha', 'articulo', 'lote_padre', 'cantidad'],
-            include: [
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad']
-                },
-                {
-                    model: TransaccionItem,
-                    as: 'lote_padre1',
-                    attributes: ['pu', 'moneda', 'lote', 'fv'],
-                },
-            ]
-        })
-
-        if (data) {
-            data = data.toJSON()
-
-            const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
-
-            data.cantidad = transaccion_tiposMap[data.tipo]?.operacion * data.cantidad
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        await transaction.rollback()
-
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-
 ///// ----- PARA PRODUCCION PRODUCTOS ----- /////
-const createProduccionProductos = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
-    try {
-        const { colaborador } = req.user
-        const {
-            tipo, fecha, produccion_orden,
-            articulo, lote, fv, cantidad,
-        } = req.body
-
-        // ----- CREAR ----- //
-        const nuevo = await TransaccionItem.create({
-            tipo, fecha, produccion_orden,
-            articulo, lote, fv, cantidad,
-            createdBy: colaborador
-        }, { transaction })
-
-        await transaction.commit()
-
-        // ----- DEVOLVER ----- //
-        let data = await TransaccionItem.findByPk(nuevo.id, {
-            attributes: ['id', 'lote', 'fv', 'cantidad'],
-        })
-
-        data = data.toJSON()
-        const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
-        data.producto_estado = 1
-        data.producto_estado1 = cuarentena_productos_estadosMap[data.producto_estado]
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        await transaction.rollback()
-
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
 const updateProduccionProductos = async (req, res) => {
     const transaction = await sequelize.transaction()
 
@@ -442,151 +448,13 @@ const updateProduccionProductos = async (req, res) => {
 }
 
 
-///// ----- TRANSACCION ITEMS ----- /////
-const findItems = async (req, res) => {
-    try {
-        const { id } = req.params
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id', 'articulo', 'cantidad', 'lote', 'fv', 'calidad_revisado'],
-            order: [['createdAt', 'DESC']],
-            where: {},
-            include: [
-                {
-                    model: Transaccion,
-                    as: 'transaccion1',
-                    attributes: ['id', 'tipo', 'fecha', 'socio', 'guia', 'factura'],
-                    where: {},
-                    include: [
-                        {
-                            model: Socio,
-                            as: 'socio1',
-                            attributes: ['nombres', 'apellidos', 'nombres_apellidos']
-                        }
-                    ]
-                },
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['id', 'nombre', 'unidad']
-                },
-                {
-                    model: TransaccionItem,
-                    as: 'lote_padre1',
-                    attributes: ['id', 'lote', 'pu', 'moneda', 'fv'],
-                },
-            ]
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                const fltr_transaccion = {}
-                if (qry.fltr.transaccion_tipo) fltr_transaccion.tipo = qry.fltr.transaccion_tipo
-                if (qry.fltr.transaccion_fecha) fltr_transaccion.fecha = qry.fltr.transaccion_fecha
-                if (qry.fltr.transaccion_socio) fltr_transaccion.socio = qry.fltr.transaccion_socio
-                if (qry.fltr.transaccion_guia) fltr_transaccion.guia = qry.fltr.transaccion_guia
-                if (qry.fltr.transaccion_factura) fltr_transaccion.guia = qry.fltr.transaccion_factura
-                if (qry.fltr.transaccion_produccion_orden) fltr_transaccion.produccion_orden = qry.fltr.transaccion_produccion_orden
-                Object.assign(findProps.include[0].where, applyFilters(fltr_transaccion))
-
-                delete qry.fltr.transaccion_tipo
-                delete qry.fltr.transaccion_fecha
-                delete qry.fltr.transaccion_socio
-                delete qry.fltr.transaccion_guia
-                delete qry.fltr.transaccion_factura
-                delete qry.fltr.transaccion_produccion_orden
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-        }
-
-        let data = await TransaccionItem.findAll(findProps)
-
-        if (data.length > 0) {
-            data = data.map(a => a.toJSON())
-
-            const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
-            const estadosMap = cSistema.arrayMap('estados')
-
-            for (const a of data) {
-                a.cantidad = transaccion_tiposMap[a.transaccion1.tipo]?.operacion * a.cantidad
-                a.calidad_revisado1 = estadosMap[a.calidad_revisado]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-
-///// ----- AJUSTE STOCK ----- /////
-const ajusteStock = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
-    try {
-        const { colaborador } = req.user
-
-        const {
-            tipo, fecha,
-            estado,
-            transaccion_items
-        } = req.body
-
-        // ----- CREAR ----- //
-        const nuevo = await Transaccion.create({
-            tipo, fecha,
-            estado,
-            createdBy: colaborador
-        }, { transaction })
-
-        // ----- GUARDAR ITEMS ----- //
-        const items = transaccion_items.map(a => ({
-            tipo, fecha,
-            ...a,
-            transaccion: nuevo.id,
-            createdBy: colaborador
-        }))
-
-        await TransaccionItem.bulkCreate(items, { transaction })
-
-        // ----- ACTUALIZAR STOCK ----- //
-        for (const a of transaccion_items) {
-            await TransaccionItem.update(
-                {
-                    stock: sequelize.literal(`COALESCE(stock, 0) ${tipo == 7 ? '-' : '+'} ${a.cantidad}`)
-                },
-                {
-                    where: { id: a.lote_padre },
-                    transaction
-                }
-            )
-        }
-
-        await transaction.commit()
-
-        res.json({ code: 0 })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
 export default {
     update,
     find,
     delet,
+    create,
 
     findLotes,
 
-    createProduccionInsumo,
-
-    createProduccionProductos,
     updateProduccionProductos,
-
-    findItems,
-
-    ajusteStock,
 }
