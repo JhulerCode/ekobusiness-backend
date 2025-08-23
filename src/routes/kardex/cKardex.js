@@ -148,14 +148,12 @@ const find = async (req, res) => {
                 model: TransaccionItem,
                 as: 'lote_padre1',
                 attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote'],
-                where: {},
                 required: false
             },
             transaccion1: {
                 model: Transaccion,
                 as: 'transaccion1',
                 attributes: ['id', 'socio', 'guia', 'factura'],
-                where: {},
                 required: false,
                 include: [
                     {
@@ -169,7 +167,6 @@ const find = async (req, res) => {
                 model: Maquina,
                 as: 'maquina1',
                 attributes: ['id', 'nombre'],
-                where: {},
                 required: false,
             },
             produccion_orden1: {
@@ -183,14 +180,12 @@ const find = async (req, res) => {
                         attributes: ['id', 'nombre'],
                     }
                 ],
-                where: {},
                 required: false,
             },
             articulo1: {
                 model: Articulo,
                 as: 'articulo1',
                 attributes: ['nombre', 'unidad'],
-                where: {},
             },
         }
 
@@ -205,6 +200,7 @@ const find = async (req, res) => {
                 const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
 
                 delete qry.fltr.articulo_nombre
+                
                 delete qry.fltr.produccion_orden_tipo
                 delete qry.fltr.produccion_orden_maquina
 
@@ -215,33 +211,27 @@ const find = async (req, res) => {
                 Object.assign(findProps.where, applyFilters(qry.fltr))
 
                 if (fltr1.articulo_nombre) {
-                    const a = findProps.include.find(b => b.as == 'articulo1')
-                    Object.assign(a.where, applyFilters({ nombre: fltr1.articulo_nombre }))
+                    Object.assign(findProps.where, applyFilters({ '$articulo1.nombre$': fltr1.articulo_nombre }))
                 }
 
                 if (fltr1.produccion_orden_tipo) {
-                    const a = findProps.include.find(b => b.as == 'produccion_orden1')
-                    Object.assign(a.where, applyFilters({ tipo: fltr1.produccion_orden_tipo }))
+                    Object.assign(findProps.where, applyFilters({ '$produccion_orden1.tipo$': fltr1.produccion_orden_tipo }))
                 }
 
                 if (fltr1.produccion_orden_maquina) {
-                    const a = findProps.include.find(b => b.as == 'produccion_orden1')
-                    Object.assign(a.where, applyFilters({ maquina: fltr1.produccion_orden_maquina }))
+                    Object.assign(findProps.where, applyFilters({ '$produccion_orden1.maquina$': fltr1.produccion_orden_maquina }))
                 }
 
                 if (fltr1.transaccion_guia) {
-                    const a = findProps.include.find(b => b.as == 'transaccion1')
-                    Object.assign(a.where, applyFilters({ guia: fltr1.transaccion_guia }))
+                    Object.assign(findProps.where, applyFilters({ '$transaccion1.guia$': fltr1.transaccion_guia }))
                 }
 
                 if (fltr1.transaccion_factura) {
-                    const a = findProps.include.find(b => b.as == 'transaccion1')
-                    Object.assign(a.where, applyFilters({ factura: fltr1.transaccion_factura }))
+                    Object.assign(findProps.where, applyFilters({ '$transaccion1.factura$': fltr1.transaccion_factura }))
                 }
 
                 if (fltr1.transaccion_socio) {
-                    const a = findProps.include.find(b => b.as == 'transaccion1')
-                    Object.assign(a.where, applyFilters({ socio: fltr1.transaccion_socio }))
+                    Object.assign(findProps.where, applyFilters({ '$transaccion1.socio$': fltr1.transaccion_socio }))
                 }
             }
 
