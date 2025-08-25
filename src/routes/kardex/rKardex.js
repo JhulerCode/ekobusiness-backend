@@ -33,12 +33,12 @@ router.post(
 
 router.patch(
     '/:id',
-    verifyPermiso(
+    verifyPermiso([
         'vProgramaFiltrantes:productosTerminados',
         'vProgramaGranel:productosTerminados',
         'vProgramaLuxury:productosTerminados',
         'vProduccionHistorial:productosTerminados',
-    ),
+    ]),
     controller.update
 )
 
@@ -68,7 +68,7 @@ router.get(
         'vProductosTerminados:ajusteStock',
         'vVentaPedidos:entregarMercaderia',
         'vVentas:crear',
-        
+
         'vProgramaFiltrantes:salidaInsumos',
         'vProgramaGranel:salidaInsumos',
         'vProgramaLuxury:salidaInsumos',
