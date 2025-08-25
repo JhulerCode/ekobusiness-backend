@@ -200,7 +200,7 @@ const find = async (req, res) => {
                 const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
 
                 delete qry.fltr.articulo_nombre
-                
+
                 delete qry.fltr.produccion_orden_tipo
                 delete qry.fltr.produccion_orden_maquina
 
@@ -237,7 +237,7 @@ const find = async (req, res) => {
 
             if (qry.cols) {
                 const excludeCols = [
-                    'articulo_nombre',
+                    'articulo_nombre', 'articulo_unidad',
                     'produccion_orden_tipo', 'produccion_orden_maquina', 'producto_estado',
                     'transaccion_guia', 'transaccion_factura', 'transaccion_socio',
                 ]
