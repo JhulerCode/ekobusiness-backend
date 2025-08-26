@@ -50,7 +50,8 @@ const create = async (req, res) => {
             tipo, fecha, fecha_entrega, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-            observacion, estado, empresa_datos,
+            observacion, estado, pagado,
+            empresa_datos,
             socio_pedido_items,
         } = req.body
 
@@ -60,7 +61,8 @@ const create = async (req, res) => {
             tipo, fecha, fecha_entrega, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-            observacion, estado, empresa_datos,
+            observacion, estado, pagado,
+            empresa_datos,
             createdBy: colaborador
         }, { transaction })
 
@@ -92,7 +94,8 @@ const update = async (req, res) => {
             tipo, fecha, fecha_entrega, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-            observacion, estado, empresa_datos,
+            observacion, estado, pagado,
+            empresa_datos,
             socio_pedido_items,
         } = req.body
 
@@ -102,7 +105,8 @@ const update = async (req, res) => {
                 tipo, fecha, fecha_entrega, codigo,
                 socio, socio_datos, contacto, contacto_datos,
                 pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-                observacion, estado, empresa_datos,
+                observacion, estado, pagado,
+                empresa_datos,
                 updatedBy: colaborador
             },
             {
@@ -214,9 +218,11 @@ async function loadOne(id) {
 
         const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
         const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+        const estadoMap = cSistema.arrayMap('estados')
 
         data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
         data.estado1 = pedido_estadosMap[data.estado]
+        data.pagado1 = estadoMap[data.pagado]
     }
 
     return data
@@ -261,10 +267,12 @@ const find = async (req, res) => {
 
             const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+            const estadoMap = cSistema.arrayMap('estados')
 
             for (const a of data) {
                 if (qry.cols.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
                 if (qry.cols.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
+                if (qry.cols.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
             }
         }
 
@@ -318,9 +326,11 @@ const findById = async (req, res) => {
 
             const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+            const estadoMap = cSistema.arrayMap('estados')
 
             data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
             data.estado1 = pedido_estadosMap[data.estado]
+            data.pagado1 = estadoMap[data.pagado]
         }
         res.json({ code: 0, data })
     }
