@@ -77,6 +77,7 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     stock: { type: DataTypes.DOUBLE },
     lote_padre: { type: DataTypes.STRING }, //required //linked
 
+    observacion: { type: DataTypes.STRING },
     calidad_revisado: { type: DataTypes.STRING },
 
     transaccion: { type: DataTypes.STRING }, //required //linked

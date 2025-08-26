@@ -16,22 +16,22 @@ const create = async (req, res) => {
         const {
             tipo, fecha,
             articulo, cantidad,
-            moneda, tipo_cambio, pu, igv_afectacion, igv_porcentaje,
+            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
-            is_lote_padre, stock,
-            calidad_revisado,
-            lote_padre, transaccion, produccion_orden, maquina,
+            is_lote_padre, stock, lote_padre,
+            observacion, calidad_revisado,
+            transaccion, produccion_orden, maquina,
         } = req.body
 
         // ----- CREAR ----- //
         const nuevo = await TransaccionItem.create({
             tipo, fecha,
             articulo, cantidad,
-            moneda, tipo_cambio, pu, igv_afectacion, igv_porcentaje,
+            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
-            is_lote_padre, stock,
-            calidad_revisado,
-            lote_padre, transaccion, produccion_orden, maquina,
+            is_lote_padre, stock, lote_padre,
+            observacion, calidad_revisado,
+            transaccion, produccion_orden, maquina,
             createdBy: colaborador
         }, { transaction })
 
@@ -103,21 +103,21 @@ const update = async (req, res) => {
         const {
             tipo, fecha,
             articulo, cantidad,
-            moneda, tipo_cambio, pu, igv_afectacion, igv_porcentaje,
+            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
-            is_lote_padre, stock,
-            calidad_revisado,
-            lote_padre, transaccion, produccion_orden, maquina
+            is_lote_padre, stock, lote_padre,
+            observacion, calidad_revisado,
+            transaccion, produccion_orden, maquina,
         } = req.body
 
         await TransaccionItem.update({
             tipo, fecha,
             articulo, cantidad,
-            moneda, tipo_cambio, pu, igv_afectacion, igv_porcentaje,
+            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
-            is_lote_padre, stock,
-            calidad_revisado,
-            lote_padre, transaccion, produccion_orden, maquina,
+            is_lote_padre, stock, lote_padre,
+            observacion, calidad_revisado,
+            transaccion, produccion_orden, maquina,
             updatedBy: colaborador
         }, { where: { id } })
 
@@ -139,7 +139,7 @@ const find = async (req, res) => {
             where: {
                 // '$produccion_orden1.maquina$': '1929d208-251a-48ed-a2fa-b8db6f7b67c5'
             },
-            order: [['createdAt', 'DESC']],
+            order: [['createdAt', 'DESC'], ['fecha', 'DESC']],
             include: [],
         }
 
