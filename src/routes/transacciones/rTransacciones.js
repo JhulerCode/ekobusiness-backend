@@ -33,10 +33,10 @@ router.get(
     controller.findById
 )
 
-// router.patch(
-//     '/:id',
-//     controller.update
-// )
+router.patch(
+    '/:id',
+    controller.update
+)
 
 router.delete(
     '/:id',

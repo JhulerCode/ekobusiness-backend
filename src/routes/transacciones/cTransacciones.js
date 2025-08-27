@@ -106,9 +106,12 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { factura } = req.body
+        const { guia, factura } = req.body
 
-        await Transaccion.update({ factura, updatedBy: colaborador }, { where: { id } })
+        await Transaccion.update({
+            guia, factura,
+            updatedBy: colaborador
+        }, { where: { id } })
 
         res.json({ code: 0 })
     }
