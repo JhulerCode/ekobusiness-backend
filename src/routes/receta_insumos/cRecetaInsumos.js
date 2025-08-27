@@ -1,26 +1,43 @@
-import { Op } from 'sequelize'
-import sequelize from '../../database/sequelize.js'
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
-import { existe } from '../../utils/mine.js'
 import { Articulo } from '../../database/models/Articulo.js'
-
-const attributes = [
-    'id', 'nombre', 'activo'
-]
+import { applyFilters } from '../../utils/mine.js'
 
 const find = async (req, res) => {
     try {
-        const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await RecetaInsumo.findAll({
-            where: { articulo_principal: id },
+        const findProps = {
+            attributes: ['id'],
             order: [['orden', 'ASC']],
-            include: {
+            where: {},
+            include: []
+        }
+
+        const include1 = {
+            articulo1: {
                 model: Articulo,
                 as: 'articulo1',
                 attributes: ['nombre', 'unidad'],
             }
-        })
+        }
+
+        if (qry) {
+            if (qry.fltr) {
+                Object.assign(findProps.where, applyFilters(qry.fltr))
+            }
+
+            if (qry.cols) {
+                findProps.attributes = findProps.attributes.concat(qry.cols)
+            }
+
+            if (qry.incl) {
+                for (const a of qry.incl) {
+                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
+                }
+            }
+        }
+
+        const data = await RecetaInsumo.findAll(findProps)
 
         res.json({ code: 0, data })
     }

@@ -5,7 +5,7 @@ import verifyPermiso from "../../middlewares/verifyPermiso.js"
 const router = Router()
 
 router.get(
-    '/:id',
+    '/',
     verifyPermiso([
         'vReceta:listar',
     ]),
