@@ -136,9 +136,7 @@ const find = async (req, res) => {
 
         const findProps = {
             attributes: ['id'],
-            where: {
-                // '$produccion_orden1.maquina$': '1929d208-251a-48ed-a2fa-b8db6f7b67c5'
-            },
+            where: {},
             order: [['createdAt', 'DESC'], ['fecha', 'DESC']],
             include: [],
         }

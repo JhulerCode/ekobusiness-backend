@@ -22,6 +22,11 @@ const includes = {
         as: 'moneda1',
         attributes: ['nombre']
     },
+    socio_pedido1: {
+        model: SocioPedido,
+        as: 'socio_pedido1',
+        attributes: ['id', 'codigo']
+    }
 }
 
 const create = async (req, res) => {

@@ -100,20 +100,17 @@ const update = async (req, res) => {
         } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await SocioPedido.update(
-            {
-                tipo, fecha, fecha_entrega, codigo,
-                socio, socio_datos, contacto, contacto_datos,
-                pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-                observacion, estado, pagado,
-                empresa_datos,
-                updatedBy: colaborador
-            },
-            {
-                where: { id },
-                transaction
-            }
-        )
+        const [affectedRows] = await SocioPedido.update({
+            tipo, fecha, fecha_entrega, codigo,
+            socio, socio_datos, contacto, contacto_datos,
+            pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
+            observacion, estado, pagado,
+            empresa_datos,
+            updatedBy: colaborador
+        }, {
+            where: { id },
+            transaction
+        })
 
         if (affectedRows > 0) {
             // ----- OBTENER ITEMS QUE ESTABAN ----- //
@@ -131,11 +128,10 @@ const update = async (req, res) => {
             if (idsItemsGone.length > 0) {
                 await SocioPedidoItem.destroy({
                     where: {
-                        articulo: {
-                            [Op.in]: idsItemsGone
-                        },
-                        socio_pedido: id
-                    }
+                        socio_pedido: id,
+                        articulo: { [Op.in]: idsItemsGone },
+                    },
+                    transaction
                 })
             }
 
@@ -414,7 +410,9 @@ const terminar = async (req, res) => {
             { where: { id } }
         )
 
-        res.json({ code: 0 })
+        const data = await loadOne(id)
+
+        res.json({ code: 0, data })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
