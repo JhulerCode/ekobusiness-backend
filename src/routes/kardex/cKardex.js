@@ -356,7 +356,7 @@ const findLotes = async (req, res) => {
 
         const findProps = {
             attributes: ['id', 'fecha', 'moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote', 'stock'],
-            order: [['createdAt', 'DESC']],
+            order: [['fv', 'DESC'], ['createdAt', 'DESC']],
             where: {
                 articulo: id,
                 is_lote_padre: true,
@@ -390,9 +390,12 @@ const findLotes = async (req, res) => {
             for (const a of data) {
                 a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
 
-                // a.pu_real = a.tipo_cambio == null ? 'error' : cleanFloat(a.pu * a.tipo_cambio)
-
-                a.lote_fv_stock = a.lote + (a.fv ? ` | ${a.fv}` : '') + (` | ${a.stock.toLocaleString('es-US', { maximumFractionDigits: 2 })}`)
+                let fecha_vencimiento = ''
+                if (a.fv) {
+                    const [año, mes, dia] = a.fv.split("-")
+                    fecha_vencimiento = `${dia}-${mes}-${año}`
+                }
+                a.lote_fv_stock = a.lote + (a.fv ? ` | ${fecha_vencimiento}` : '') + (` | ${a.stock.toLocaleString('es-US', { maximumFractionDigits: 2 })}`)
             }
         }
 
