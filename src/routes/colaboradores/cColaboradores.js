@@ -25,10 +25,16 @@ const create = async (req, res) => {
         let { usuario, contrasena } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(Colaborador, { nombres, apellidos }, res) == true) return
+        if (await existe(Colaborador, { nombres, apellidos }, res) == true) {
+            await transaction.rollback()
+            return
+        }
 
         if (usuario) {
-            if (await existe(Colaborador, { usuario }, res) == true) return
+            if (await existe(Colaborador, { usuario }, res) == true) {
+                await transaction.rollback()
+                return
+            }
         }
 
         if (has_signin == false) {
@@ -90,10 +96,16 @@ const update = async (req, res) => {
         let { usuario, contrasena } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(Colaborador, { nombres, apellidos, id }, res) == true) return
+        if (await existe(Colaborador, { nombres, apellidos, id }, res) == true) {
+            await transaction.rollback()
+            return
+        }
 
         if (usuario) {
-            if (await existe(Colaborador, { usuario, id }, res) == true) return
+            if (await existe(Colaborador, { usuario, id }, res) == true) {
+                await transaction.rollback()
+                return
+            }
         }
 
         if (has_signin == false) {

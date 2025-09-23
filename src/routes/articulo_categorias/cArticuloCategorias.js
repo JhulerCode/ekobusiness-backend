@@ -1,10 +1,17 @@
 import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
+import { deleteFile } from '../../utils/uploadFiles.js'
 
 const create = async (req, res) => {
     try {
         const { colaborador } = req.user
+
+        if (req.body.datos) {
+            const datos = JSON.parse(req.body.datos)
+            req.body = { ...req.body, ...datos }
+        }
+
         const { tipo, nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -13,6 +20,7 @@ const create = async (req, res) => {
         // ----- CREAR ----- //
         const nuevo = await ArticuloCategoria.create({
             tipo, nombre, descripcion, activo,
+            imagen: req.file ? req.file.filename : null,
             createdBy: colaborador,
         })
 
@@ -29,21 +37,40 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { tipo, nombre, descripcion, activo } = req.body
+
+        if (req.body.datos) {
+            const datos = JSON.parse(req.body.datos)
+            req.body = { ...datos }
+        }
+
+        const {
+            tipo, nombre, descripcion, activo,
+            imagen, previous_imagen
+        } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(ArticuloCategoria, { nombre, id }, res) == true) return
 
         // ----- ACTUALIZAR ----- //
+        const send = {
+            tipo, nombre, descripcion, activo,
+            imagen,
+            updatedBy: colaborador
+        }
+
+        if (req.file) send.imagen = req.file.filename
+        console.log(req.file)
+
         const [affectedRows] = await ArticuloCategoria.update(
-            {
-                tipo, nombre, descripcion, activo,
-                updatedBy: colaborador
-            },
+            send,
             { where: { id } }
         )
 
         if (affectedRows > 0) {
+            if (send.imagen != previous_imagen && previous_imagen != null) {
+                deleteFile(previous_imagen)
+            }
+
             const data = await loadOne(id)
 
             res.json({ code: 0, data })
@@ -80,7 +107,7 @@ const find = async (req, res) => {
             order: [['nombre', 'ASC']],
             where: {},
         }
-
+        console.log(qry)
         if (qry) {
             if (qry.fltr) {
                 Object.assign(findProps.where, applyFilters(qry.fltr))
@@ -93,7 +120,7 @@ const find = async (req, res) => {
 
         let data = await ArticuloCategoria.findAll(findProps)
 
-        if (data.length > 0 && qry.cols) {
+        if (data.length > 0 && qry && qry.cols) {
             data = data.map(a => a.toJSON())
 
             const estadosMap = cSistema.arrayMap('estados')
@@ -114,7 +141,12 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await ArticuloCategoria.findByPk(id)
+        let data = await ArticuloCategoria.findByPk(id)
+
+        if (data) {
+            data = data.toJSON()
+            data.previous_imagen = data.imagen
+        }
 
         res.json({ code: 0, data })
     }

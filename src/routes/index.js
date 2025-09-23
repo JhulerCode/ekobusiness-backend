@@ -26,6 +26,8 @@ import socios from './socios/rSocios.js'
 import tipo_cambios from './tipo_cambios/rTipoCambios.js'
 import transacciones from './transacciones/rTransacciones.js'
 
+import store_categorias from './store/rArticuloCategorias.js'
+
 function routes(app) {
     app.get('/', (req, res) => {
         // const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress
@@ -33,9 +35,7 @@ function routes(app) {
     })
 
     app.use('/signin', signin)
-
     app.use('/api', verifyToken)
-
     app.use('/api/activity_logs', activity_logs)
     app.use('/api/sistema', sistema)
     app.use('/api/articulo_categorias', articulo_categorias)
@@ -60,6 +60,8 @@ function routes(app) {
     app.use('/api/socio_pedidos', socio_pedidos)
     app.use('/api/tipo_cambios', tipo_cambios)
     app.use('/api/transacciones', transacciones)
+
+    app.use('/store/categorias', store_categorias)
 }
 
 export default routes

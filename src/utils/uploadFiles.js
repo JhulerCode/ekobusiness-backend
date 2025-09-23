@@ -5,45 +5,25 @@ import multer from 'multer'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const uploadsPath = path.join(__dirname, '..', 'uploads')
+const pathUploads = path.join(__dirname, '..', '..', 'uploads')
 
-// function saveFile(file, name) {
-//     if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath, { recursive: true })
-
-//     const tipoArchivo = file.split(';')[0].split('/')[1]
-
-//     const nombreArchivo = name ?
-//         `${name}.${tipoArchivo}` :
-//         Date.now() +''+ Math.floor(Math.random() * 1000) + '.' + tipoArchivo
-//     const filePath = path.join(uploadsPath, nombreArchivo)
-
-//     const base64DataSinEncabezado = file.replace(/^data:[^;]+;base64,/, '')
-//     const datosBinarios = Buffer.from(base64DataSinEncabezado, 'base64')
-
-//     fs.writeFileSync(filePath, datosBinarios)
-
-//     return nombreArchivo
-// }
-
-const storage = multer.diskStorage({
+const storageUploads = multer.diskStorage({
     destination: (req, file, cb) => {
-
-        if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath, { recursive: true });
-
-        cb(null, uploadsPath);
+        if (!fs.existsSync(pathUploads)) fs.mkdirSync(pathUploads, { recursive: true })
+        cb(null, pathUploads)
     },
     filename: (req, file, cb) => {
-        const timestamp = Date.now();
-        const uniqueName = `${timestamp}-${file.originalname}`;
-        cb(null, uniqueName);
+        const timestamp = Date.now()
+        const uniqueName = `${timestamp}-${file.originalname}`
+        cb(null, uniqueName)
     }
 })
 
-const upload = multer({ storage })
+const upload = multer({ storage: storageUploads })
 
 function deleteFile(name) {
     try {
-        fs.unlinkSync(path.join(uploadsPath, name))
+        fs.unlinkSync(path.join(pathUploads, name))
     }
     catch (error) {
         console.log(error)
@@ -51,18 +31,18 @@ function deleteFile(name) {
 }
 
 function getFile(name) {
-    const rutaArchivo = path.join(uploadsPath, name)
+    const rutaArchivo = path.join(pathUploads, name)
 
     return fs.existsSync(rutaArchivo)
 }
 
 function getFilePath(name) {
-    return path.join(uploadsPath, name)
+    return path.join(pathUploads, name)
 }
 
 export {
     __dirname,
-    uploadsPath,
+    pathUploads,
     upload,
     deleteFile,
     getFilePath,
