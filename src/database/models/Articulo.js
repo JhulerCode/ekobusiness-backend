@@ -24,6 +24,9 @@ export const Articulo = sequelize.define('articulos', {
     is_combo: { type: DataTypes.BOOLEAN },
     combo_articulos: { type: DataTypes.JSON },
 
+    precio: { type: DataTypes.DOUBLE },
+    fotos: { type: DataTypes.JSON },
+
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

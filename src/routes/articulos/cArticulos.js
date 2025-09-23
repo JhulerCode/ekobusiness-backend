@@ -5,6 +5,8 @@ import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
+import { deleteFile } from '../../utils/uploadFiles.js'
+
 
 // ----- PARA INCLUDES EN SELECT ----- //
 const attributes = ['id', 'nombre', 'unidad']
@@ -146,7 +148,6 @@ async function loadOne(id) {
 
 const find = async (req, res) => {
     try {
-        const { colaborador, permisos } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
@@ -181,7 +182,7 @@ const find = async (req, res) => {
         let data = await Articulo.findAll(findProps)
 
         // ----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
-        if (data.length > 0 && qry.cols) {
+        if (data.length > 0 && qry && qry.cols) {
             data = data.map(a => a.toJSON())
 
             const estadosMap = cSistema.arrayMap('estados')
@@ -333,6 +334,54 @@ const updateBulk = async (req, res) => {
     }
 }
 
+const updateFotos = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        if (req.body.datos) {
+            const datos = JSON.parse(req.body.datos)
+            req.body = { ...datos }
+        }
+
+        const { vigentes, eliminados } = req.body
+
+        const archivos = req.files
+
+        const new_fotos = []
+        for (const a of vigentes) {
+            const arch = archivos.find(b => b.originalname == a.name)
+
+            new_fotos.push({
+                id: arch ? arch.filename : a.id,
+                ...a
+            })
+        }
+
+        // ----- ACTUALIZAR ----- //
+        const [affectedRows] = await Articulo.update(
+            {
+                fotos: new_fotos,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        if (affectedRows > 0) {
+            for (const a of eliminados) {
+                deleteFile(a.id)
+            }
+            res.json({ code: 0, data: new_fotos })
+        }
+        else {
+            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 export default {
     find,
     findById,
@@ -343,4 +392,6 @@ export default {
     createBulk,
     deleteBulk,
     updateBulk,
+
+    updateFotos,
 }

@@ -27,6 +27,7 @@ import tipo_cambios from './tipo_cambios/rTipoCambios.js'
 import transacciones from './transacciones/rTransacciones.js'
 
 import store_categorias from './store/rArticuloCategorias.js'
+import store_productos from './store/rArticulos.js'
 
 function routes(app) {
     app.get('/', (req, res) => {
@@ -62,6 +63,7 @@ function routes(app) {
     app.use('/api/transacciones', transacciones)
 
     app.use('/store/categorias', store_categorias)
+    app.use('/store/productos', store_productos)
 }
 
 export default routes

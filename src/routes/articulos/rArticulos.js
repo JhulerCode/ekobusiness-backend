@@ -1,6 +1,7 @@
 import { Router } from "express"
 import controller from "./cArticulos.js"
 import verifyPermiso from '../../middlewares/verifyPermiso.js'
+import { upload } from '../../utils/uploadFiles.js'
 
 const router = Router()
 
@@ -86,6 +87,15 @@ router.delete(
         'vProductosTerminados:eliminarBulk'
     ]),
     controller.deleteBulk
+)
+
+router.patch(
+    '/fotos/:id',
+    verifyPermiso([
+        'vProductos:actualizarFotos',
+    ]),
+    upload.array('archivos'),
+    controller.updateFotos
 )
 
 export default router
