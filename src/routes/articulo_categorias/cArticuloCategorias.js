@@ -1,7 +1,6 @@
 import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import { deleteFile } from '../../utils/uploadFiles.js'
 import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
 
 const create = async (req, res) => {

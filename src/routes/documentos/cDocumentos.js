@@ -1,7 +1,7 @@
 import { Documento } from '../../database/models/Documento.js'
 import { applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import { deleteFile, getFile, getFilePath } from '../../utils/uploadFiles.js'
+// import { deleteFile, getFile, getFilePath } from '../../utils/uploadFiles.js'
 
 const create = async (req, res) => {
     try {
@@ -58,7 +58,7 @@ const update = async (req, res) => {
 
         if (affectedRows > 0) {
             if (req.file || file_name == null) {
-                deleteFile(previous_file_name)
+                // deleteFile(previous_file_name)
             }
 
             const data = await loadOne(id)

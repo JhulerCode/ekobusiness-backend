@@ -5,8 +5,7 @@ import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import { deleteFile } from '../../utils/uploadFiles.js'
-
+import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
 
 // ----- PARA INCLUDES EN SELECT ----- //
 const attributes = ['id', 'nombre', 'unidad']
@@ -334,31 +333,101 @@ const updateBulk = async (req, res) => {
     }
 }
 
+// const updateFotos = async (req, res) => {
+//     try {
+//         const { colaborador } = req.user
+//         const { id } = req.params
+
+//         if (req.body.datos) {
+//             const datos = JSON.parse(req.body.datos)
+//             req.body = { ...datos }
+//         }
+
+//         const { vigentes, eliminados } = req.body
+
+//         const archivos = req.files
+
+//         const new_fotos = []
+//         for (const a of vigentes) {
+//             const arch = archivos.find(b => b.originalname == a.name)
+
+//             new_fotos.push({
+//                 id: arch ? arch.filename : a.id,
+//                 ...a
+//             })
+//         }
+
+//         // ----- ACTUALIZAR ----- //
+//         const [affectedRows] = await Articulo.update(
+//             {
+//                 fotos: new_fotos,
+//                 updatedBy: colaborador
+//             },
+//             { where: { id } }
+//         )
+
+//         if (affectedRows > 0) {
+//             for (const a of eliminados) {
+//                 deleteFile(a.id)
+//             }
+//             res.json({ code: 0, data: new_fotos })
+//         }
+//         else {
+//             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+//         }
+//     }
+//     catch (error) {
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
+
 const updateFotos = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
 
+        // Si los datos llegan como string JSON, conviértelos
         if (req.body.datos) {
             const datos = JSON.parse(req.body.datos)
             req.body = { ...datos }
         }
 
         const { vigentes, eliminados } = req.body
-
-        const archivos = req.files
+        const archivos = req.files // multer los guarda en memoria o en req.files[]
 
         const new_fotos = []
-        for (const a of vigentes) {
-            const arch = archivos.find(b => b.originalname == a.name)
 
-            new_fotos.push({
-                id: arch ? arch.filename : a.id,
-                ...a
-            })
+        for (const a of vigentes) {
+            // Buscar si hay un nuevo archivo con ese nombre
+            const arch = archivos.find(b => b.originalname === a.name)
+
+            if (arch) {
+                // --- SUBIR ARCHIVO NUEVO A MINIO ---
+                const timestamp = Date.now()
+                const uniqueName = `${timestamp}-${arch.originalname}`
+
+                await minioClient.putObject(
+                    minioBucket,
+                    uniqueName,
+                    arch.buffer,
+                    arch.size,
+                    { "Content-Type": arch.mimetype }
+                )
+
+                const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
+
+                new_fotos.push({
+                    id: uniqueName, // ID interno = nombre único del archivo
+                    name: arch.originalname,
+                    url: publicUrl
+                })
+            } else {
+                // --- FOTO EXISTENTE ---
+                new_fotos.push(a)
+            }
         }
 
-        // ----- ACTUALIZAR ----- //
+        // --- ACTUALIZAR EN BASE DE DATOS ---
         const [affectedRows] = await Articulo.update(
             {
                 fotos: new_fotos,
@@ -368,16 +437,21 @@ const updateFotos = async (req, res) => {
         )
 
         if (affectedRows > 0) {
+            // --- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---
             for (const a of eliminados) {
-                deleteFile(a.id)
+                try {
+                    await minioClient.removeObject(minioBucket, a.id)
+                } catch (err) {
+                    console.error(`Error al eliminar ${a.id}:`, err.message)
+                }
             }
+
             res.json({ code: 0, data: new_fotos })
-        }
-        else {
+        } else {
             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
         }
-    }
-    catch (error) {
+    } catch (error) {
+        console.error('Error en updateFotos:', error)
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

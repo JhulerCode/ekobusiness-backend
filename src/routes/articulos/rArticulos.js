@@ -1,7 +1,7 @@
 import { Router } from "express"
 import controller from "./cArticulos.js"
 import verifyPermiso from '../../middlewares/verifyPermiso.js'
-import { upload } from '../../utils/uploadFiles.js'
+import { uploadMem } from '../../utils/uploadFiles.js'
 
 const router = Router()
 
@@ -94,7 +94,7 @@ router.patch(
     verifyPermiso([
         'vProductos:actualizarFotos',
     ]),
-    upload.array('archivos'),
+    uploadMem.array('archivos'),
     controller.updateFotos
 )
 

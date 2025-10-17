@@ -1,7 +1,7 @@
 import { Router } from "express"
 import controller from "./cArticuloCategorias.js"
 import verifyPermiso from '../../middlewares/verifyPermiso.js'
-import { upload, uploadMem } from "../../utils/uploadFiles.js"
+import { uploadMem } from "../../utils/uploadFiles.js"
 
 const router = Router()
 
@@ -22,7 +22,7 @@ router.post(
         'vArticuloCategorias:crear',
         'vProductoCategorias:crear'
     ]),
-    upload.single('archivo'),
+    uploadMem.single('archivo'),
     controller.create
 )
 
