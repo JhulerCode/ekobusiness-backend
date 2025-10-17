@@ -26,6 +26,11 @@ export const Articulo = sequelize.define('articulos', {
 
     precio: { type: DataTypes.DOUBLE },
     fotos: { type: DataTypes.JSON },
+    descripcion: { type: DataTypes.TEXT },
+    dimenciones: { type: DataTypes.STRING },
+    envase_tipo: { type: DataTypes.STRING },
+    ingredientes: { type: DataTypes.JSON },
+    beneficios: { type: DataTypes.JSON },
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
@@ -34,7 +39,7 @@ export const Articulo = sequelize.define('articulos', {
 ArticuloCategoria.hasMany(Articulo, { foreignKey: 'categoria', as: 'articulos', onDelete: 'RESTRICT' })
 Articulo.belongsTo(ArticuloCategoria, { foreignKey: 'categoria', as: 'categoria1' })
 
-Colaborador.hasMany(Articulo, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-Articulo.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(Articulo, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-Articulo.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(Articulo, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+Articulo.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(Articulo, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+Articulo.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

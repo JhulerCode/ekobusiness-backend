@@ -2,6 +2,7 @@ import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { deleteFile } from '../../utils/uploadFiles.js'
+import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
 
 const create = async (req, res) => {
     try {
@@ -58,20 +59,44 @@ const update = async (req, res) => {
             updatedBy: colaborador
         }
 
-        if (req.file) send.imagen = req.file.filename
-        console.log(req.file)
+        if (req.file) {
+            const timestamp = Date.now();
+            const uniqueName = `${timestamp}-${req.file.originalname}`;
 
-        const [affectedRows] = await ArticuloCategoria.update(
-            send,
-            { where: { id } }
-        )
+            // Subir a MinIO
+            await minioClient.putObject(
+                minioBucket,
+                uniqueName,
+                req.file.buffer,
+                req.file.size,
+                { "Content-Type": req.file.mimetype }
+            );
 
-        if (affectedRows > 0) {
-            if (send.imagen != previous_imagen && previous_imagen != null) {
-                deleteFile(previous_imagen)
+            send.imagen = uniqueName;
+
+            // Borrar logo anterior del bucket si existe
+            if (previous_imagen && previous_imagen !== uniqueName) {
+                try {
+                    await minioClient.removeObject(minioBucket, previous_logo);
+                } catch (err) {
+                    console.error("Error al borrar logo anterior:", err.message);
+                }
             }
 
-            const data = await loadOne(id)
+            // Generar URL pública HTTPS permanente
+            const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`;
+            send.imagen_url = publicUrl;
+        }
+
+        const [affectedRows] = await ArticuloCategoria.update(send, { where: { id } })
+
+        if (affectedRows > 0) {
+            let data = await loadOne(id)
+
+            if (data) {
+                data = data.toJSON()
+                data.imagen_url = send.imagen_url || null
+            }
 
             res.json({ code: 0, data })
         }
@@ -83,6 +108,57 @@ const update = async (req, res) => {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
+
+// const update = async (req, res) => {
+//     try {
+//         const { colaborador } = req.user
+//         const { id } = req.params
+
+//         if (req.body.datos) {
+//             const datos = JSON.parse(req.body.datos)
+//             req.body = { ...datos }
+//         }
+
+//         const {
+//             tipo, nombre, descripcion, activo,
+//             imagen, previous_imagen
+//         } = req.body
+
+//         // ----- VERIFY SI EXISTE NOMBRE ----- //
+//         if (await existe(ArticuloCategoria, { nombre, id }, res) == true) return
+
+//         // ----- ACTUALIZAR ----- //
+//         const send = {
+//             tipo, nombre, descripcion, activo,
+//             imagen,
+//             updatedBy: colaborador
+//         }
+
+//         if (req.file) send.imagen = req.file.filename
+//         console.log(req.file)
+
+//         const [affectedRows] = await ArticuloCategoria.update(
+//             send,
+//             { where: { id } }
+//         )
+
+//         if (affectedRows > 0) {
+//             if (send.imagen != previous_imagen && previous_imagen != null) {
+//                 deleteFile(previous_imagen)
+//             }
+
+//             const data = await loadOne(id)
+
+//             res.json({ code: 0, data })
+//         }
+//         else {
+//             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+//         }
+//     }
+//     catch (error) {
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
 
 async function loadOne(id) {
     let data = await ArticuloCategoria.findByPk(id)

@@ -6,15 +6,16 @@ export const ArticuloCategoria = sequelize.define('articulo_categorias', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.STRING },
     nombre: { type: DataTypes.STRING }, //required
-    descripcion: { type: DataTypes.STRING },
+    descripcion: { type: DataTypes.TEXT },
     activo: { type: DataTypes.BOOLEAN }, //required
     imagen: { type: DataTypes.STRING },
+    is_destacado: { type: DataTypes.BOOLEAN, defaultValue: false }, //required
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })
 
-Colaborador.hasMany(ArticuloCategoria, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-ArticuloCategoria.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(ArticuloCategoria, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-ArticuloCategoria.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(ArticuloCategoria, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+ArticuloCategoria.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(ArticuloCategoria, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+ArticuloCategoria.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })
