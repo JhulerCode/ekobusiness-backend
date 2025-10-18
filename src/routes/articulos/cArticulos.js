@@ -333,54 +333,6 @@ const updateBulk = async (req, res) => {
     }
 }
 
-// const updateFotos = async (req, res) => {
-//     try {
-//         const { colaborador } = req.user
-//         const { id } = req.params
-
-//         if (req.body.datos) {
-//             const datos = JSON.parse(req.body.datos)
-//             req.body = { ...datos }
-//         }
-
-//         const { vigentes, eliminados } = req.body
-
-//         const archivos = req.files
-
-//         const new_fotos = []
-//         for (const a of vigentes) {
-//             const arch = archivos.find(b => b.originalname == a.name)
-
-//             new_fotos.push({
-//                 id: arch ? arch.filename : a.id,
-//                 ...a
-//             })
-//         }
-
-//         // ----- ACTUALIZAR ----- //
-//         const [affectedRows] = await Articulo.update(
-//             {
-//                 fotos: new_fotos,
-//                 updatedBy: colaborador
-//             },
-//             { where: { id } }
-//         )
-
-//         if (affectedRows > 0) {
-//             for (const a of eliminados) {
-//                 deleteFile(a.id)
-//             }
-//             res.json({ code: 0, data: new_fotos })
-//         }
-//         else {
-//             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-//         }
-//     }
-//     catch (error) {
-//         res.status(500).json({ code: -1, msg: error.message, error })
-//     }
-// }
-
 const updateFotos = async (req, res) => {
     try {
         const { colaborador } = req.user

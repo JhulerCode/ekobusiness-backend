@@ -6,10 +6,11 @@ export const ArticuloCategoria = sequelize.define('articulo_categorias', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.STRING },
     nombre: { type: DataTypes.STRING }, //required
-    descripcion: { type: DataTypes.TEXT },
     activo: { type: DataTypes.BOOLEAN }, //required
-    imagen: { type: DataTypes.STRING },
+
+    descripcion: { type: DataTypes.TEXT },
     is_destacado: { type: DataTypes.BOOLEAN, defaultValue: false }, //required
+    fotos: { type: DataTypes.JSON, defaultValue: [] },
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }

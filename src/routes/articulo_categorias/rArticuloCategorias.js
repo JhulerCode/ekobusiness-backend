@@ -22,7 +22,6 @@ router.post(
         'vArticuloCategorias:crear',
         'vProductoCategorias:crear'
     ]),
-    uploadMem.single('archivo'),
     controller.create
 )
 
@@ -41,7 +40,6 @@ router.patch(
         'vArticuloCategorias:editar',
         'vProductoCategorias:editar'
     ]),
-    uploadMem.single('archivo'),
     controller.update
 )
 
@@ -52,6 +50,15 @@ router.delete(
         'vProductoCategorias:eliminar'
     ]),
     controller.delet
+)
+
+router.patch(
+    '/fotos/:id',
+    verifyPermiso([
+        'vProductos:actualizarFotos',
+    ]),
+    uploadMem.array('archivos'),
+    controller.updateFotos
 )
 
 export default router

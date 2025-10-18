@@ -6,12 +6,6 @@ import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
 const create = async (req, res) => {
     try {
         const { colaborador } = req.user
-
-        if (req.body.datos) {
-            const datos = JSON.parse(req.body.datos)
-            req.body = { ...req.body, ...datos }
-        }
-
         const { tipo, nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -20,7 +14,6 @@ const create = async (req, res) => {
         // ----- CREAR ----- //
         const nuevo = await ArticuloCategoria.create({
             tipo, nombre, descripcion, activo,
-            imagen: req.file ? req.file.filename : null,
             createdBy: colaborador,
         })
 
@@ -37,65 +30,19 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-
-        if (req.body.datos) {
-            const datos = JSON.parse(req.body.datos)
-            req.body = { ...datos }
-        }
-
-        const {
-            tipo, nombre, descripcion, activo,
-            imagen, previous_imagen
-        } = req.body
+        const { tipo, nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (await existe(ArticuloCategoria, { nombre, id }, res) == true) return
 
         // ----- ACTUALIZAR ----- //
-        const send = {
+        const [affectedRows] = await ArticuloCategoria.update({
             tipo, nombre, descripcion, activo,
-            imagen,
             updatedBy: colaborador
-        }
-
-        if (req.file) {
-            const timestamp = Date.now();
-            const uniqueName = `${timestamp}-${req.file.originalname}`;
-
-            // Subir a MinIO
-            await minioClient.putObject(
-                minioBucket,
-                uniqueName,
-                req.file.buffer,
-                req.file.size,
-                { "Content-Type": req.file.mimetype }
-            );
-
-            send.imagen = uniqueName;
-
-            // Borrar logo anterior del bucket si existe
-            if (previous_imagen && previous_imagen !== uniqueName) {
-                try {
-                    await minioClient.removeObject(minioBucket, previous_logo);
-                } catch (err) {
-                    console.error("Error al borrar logo anterior:", err.message);
-                }
-            }
-
-            // Generar URL pública HTTPS permanente
-            const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`;
-            send.imagen_url = publicUrl;
-        }
-
-        const [affectedRows] = await ArticuloCategoria.update(send, { where: { id } })
+        }, { where: { id } })
 
         if (affectedRows > 0) {
-            let data = await loadOne(id)
-
-            if (data) {
-                data = data.toJSON()
-                data.imagen_url = send.imagen_url || null
-            }
+            const data = await loadOne(id)
 
             res.json({ code: 0, data })
         }
@@ -108,57 +55,6 @@ const update = async (req, res) => {
     }
 }
 
-// const update = async (req, res) => {
-//     try {
-//         const { colaborador } = req.user
-//         const { id } = req.params
-
-//         if (req.body.datos) {
-//             const datos = JSON.parse(req.body.datos)
-//             req.body = { ...datos }
-//         }
-
-//         const {
-//             tipo, nombre, descripcion, activo,
-//             imagen, previous_imagen
-//         } = req.body
-
-//         // ----- VERIFY SI EXISTE NOMBRE ----- //
-//         if (await existe(ArticuloCategoria, { nombre, id }, res) == true) return
-
-//         // ----- ACTUALIZAR ----- //
-//         const send = {
-//             tipo, nombre, descripcion, activo,
-//             imagen,
-//             updatedBy: colaborador
-//         }
-
-//         if (req.file) send.imagen = req.file.filename
-//         console.log(req.file)
-
-//         const [affectedRows] = await ArticuloCategoria.update(
-//             send,
-//             { where: { id } }
-//         )
-
-//         if (affectedRows > 0) {
-//             if (send.imagen != previous_imagen && previous_imagen != null) {
-//                 deleteFile(previous_imagen)
-//             }
-
-//             const data = await loadOne(id)
-
-//             res.json({ code: 0, data })
-//         }
-//         else {
-//             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-//         }
-//     }
-//     catch (error) {
-//         res.status(500).json({ code: -1, msg: error.message, error })
-//     }
-// }
-
 async function loadOne(id) {
     let data = await ArticuloCategoria.findByPk(id)
 
@@ -168,6 +64,7 @@ async function loadOne(id) {
         const estadosMap = cSistema.arrayMap('estados')
 
         data.activo1 = estadosMap[data.activo]
+        data.is_destacado1 = estadosMap[data.is_destacado]
     }
 
     return data
@@ -182,7 +79,7 @@ const find = async (req, res) => {
             order: [['nombre', 'ASC']],
             where: {},
         }
-        console.log(qry)
+        // console.log(qry)
         if (qry) {
             if (qry.fltr) {
                 Object.assign(findProps.where, applyFilters(qry.fltr))
@@ -202,6 +99,7 @@ const find = async (req, res) => {
 
             for (const a of data) {
                 if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
+                if (qry.cols.includes('is_destacado')) a.is_destacado1 = estadosMap[a.is_destacado]
             }
         }
 
@@ -246,10 +144,85 @@ const delet = async (req, res) => {
     }
 }
 
+const updateFotos = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        if (req.body.datos) {
+            const datos = JSON.parse(req.body.datos)
+            req.body = { ...datos }
+        }
+
+        const { vigentes, eliminados } = req.body
+        const archivos = req.files // multer los guarda en memoria o en req.files[]
+
+        const new_fotos = []
+
+        for (const a of vigentes) {
+            // Buscar si hay un nuevo archivo con ese nombre
+            const arch = archivos.find(b => b.originalname === a.name)
+
+            if (arch) {
+                // --- SUBIR ARCHIVO NUEVO A MINIO ---
+                const timestamp = Date.now()
+                const uniqueName = `${timestamp}-${arch.originalname}`
+
+                await minioClient.putObject(
+                    minioBucket,
+                    uniqueName,
+                    arch.buffer,
+                    arch.size,
+                    { "Content-Type": arch.mimetype }
+                )
+
+                const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
+
+                new_fotos.push({
+                    id: uniqueName, // ID interno = nombre único del archivo
+                    name: arch.originalname,
+                    url: publicUrl
+                })
+            } else {
+                // --- ARCHIVO EXISTENTE ---
+                new_fotos.push(a)
+            }
+        }
+
+        // --- ACTUALIZAR EN BASE DE DATOS ---
+        const [affectedRows] = await ArticuloCategoria.update(
+            {
+                fotos: new_fotos,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        if (affectedRows > 0) {
+            // --- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---
+            for (const a of eliminados) {
+                try {
+                    await minioClient.removeObject(minioBucket, a.id)
+                } catch (err) {
+                    console.error(`Error al eliminar ${a.id}:`, err.message)
+                }
+            }
+
+            res.json({ code: 0, data: new_fotos })
+        } else {
+            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+        }
+    } catch (error) {
+        console.error('Error en updateFotos:', error)
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 export default {
     find,
     findById,
     create,
     delet,
-    update
+    update,
+    updateFotos,
 }
