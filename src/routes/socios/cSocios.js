@@ -256,6 +256,23 @@ const updateBulk = async (req, res) => {
     }
 }
 
+const createToNewsletter = async (req, res) => {
+    try {
+        const { correo } = req.body
+
+        // ----- VERIFY SI EXISTE CORREO ----- //
+        if (await existe(Socio, { correo }, res, 'El correo ya fue registrado anteriormente.') == true) return
+
+        // ----- CREAR ----- //
+        await Socio.create({ correo, only_newsletter: true })
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 export default {
     create,
     find,
@@ -265,4 +282,6 @@ export default {
 
     deleteBulk,
     updateBulk,
+
+    createToNewsletter,
 }

@@ -29,6 +29,8 @@ export const Socio = sequelize.define('socios', {
 
     documentos: { type: DataTypes.JSON },
 
+    only_newsletter: { type: DataTypes.BOOLEAN, defaultValue: false },
+
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 
