@@ -4,6 +4,12 @@ import sequelize from '../sequelize.js'
 export const DerechoArco = sequelize.define('derecho_arcos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
 
+    codigo: { type: DataTypes.STRING },
+    estado: { type: DataTypes.STRING },
+    fecha_recepcion: { type: DataTypes.DATEONLY },
+    fecha_respuesta: { type: DataTypes.DATEONLY },
+    observaciones: { type: DataTypes.TEXT },
+
     nombres: { type: DataTypes.STRING },
     apellidos: { type: DataTypes.STRING },
     doc_tipo: { type: DataTypes.STRING },
