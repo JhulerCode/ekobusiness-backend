@@ -29,6 +29,7 @@ import transacciones from './transacciones/rTransacciones.js'
 import store_categorias from './store/rArticuloCategorias.js'
 import store_productos from './store/rArticulos.js'
 import store_socios from './store/rSocios.js'
+import store_arco from './store/rArco.js'
 
 function routes(app) {
     app.get('/', (req, res) => {
@@ -66,6 +67,7 @@ function routes(app) {
     app.use('/store/categorias', store_categorias)
     app.use('/store/productos', store_productos)
     app.use('/store/newsletter', store_socios)
+    app.use('/store/arco', store_arco)
 }
 
 export default routes
