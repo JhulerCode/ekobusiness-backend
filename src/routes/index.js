@@ -22,6 +22,7 @@ import produccion_ordenes from './produccion_ordenes/rProduccionOrdenes.js'
 import receta_insumos from './receta_insumos/rRecetaInsumos.js'
 import sessions from './sessions/rSessions.js'
 import socio_pedidos from './socio_pedidos/rSocioPedidos.js'
+import socio_pedido_items from './socio_pedido_items/rSocioPedidoItems.js'
 import socios from './socios/rSocios.js'
 import tipo_cambios from './tipo_cambios/rTipoCambios.js'
 import transacciones from './transacciones/rTransacciones.js'
@@ -61,6 +62,7 @@ function routes(app) {
     app.use('/api/sessions', sessions)
     app.use('/api/socios', socios)
     app.use('/api/socio_pedidos', socio_pedidos)
+    app.use('/api/socio_pedido_items', socio_pedido_items)
     app.use('/api/tipo_cambios', tipo_cambios)
     app.use('/api/transacciones', transacciones)
 

@@ -136,8 +136,8 @@ const find = async (req, res) => {
 
         const findProps = {
             attributes: ['id'],
-            where: {},
             order: [['createdAt', 'DESC'], ['fecha', 'DESC']],
+            where: {},
             include: [],
         }
 
@@ -242,7 +242,6 @@ const find = async (req, res) => {
                 const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
                 findProps.attributes = findProps.attributes.concat(cols1)
             }
-
         }
 
         let data = await TransaccionItem.findAll(findProps)
@@ -297,7 +296,6 @@ const find = async (req, res) => {
                 if (qry.cols.includes('calidad_revisado')) {
                     a.calidad_revisado1 = estadosMap[a.calidad_revisado]
                 }
-
             }
         }
 
