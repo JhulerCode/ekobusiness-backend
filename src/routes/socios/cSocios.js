@@ -4,6 +4,10 @@ import { applyFilters, existe } from '../../utils/mine.js'
 import { PrecioLista } from '../../database/models/PrecioLista.js'
 import cSistema from "../_sistema/cSistema.js"
 import sequelize from '../../database/sequelize.js'
+import bcrypt from 'bcrypt'
+import config from "../../config.js"
+import jat from '../../utils/jat.js'
+import { guardarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
 
 const attributes = [
     'id',
@@ -256,17 +260,93 @@ const updateBulk = async (req, res) => {
     }
 }
 
+
+//--- E-COMMERCE ---//
 const createToNewsletter = async (req, res) => {
     try {
         const { correo } = req.body
 
         // ----- VERIFY SI EXISTE CORREO ----- //
-        if (await existe(Socio, { correo }, res, 'El correo ya fue registrado anteriormente.') == true) return
+        if (await existe(Socio, { correo, only_newsletter: true }, res, 'El correo ya fue registrado anteriormente.') == true) return
 
         // ----- CREAR ----- //
         await Socio.create({ correo, only_newsletter: true })
 
         res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const createUser = async (req, res) => {
+    try {
+        let { correo, contrasena } = req.body
+
+        // ----- VERIFY SI EXISTE CORREO ----- //
+        if (await existe(Socio, { correo, tipo: 2 }, res, 'El correo ya fue registrado anteriormente.') == true) return
+
+        // ----- CREAR ----- //
+        contrasena = await bcrypt.hash(contrasena, 10)
+        const data = await Socio.create({ correo, contrasena, tipo: 2 })
+
+        const token = jat.encrypt({
+            id: data.id,
+        }, config.tokenMyApi)
+
+        guardarSesion(data.id, {
+            token,
+            correo,
+        })
+
+        res.json({ code: 0, token })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const loginUser = async (req, res) => {
+    try {
+        let { correo, contrasena } = req.body
+
+        const data = await Socio.findOne({
+            where: { correo, tipo: 2 },
+        })
+
+        if (data == null) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+
+        const correct = await bcrypt.compare(contrasena, data.contrasena)
+        if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+
+        const token = jat.encrypt({
+            id: data.id,
+        }, config.tokenMyApi)
+
+        const toSave = {
+            token,
+
+            doc_tipo: data.doc_tipo,
+            doc_numero: data.doc_numero,
+            nombres: data.nombres,
+            apellidos: data.apellidos,
+
+            correo: data.correo,
+            telefono1: data.telefono1,
+            telefono2: data.telefono2,
+            web: data.web,
+            activo: data.activo,
+
+            direcciones: data.direcciones,
+
+            bancos: data.bancos,
+
+            nombres_apellidos: data.nombres_apellidos,
+        }
+
+        guardarSesion(data.id, toSave)
+
+        res.json({ code: 0, token, data: toSave })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -284,4 +364,6 @@ export default {
     updateBulk,
 
     createToNewsletter,
+    createUser,
+    loginUser,
 }

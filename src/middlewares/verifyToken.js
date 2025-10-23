@@ -22,6 +22,7 @@ async function verifyToken(req, res, next) {
 
         req.user = {
             colaborador: user.colaborador, // este es el id del jwt
+            id: user.id,
             ...sesion
         }
 
