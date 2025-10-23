@@ -72,6 +72,8 @@ function routes(app) {
     app.use('/store/newsletter', store_socios)
     app.use('/store/arco', store_arco)
     app.use('/store/auth', store_auth)
+    app.use('/store/account', verifyToken)
+    app.use('/store/account', store_auth)
 }
 
 export default routes

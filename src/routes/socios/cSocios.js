@@ -353,6 +353,16 @@ const loginUser = async (req, res) => {
     }
 }
 
+const verifyLogin = async (req, res) => {
+    try {
+        res.json({ code: 0, data: { ...req.user } })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+
 export default {
     create,
     find,
@@ -366,4 +376,5 @@ export default {
     createToNewsletter,
     createUser,
     loginUser,
+    verifyLogin,
 }
