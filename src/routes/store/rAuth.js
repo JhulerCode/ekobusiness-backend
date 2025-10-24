@@ -7,5 +7,6 @@ router.post('/register', controller.createUser)
 router.post('/login', controller.loginUser)
 
 router.get('/verify', controller.verifyLogin)
+router.patch('/:id', controller.update)
 
 export default router

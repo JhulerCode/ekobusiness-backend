@@ -32,6 +32,7 @@ import store_productos from './store/rArticulos.js'
 import store_socios from './store/rSocios.js'
 import store_arco from './store/rArco.js'
 import store_auth from './store/rAuth.js'
+import ubigeos from './ubigeos/rUbigeos.js'
 
 function routes(app) {
     app.get('/', (req, res) => {
@@ -74,6 +75,7 @@ function routes(app) {
     app.use('/store/auth', store_auth)
     app.use('/store/account', verifyToken)
     app.use('/store/account', store_auth)
+    app.use('/store/account/ubigeos', ubigeos)
 }
 
 export default routes

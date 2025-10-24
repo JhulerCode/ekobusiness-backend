@@ -7,7 +7,7 @@ import sequelize from '../../database/sequelize.js'
 import bcrypt from 'bcrypt'
 import config from "../../config.js"
 import jat from '../../utils/jat.js'
-import { guardarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
+import { guardarSesion, actualizarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
 
 const attributes = [
     'id',
@@ -34,7 +34,13 @@ const create = async (req, res) => {
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(Socio, { tipo, doc_numero }, res, `El socio comercial ya existe`) == true) return
+        if (doc_numero) {
+            if (await existe(Socio, { tipo, doc_numero }, res, `El Nro de documento ya existe, ingresa otro.`) == true) return
+        }
+
+        if (correo) {
+            if (await existe(Socio, { tipo, correo, id }, res, `El correo ya existe, ingresa otro.`) == true) return
+        }
 
         // ----- CREAR ----- //
         const nuevo = await Socio.create({
@@ -67,10 +73,17 @@ const update = async (req, res) => {
             contactos,
             precio_lista, pago_condicion, bancos,
             documentos,
+            comes_from,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(Socio, { tipo, doc_numero, id }, res, `El socio comercial ya existe`) == true) return
+        if (doc_numero) {
+            if (await existe(Socio, { tipo, doc_numero, id }, res, `El Nro de documento ya existe, ingresa otro.`) == true) return
+        }
+
+        if (correo) {
+            if (await existe(Socio, { tipo, correo, id }, res, `El correo ya existe, ingresa otro.`) == true) return
+        }
 
         // ----- ACTUALIZAR ----- //
         const [affectedRows] = await Socio.update(
@@ -87,6 +100,10 @@ const update = async (req, res) => {
         )
 
         if (affectedRows > 0) {
+            if (comes_from == 'ecommerce') {
+                actualizarSesion(id, { nombres, apellidos, doc_tipo, doc_numero, telefono1, direcciones })
+            }
+
             const data = await loadOne(id)
 
             res.json({ code: 0, data })
@@ -102,7 +119,8 @@ const update = async (req, res) => {
 
 async function loadOne(id) {
     let data = await Socio.findByPk(id, {
-        include: [includes.precio_lista1]
+        include: [includes.precio_lista1],
+        attributes: { exclude: ['contrasena'] }
     })
 
     if (data) {
@@ -297,6 +315,8 @@ const createUser = async (req, res) => {
         guardarSesion(data.id, {
             token,
             correo,
+            direcciones: [],
+            bancos: [],
         })
 
         res.json({ code: 0, token })

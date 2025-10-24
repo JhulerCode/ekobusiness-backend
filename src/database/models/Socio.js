@@ -16,18 +16,18 @@ export const Socio = sequelize.define('socios', {
     telefono1: { type: DataTypes.STRING },
     telefono2: { type: DataTypes.STRING },
     web: { type: DataTypes.STRING },
-    activo: { type: DataTypes.BOOLEAN }, //required
+    activo: { type: DataTypes.BOOLEAN, defaultValue: true }, //required
 
-    direcciones: { type: DataTypes.JSON },
+    direcciones: { type: DataTypes.JSON, defaultValue: [] },
 
-    contactos: { type: DataTypes.JSON },
+    contactos: { type: DataTypes.JSON, defaultValue: [] },
 
     precio_lista: { type: DataTypes.STRING },
     pago_condicion: { type: DataTypes.STRING },
     // credito: { type: DataTypes.DOUBLE },
-    bancos: { type: DataTypes.JSON },
+    bancos: { type: DataTypes.JSON, defaultValue: [] },
 
-    documentos: { type: DataTypes.JSON },
+    documentos: { type: DataTypes.JSON, defaultValue: [] },
 
     only_newsletter: { type: DataTypes.BOOLEAN, defaultValue: false },
     contrasena: { type: DataTypes.STRING },
@@ -48,7 +48,7 @@ export const Socio = sequelize.define('socios', {
 PrecioLista.hasMany(Socio, { foreignKey: 'precio_lista', as: 'socios', onDelete: 'RESTRICT' })
 Socio.belongsTo(PrecioLista, { foreignKey: 'precio_lista', as: 'precio_lista1' })
 
-Colaborador.hasMany(Socio, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-Socio.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(Socio, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-Socio.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(Socio, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+Socio.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(Socio, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+Socio.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })
