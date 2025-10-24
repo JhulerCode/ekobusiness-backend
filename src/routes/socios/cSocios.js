@@ -71,7 +71,7 @@ const update = async (req, res) => {
             telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
-            precio_lista, pago_condicion, bancos,
+            precio_lista, pago_condicion, bancos, pago_metodos,
             documentos,
             comes_from,
         } = req.body
@@ -92,7 +92,7 @@ const update = async (req, res) => {
                 telefono1, telefono2, correo, web, activo,
                 direcciones,
                 contactos,
-                precio_lista, pago_condicion, bancos,
+                precio_lista, pago_condicion, bancos, pago_metodos,
                 documentos,
                 updatedBy: colaborador
             },
@@ -101,7 +101,7 @@ const update = async (req, res) => {
 
         if (affectedRows > 0) {
             if (comes_from == 'ecommerce') {
-                actualizarSesion(id, { nombres, apellidos, doc_tipo, doc_numero, telefono1, direcciones })
+                actualizarSesion(id, { nombres, apellidos, doc_tipo, doc_numero, telefono1, direcciones, pago_metodos })
             }
 
             const data = await loadOne(id)
@@ -316,7 +316,7 @@ const createUser = async (req, res) => {
             token,
             correo,
             direcciones: [],
-            bancos: [],
+            pago_metodos: [],
         })
 
         res.json({ code: 0, token })
@@ -359,7 +359,7 @@ const loginUser = async (req, res) => {
 
             direcciones: data.direcciones,
 
-            bancos: data.bancos,
+            pago_metodos: data.pago_metodos,
 
             nombres_apellidos: data.nombres_apellidos,
         }

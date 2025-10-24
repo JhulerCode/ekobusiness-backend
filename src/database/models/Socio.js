@@ -26,6 +26,7 @@ export const Socio = sequelize.define('socios', {
     pago_condicion: { type: DataTypes.STRING },
     // credito: { type: DataTypes.DOUBLE },
     bancos: { type: DataTypes.JSON, defaultValue: [] },
+    pago_metodos: { type: DataTypes.JSON, defaultValue: [] },
 
     documentos: { type: DataTypes.JSON, defaultValue: [] },
 
