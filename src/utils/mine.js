@@ -139,8 +139,15 @@ function cleanFloat(num) {
     return Math.round((num + Number.EPSILON) * 1e12) / 1e12;
 }
 
+function generarCodigo6() {
+    const codigo = Math.floor(100000 + Math.random() * 900000);
+  
+    return codigo.toString()
+}
+
 export {
     existe,
     applyFilters,
     cleanFloat,
+    generarCodigo6,
 }

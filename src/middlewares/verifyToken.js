@@ -13,9 +13,9 @@ async function verifyToken(req, res, next) {
 
     try {
         const user = jat.decrypt(token, config.tokenMyApi)
-        console.log('user', user)
+        // console.log('user', user)
         const sesion = obtenerSesion(user.colaborador || user.id)
-        console.log('sesion', sesion)
+        // console.log('sesion', sesion)
 
         if (!sesion || sesion.token !== token) {
             return res.status(401).json({ msg: 'Sesión no válida' })

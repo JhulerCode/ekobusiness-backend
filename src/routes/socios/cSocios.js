@@ -1,6 +1,6 @@
 import { Socio } from '../../database/models/Socio.js'
 import { Sequelize, Op } from 'sequelize'
-import { applyFilters, existe } from '../../utils/mine.js'
+import { applyFilters, existe, generarCodigo6 } from '../../utils/mine.js'
 import { PrecioLista } from '../../database/models/PrecioLista.js'
 import cSistema from "../_sistema/cSistema.js"
 import sequelize from '../../database/sequelize.js'
@@ -8,10 +8,9 @@ import bcrypt from 'bcrypt'
 import config from "../../config.js"
 import jat from '../../utils/jat.js'
 import { guardarSesion, actualizarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
-
-const attributes = [
-    'id',
-]
+import dayjs from '../../utils/dayjs.js'
+import { nodeMailer } from "../../lib/nodeMailer.js"
+import { companyName, codigoVerificacionHtml } from '../../utils/layouts.js'
 
 const includes = {
     precio_lista1: {
@@ -141,7 +140,7 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
-            attributes,
+            attributes: ['id'],
             order: [[Sequelize.literal(`TRIM(CONCAT(COALESCE(nombres, ''), ' ', COALESCE(apellidos, '')))`), 'ASC']],
             where: {},
             include: []
@@ -306,7 +305,12 @@ const createUser = async (req, res) => {
 
         // ----- CREAR ----- //
         contrasena = await bcrypt.hash(contrasena, 10)
-        const data = await Socio.create({ correo, contrasena, tipo: 2 })
+        const data = await Socio.create({
+            tipo: 2,
+            correo,
+            contrasena,
+            contrasena_updated_at: Sequelize.literal('current_timestamp')
+        })
 
         const token = jat.encrypt({
             id: data.id,
@@ -317,6 +321,7 @@ const createUser = async (req, res) => {
             correo,
             direcciones: [],
             pago_metodos: [],
+            contrasena_updated_at: data.contrasena_updated_at,
         })
 
         res.json({ code: 0, token })
@@ -362,6 +367,8 @@ const loginUser = async (req, res) => {
             pago_metodos: data.pago_metodos,
 
             nombres_apellidos: data.nombres_apellidos,
+
+            contrasena_updated_at: data.contrasena_updated_at,
         }
 
         guardarSesion(data.id, toSave)
@@ -382,6 +389,69 @@ const verifyLogin = async (req, res) => {
     }
 }
 
+const sendCodigo = async (req, res) => {
+    try {
+        const { correo } = req.body
+        const codigo_verificacion = generarCodigo6()
+
+        await Socio.update({ codigo_verificacion }, { where: { correo } })
+
+        const nodemailer = nodeMailer()
+        const result = await nodemailer.sendMail({
+            from: `${companyName} <${config.SOPORTE_EMAIL}>`,
+            to: correo,
+            subject: 'Código de verificación',
+            html: codigoVerificacionHtml(codigo_verificacion)
+        })
+
+        res.status(200).json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const verifyCodigo = async (req, res) => {
+    try {
+        const { correo, codigo_verificacion } = req.body
+
+        const data = await Socio.findOne({ where: { correo, codigo_verificacion } })
+
+        if (data == null) return res.status(200).json({ code: 1, msg: 'Código ingresado incorrecto' })
+
+        await Socio.update({ codigo_verificacion: null }, { where: { correo } })
+
+        res.status(200).json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const updatePassword = async (req, res) => {
+    try {
+        let { id, contrasena } = req.body
+
+        contrasena = await bcrypt.hash(contrasena, 10)
+
+        const contrasena_updated_at = dayjs()
+
+        await Socio.update(
+            {
+                contrasena,
+                contrasena_updated_at,
+            },
+            { where: { id } }
+        )
+
+        actualizarSesion(id, { contrasena_updated_at })
+
+        res.json({ code: 0, data: { contrasena_updated_at } })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
 
 export default {
     create,
@@ -397,4 +467,7 @@ export default {
     createUser,
     loginUser,
     verifyLogin,
+    sendCodigo,
+    verifyCodigo,
+    updatePassword,
 }

@@ -1,109 +1,120 @@
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc.js'
-import timezone from 'dayjs/plugin/timezone.js'
+// import dayjs from 'dayjs'
+// import utc from 'dayjs/plugin/utc.js'
+// import timezone from 'dayjs/plugin/timezone.js'
 
-dayjs.extend(utc)
-dayjs.extend(timezone)
-dayjs.tz.setDefault('America/Lima')
+// dayjs.extend(utc)
+// dayjs.extend(timezone)
+// dayjs.tz.setDefault('America/Lima')
 
-const companyName = 'EKO BUSINESS S.A.C.'
+import dayjs from '../utils/dayjs.js'
+
+const primary_color = '#2492c2'
+const companyName = 'Sunka Herbal Tea'
 const companyWeb = 'sunka.pe'
+const contactEmail = 'comercial@sunkatea.com';
+const whatsappNumber = '+51 999 888 777'
+const atentamente = 'Sunka Herbal Tea'
 const derechos = `© ${dayjs().format('YYYY')} ${companyName}, todos los derechos reservados.`
 
 function arcoHtml(nombres, apellidos, codigo, fecha_recepcion, tipo, email) {
     return `
-    <html lang="es">
-        <head>
-            <meta charset="UTF-8" />
-            <title>Confirmación de Solicitud ARCO</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <style>
-                body {
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9fafb;
-                    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                    color: #333333;
-                }
-                .container {
-                    max-width: 600px;
-                    margin: 40px auto;
-                    background: #ffffff;
-                    border-radius: 16px;
-                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-                    overflow: hidden;
-                }
-                .header {
-                    background-color: black;
-                    color: #ffffff;
-                    text-align: center;
-                    padding: 24px 20px;
-                }
-                .header h1 {
-                    margin: 0;
-                    font-size: 22px;
-                    letter-spacing: 0.5px;
-                }
-                .content {
-                    padding: 32px 28px;
-                    line-height: 1.6;
-                }
-                .content h2 {
-                    font-size: 18px;
-                    margin-top: 0;
-                    color: black;
-                }
-                .highlight {
-                    background: #f9fafb;
-                    border-left: 4px solid black;
-                    padding: 12px 16px;
-                    margin: 20px 0;
-                    border-radius: 8px;
-                    font-size: 15px;
-                }
-                .details {
-                    margin-top: 24px;
-                    border-collapse: collapse;
-                    width: 100%;
-                }
-                .details td {
-                    padding: 8px 0;
-                    border-bottom: 1px solid #eee;
-                    font-size: 14px;
-                }
-                .details td:first-child {
-                    font-weight: 600;
-                    width: 160px;
-                }
-                .footer {
-                    background: #f9fafb;
-                    padding: 20px;
-                    text-align: center;
-                    font-size: 12px;
-                    color: #666666;
-                }
-                .footer a {
-                    color: black;
-                    text-decoration: none;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>Solicitud ARCO recibida</h1>
-                </div>
-                <div class="content">
-                    <h2>Estimado/a ${nombres} ${apellidos},</h2>
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica,
+                    Arial, sans-serif;
+                border: none;
+                outline: none;
+                color: #3c3c3b;
+                font-size: 15px;
+            }
+
+            section {
+                width: 100%;
+                background-color: whitesmoke;
+                padding: 1rem;
+            }
+
+            article {
+                background-color: white;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin: 0 auto;
+                width: 35rem;
+            }
+
+            h1 {
+                text-align: center;
+                font-size: 2rem;
+            }
+
+            footer {
+                text-align: center;
+                margin: 0 auto;
+                margin-top: 2rem;
+                width: 35rem;
+            }
+
+            footer p {
+                margin-top: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .container-mensaje {
+                margin: 2rem 2rem 0 2rem;
+            }
+
+            .container-mensaje strong,
+            .container-mensaje p {
+                font-size: 1rem;
+                word-spacing: 3px;
+                line-height: 1.4;
+            }
+
+            .resaltado {
+                color: ${primary_color};
+            }
+
+            .container-codigo {
+                padding: 1.5rem 1rem;
+                border-radius: 1rem 0 1rem 0;
+                border: solid 0.06rem whitesmoke;
+                margin: 2rem 2rem;
+            }
+
+            .container-codigo p {
+                color: #b6b6b6;
+            }
+        </style>
+    </head>
+
+    <body>
+        <section>
+            <article>
+                <h1>${companyName}</h1>
+
+                <div class="container-mensaje">
+                    <p>Estimado/a ${nombres} ${apellidos},</p>
+                    
                     <p>
                         Hemos recibido correctamente su solicitud de ejercicio de
-                        <strong>Derechos ARCO</strong> (Acceso, Rectificación,
+                        <strong class="resaltado">Derechos ARCO</strong> (Acceso, Rectificación,
                         Cancelación u Oposición).
                     </p>
-                    <div class="highlight">
+
+                    <div class="container-codigo">
                         <strong>Código de solicitud:</strong> ${codigo}<br />
                         <strong>Fecha de recepción:</strong> ${dayjs(fecha_recepcion).format('DD/MM/YYYY')}
+                        <strong>Tipo de solicitud:</strong> ${tipo}<br />
+                        <strong>Correo registrado:</strong> ${email}<br />
                     </div>
+
                     <p>
                         Nuestro equipo de Protección de Datos revisará su solicitud
                         y le brindará una respuesta dentro del plazo máximo
@@ -113,36 +124,149 @@ function arcoHtml(nombres, apellidos, codigo, fecha_recepcion, tipo, email) {
                             Personales</strong
                         >.
                     </p>
-                    <table class="details">
-                        <tr>
-                            <td>Tipo de solicitud:</td>
-                            <td>${tipo}</td>
-                        </tr>
-                        <tr>
-                            <td>Correo registrado:</td>
-                            <td>${email}</td>
-                        </tr>
-                    </table>
-                    <p style="margin-top: 28px">
-                        Si necesita contactarse con nosotros o presentar
-                        documentación adicional, puede hacerlo respondiendo a este
-                        correo o a través de nuestros canales oficiales.
-                    </p>
-                    <p style="margin-top: 20px">
-                        Gracias por confiar en <strong>${companyName}</strong>.
+                </div>
+            </article>
+
+            <footer>
+                <p>Atentamente <br />${atentamente}</p>
+
+                <p>
+                    Comunicate con nosotros por los siguientes medios:
+                    <br />Correo: ${contactEmail} <br />WhatsApp:
+                    ${whatsappNumber}
+                </p>
+
+                <p>${derechos}</p>
+            </footer>
+        </section>
+    </body>
+</html>
+    `
+}
+
+
+function codigoVerificacionHtml(codigo) {
+    return `
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica,
+                    Arial, sans-serif;
+                border: none;
+                outline: none;
+                color: #3c3c3b;
+                font-size: 15px;
+            }
+
+            section {
+                width: 100%;
+                background-color: whitesmoke;
+                padding: 1rem;
+            }
+
+            article {
+                background-color: white;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin: 0 auto;
+                width: 35rem;
+            }
+
+            h1 {
+                text-align: center;
+                font-size: 2rem;
+            }
+
+            footer {
+                text-align: center;
+                margin: 0 auto;
+                margin-top: 2rem;
+                width: 35rem;
+            }
+
+            footer p {
+                margin-top: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .container-mensaje {
+                margin: 2rem 2rem 0 2rem;
+            }
+
+            .container-mensaje strong,
+            .container-mensaje p {
+                font-size: 1rem;
+                word-spacing: 3px;
+                line-height: 1.4;
+            }
+
+            .resaltado {
+                color: ${primary_color};
+            }
+
+            .container-codigo {
+                padding: 1.5rem 1rem;
+                border-radius: 1rem 0 1rem 0;
+                border: solid 0.06rem whitesmoke;
+                margin: 2rem 2rem;
+                text-align: center;
+            }
+
+            .container-codigo p {
+                color: #b6b6b6;
+            }
+
+            .codigo {
+                font-size: 3rem;
+            }
+        </style>
+    </head>
+
+    <body>
+        <section>
+            <article>
+                <h1>${companyName}</h1>
+
+                <div class="container-mensaje">
+                    <p>Estimado usuario:</p>
+                    <p>
+                        Para seguir con tu solicitud, ingresa este
+                        <strong class="resaltado">código de verificación</strong> en
+                        la web.
                     </p>
                 </div>
-                <div class="footer">
-                    ${derechos}<br />
-                    <a href="${companyWeb}">${companyWeb}</a>
+
+                <div class="container-codigo">
+                    <p>Tu código de verificación es</p>
+                    <strong class="resaltado codigo">${codigo}</strong>
                 </div>
-            </div>
-        </body>
-    </html>
+            </article>
+
+            <footer>
+                <p>Atentamente <br />${atentamente}</p>
+
+                <p>
+                    Comunicate con nosotros por los siguientes medios:
+                    <br />Correo: ${contactEmail} <br />WhatsApp:
+                    ${whatsappNumber}
+                </p>
+
+                <p>${derechos}</p>
+            </footer>
+        </section>
+    </body>
+</html>
     `
 }
 
 export {
     companyName,
-    arcoHtml
+    arcoHtml,
+    codigoVerificacionHtml,
 }

@@ -16,6 +16,6 @@ export default {
     RECAPTCHA_PRIVATE_KEY: process.env.RECAPTCHA_PRIVATE_KEY || '',
 
     RESEND_API_KEY: process.env.RESEND_API_KEY || '',
-    // SOPORTE_EMAIL: process.env.SOPORTE_EMAIL || '',
-    // SOPORTE_EMAIL_PASS: process.env.SOPORTE_EMAIL_PASS || '',
+    SOPORTE_EMAIL: process.env.SOPORTE_EMAIL || '',
+    SOPORTE_EMAIL_PASS: process.env.SOPORTE_EMAIL_PASS || '',
 }

@@ -9,4 +9,9 @@ router.post('/login', controller.loginUser)
 router.get('/verify', controller.verifyLogin)
 router.patch('/:id', controller.update)
 
+router.patch('/:id', controller.update)
+router.post('/send-codigo', controller.sendCodigo)
+router.post('/verify-codigo', controller.verifyCodigo)
+router.post('/update-password', controller.updatePassword)
+
 export default router

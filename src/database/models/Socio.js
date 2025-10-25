@@ -32,6 +32,8 @@ export const Socio = sequelize.define('socios', {
 
     only_newsletter: { type: DataTypes.BOOLEAN, defaultValue: false },
     contrasena: { type: DataTypes.STRING },
+    contrasena_updated_at: { type: DataTypes.DATE },
+    codigo_verificacion: { type: DataTypes.STRING },
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
