@@ -453,6 +453,26 @@ const updatePassword = async (req, res) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    try {
+        let { id } = req.body
+
+        await Socio.update(
+            {
+                activo: 0,
+            },
+            { where: { id } }
+        )
+
+        borrarSesion(id)
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 export default {
     create,
     find,
@@ -470,4 +490,5 @@ export default {
     sendCodigo,
     verifyCodigo,
     updatePassword,
+    deleteUser,
 }
