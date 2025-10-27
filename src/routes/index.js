@@ -30,7 +30,8 @@ import transacciones from './transacciones/rTransacciones.js'
 import store_categorias from './store/rArticuloCategorias.js'
 import store_productos from './store/rArticulos.js'
 import store_socios from './store/rSocios.js'
-import store_arco from './store/rArco.js'
+import store_arcos from './store/rArco.js'
+import libro_reclamos from './store/rLibroReclamos.js'
 import store_auth from './store/rAuth.js'
 import ubigeos from './ubigeos/rUbigeos.js'
 
@@ -71,7 +72,8 @@ function routes(app) {
     app.use('/store/categorias', store_categorias)
     app.use('/store/productos', store_productos)
     app.use('/store/newsletter', store_socios)
-    app.use('/store/arco', store_arco)
+    app.use('/store/arco', store_arcos)
+    app.use('/store/libro-reclamos', libro_reclamos)
     app.use('/store/auth', store_auth)
     app.use('/store/account', verifyToken)
     app.use('/store/account', store_auth)

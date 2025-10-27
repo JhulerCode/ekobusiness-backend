@@ -3,7 +3,7 @@ import config from '../../config.js'
 import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
 // import { nodeMailer } from "../../lib/nodeMailer.js"
 import { Resend } from 'resend'
-import { companyName, arcoHtml } from '../../utils/layouts.js'
+import { companyName, htmlArco } from '../../utils/layouts.js'
 
 const create = async (req, res) => {
     try {
@@ -42,7 +42,7 @@ const create = async (req, res) => {
             if (archivos.extras_doc) extras_doc = await minioPutObject(archivos.extras_doc[0])
 
             const codigo = `ARCO-${new Date().getFullYear()}-${Date.now()}`
-            const html = arcoHtml(nombres, apellidos, codigo, fecha_recepcion, tipo, email)
+            const html = htmlArco(nombres, apellidos, codigo, fecha_recepcion, tipo, email)
 
             // ----- GUARDAR ARCO ----- //
             await DerechoArco.create({
@@ -54,25 +54,23 @@ const create = async (req, res) => {
             })
 
             // ----- ENVIAR CORREO ---- //
-            // const nodemailer = nodeMailer()
-            // const result = await nodemailer.sendMail({
-            //     from: `SUNKA <${config.SOPORTE_EMAIL}>`,
-            //     to: correo,
-            //     subject: 'Código de verificación',
-            //     html: 'HOLA'
-            // })
-            // console.log(result)
-
-            const resend = new Resend(config.RESEND_API_KEY)
-            const result = resend.emails.send({
-                from: `${companyName} <invoices@divergerest.com>`,
+            const nodemailer = nodeMailer()
+            const result = await nodemailer.sendMail({
+                from: `${companyName} <${config.SOPORTE_EMAIL}>`,
                 to: email,
                 subject: `Confirmación de su solicitud de Derechos ARCO – Código ${codigo}`,
-                html,
+                html
             })
 
+            // const resend = new Resend(config.RESEND_API_KEY)
+            // const result = resend.emails.send({
+            //     from: `${companyName} <invoices@divergerest.com>`,
+            //     to: email,
+            //     subject: `Confirmación de su solicitud de Derechos ARCO – Código ${codigo}`,
+            //     html,
+            // })
+
             if (result.error) {
-                console.error("Error al enviar email:", result.error);
                 return res.status(500).json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
             }
             else {

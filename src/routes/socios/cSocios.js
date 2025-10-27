@@ -10,7 +10,7 @@ import jat from '../../utils/jat.js'
 import { guardarSesion, actualizarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
 import dayjs from '../../utils/dayjs.js'
 import { nodeMailer } from "../../lib/nodeMailer.js"
-import { companyName, codigoVerificacionHtml } from '../../utils/layouts.js'
+import { companyName, htmlCodigoVerificacion } from '../../utils/layouts.js'
 
 const includes = {
     precio_lista1: {
@@ -401,7 +401,7 @@ const sendCodigo = async (req, res) => {
             from: `${companyName} <${config.SOPORTE_EMAIL}>`,
             to: correo,
             subject: 'Código de verificación',
-            html: codigoVerificacionHtml(codigo_verificacion)
+            html: htmlCodigoVerificacion(codigo_verificacion)
         })
 
         res.status(200).json({ code: 0 })
