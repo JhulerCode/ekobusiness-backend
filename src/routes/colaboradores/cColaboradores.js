@@ -6,7 +6,6 @@ import cSistema from "../_sistema/cSistema.js"
 import bcrypt from 'bcrypt'
 import { sessionStore, borrarSesion, actualizarSesion, obtenerSesion } from '../_signin/sessions.js'
 
-
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 

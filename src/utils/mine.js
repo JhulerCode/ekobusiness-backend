@@ -145,9 +145,14 @@ function generarCodigo6() {
     return codigo.toString()
 }
 
+function genId() {
+    return `${Date.now()}${Math.floor(Math.random() * 900) + 100}`
+}
+
 export {
     existe,
     applyFilters,
     cleanFloat,
     generarCodigo6,
+    genId,
 }

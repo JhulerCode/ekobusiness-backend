@@ -39,7 +39,7 @@ const create = async (req, res) => {
         })
 
         if (result.error) {
-            return res.status(500).json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
+            return res.json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
         }
         else {
             res.json({ code: 0 })

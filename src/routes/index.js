@@ -33,6 +33,8 @@ import store_socios from './store/rSocios.js'
 import store_arcos from './store/rArco.js'
 import libro_reclamos from './store/rLibroReclamos.js'
 import store_auth from './store/rAuth.js'
+import izipay from './store/rIzipay.js'
+import store_socio_pedidos from './store/rSocioPedidos.js'
 import ubigeos from './ubigeos/rUbigeos.js'
 
 function routes(app) {
@@ -74,10 +76,12 @@ function routes(app) {
     app.use('/store/newsletter', store_socios)
     app.use('/store/arco', store_arcos)
     app.use('/store/libro-reclamos', libro_reclamos)
+    app.use('/store/ubigeos', ubigeos)
+    app.use('/store/izipay', izipay)
+    app.use('/store/socio-pedidos', store_socio_pedidos)
     app.use('/store/auth', store_auth)
     app.use('/store/account', verifyToken)
     app.use('/store/account', store_auth)
-    app.use('/store/account/ubigeos', ubigeos)
 }
 
 export default routes

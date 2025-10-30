@@ -8,8 +8,8 @@ import { Colaborador } from './Colaborador.js'
 export const SocioPedido = sequelize.define('socio_pedidos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.SMALLINT }, //required
+    origin: { type: DataTypes.STRING }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
-    fecha_entrega: { type: DataTypes.DATEONLY }, //required
     codigo: { type: DataTypes.STRING }, //required
 
     socio: { type: DataTypes.STRING }, //required //linked
@@ -19,13 +19,21 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
 
     pago_condicion: { type: DataTypes.STRING }, //required
     moneda: { type: DataTypes.STRING }, //required //linked
-    tipo_cambio: { type: DataTypes.STRING }, //required
+    tipo_cambio: { type: DataTypes.DOUBLE }, //required
     monto: { type: DataTypes.DOUBLE }, //required
 
+    entrega_tipo: { type: DataTypes.STRING }, //required
+    fecha_entrega: { type: DataTypes.DATEONLY }, //required
+    entrega_ubigeo: { type: DataTypes.STRING }, //required
     direccion_entrega: { type: DataTypes.STRING }, //required
+    entrega_direccion_datos: { type: DataTypes.JSON }, //required
+
+    comprobante_tipo: { type: DataTypes.STRING }, //required
+    comprobante_ruc: { type: DataTypes.STRING }, //required
+    comprobante_razon_social: { type: DataTypes.STRING }, //required
 
     observacion: { type: DataTypes.STRING },
-    estado: { type: DataTypes.STRING }, //required
+    estado: { type: DataTypes.STRING, defaultValue: '1' }, //required
     pagado: { type: DataTypes.BOOLEAN, defaultValue: false },
 
     anulado_motivo: { type: DataTypes.STRING },
@@ -68,7 +76,7 @@ SocioPedidoItem.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 SocioPedido.hasMany(SocioPedidoItem, { foreignKey: 'socio_pedido', as: 'socio_pedido_items', onDelete: 'RESTRICT' })
 SocioPedidoItem.belongsTo(SocioPedido, { foreignKey: 'socio_pedido', as: 'socio_pedido1' })
 
-Colaborador.hasMany(SocioPedido, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-SocioPedido.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(SocioPedido, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-SocioPedido.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(SocioPedido, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+SocioPedido.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(SocioPedido, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+SocioPedido.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

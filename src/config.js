@@ -18,4 +18,8 @@ export default {
     RESEND_API_KEY: process.env.RESEND_API_KEY || '',
     SOPORTE_EMAIL: process.env.SOPORTE_EMAIL || '',
     SOPORTE_EMAIL_PASS: process.env.SOPORTE_EMAIL_PASS || '',
+
+    IZIPAY_MERCHANT_ID: process.env.IZIPAY_MERCHANT_ID || '',
+    IZIPAY_SECRET_KEY: process.env.IZIPAY_SECRET_KEY || '',
+    IZIPAY_HMAC_SHA_256: process.env.IZIPAY_HMAC_SHA_256 || '',
 }

@@ -10,6 +10,10 @@ import { applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { PrecioLista } from '../../database/models/PrecioLista.js'
 
+import config from '../../config.js'
+import { nodeMailer } from "../../lib/nodeMailer.js"
+import { companyName, htmlConfirmacionCompra } from '../../utils/layouts.js'
+
 const attributes = [
     'id'
 ]
@@ -45,22 +49,29 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
-        const { colaborador } = req.user
         const {
-            tipo, fecha, fecha_entrega, codigo,
+            tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
+            pago_condicion, moneda, tipo_cambio, monto,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
+            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             observacion, estado, pagado,
             empresa_datos,
             socio_pedido_items,
         } = req.body
 
+        if (!origin) {
+            var { colaborador } = req.user
+        }
+
 
         // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
-            tipo, fecha, fecha_entrega, codigo,
+            tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
+            pago_condicion, moneda, tipo_cambio, monto,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
+            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             observacion, estado, pagado,
             empresa_datos,
             createdBy: colaborador
@@ -72,6 +83,38 @@ const create = async (req, res) => {
         await SocioPedidoItem.bulkCreate(items, { transaction })
 
         await transaction.commit()
+
+        if (origin == 'ecommerce') {
+            try {
+                const entrega_tipos = [
+                    {
+                        id: 'envio',
+                        nombre: 'Envío a domicilio',
+                    },
+                    {
+                        id: 'retiro',
+                        nombre: 'Retira tu producto',
+                    },
+                ]
+
+                const entrega_tipo1 = entrega_tipos.find(a => a.id == entrega_tipo).nombre
+                const html = htmlConfirmacionCompra(
+                    socio_datos.nombres, socio_datos.apellidos,
+                    codigo, entrega_tipo1, monto,
+                    socio_pedido_items
+                )
+                
+                const nodemailer = nodeMailer()
+                const result = await nodemailer.sendMail({
+                    from: `${companyName} <${config.SOPORTE_EMAIL}>`,
+                    to: socio_datos.correo,
+                    subject: `Confirmación de compra - Código ${codigo}`,
+                    html
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
@@ -567,5 +610,5 @@ export default {
     update,
     anular,
     terminar,
-    findDetail
+    findDetail,
 }
