@@ -91,13 +91,12 @@ const notificationIPN = async (req, res) => {
     if (orderStatus === "PAID") {
         console.log('ASD3')
         //--- Actualizar a pagado ---//
-        const [affectedRows] = await SocioPedido.update(
-            {
-                pagado: true,
-                pago_id: transactionUUID
-            },
-            { codigo: orderId },
-        )
+        const [affectedRows] = await SocioPedido.update({
+            pagado: true,
+            pago_id: transactionUUID
+        }, {
+            where: { codigo: orderId }
+        })
         console.log('ASD4')
         console.log(affectedRows)
         console.log(`Estado de pago actualizado para socio_pedido ${orderId}`)
