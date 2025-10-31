@@ -76,7 +76,7 @@ const validatePayment = async (req, res) => {
     // ----- GUARDAR PEDIDO ----- //
     const transaction = await sequelize.transaction()
     try {
-        const nuevo = await SocioPedido.create({
+        var nuevo = await SocioPedido.create({
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, moneda, tipo_cambio, monto,
