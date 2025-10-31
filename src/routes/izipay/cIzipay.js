@@ -1,3 +1,4 @@
+import { SocioPedido } from "../../database/models/SocioPedido.js";
 import { checkHash, createFormToken } from "../../lib/izipay.js"
 import { genId } from '../../utils/mine.js'
 
@@ -84,22 +85,17 @@ const notificationIPN = async (req, res) => {
     const transactionUUID = transaction.uuid;
 
     if (orderStatus === "PAID") {
-        /* I update my database if needed */
-        /* Add here your custom code */
-        // Buscar y actualizar el documento en MongoDB
-        const venta = await Venta.findOneAndUpdate(
-            { orderId: orderId },
-            { estado_pago: true },
-            { new: true } // Para devolver el documento actualizado
-        );
+        //--- Actualizar a pagado ---//
+        const [affectedRows] = await SocioPedido.update(
+            {
+                pagado: true,
+                pago_id: transactionUUID
+            },
+            { codigo: orderId },
+        )
 
-        if (!venta) {
-            return res.status(404).send("Venta no encontrada");
-        }
-
-        console.log(`Estado de pago actualizado para orderId ${orderId}`);
-        console.log(orderStatus)
-
+        console.log(affectedRows)
+        console.log(`Estado de pago actualizado para socio_pedido ${orderId}`)
     }
 
     /**
