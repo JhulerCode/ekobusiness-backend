@@ -63,28 +63,33 @@ const validatePayment = (req, res) => {
 
 const notificationIPN = async (req, res) => {
     const paymentDataIPN = req.body;
-    console.log("IPN:", paymentDataIPN);
+    // console.log("IPN:", paymentDataIPN);
     /* Retrieve the IPN content */
     const formAnswer = paymentDataIPN["kr-answer"];
     const hash = paymentDataIPN["kr-hash"];
     const hashKey = paymentDataIPN["kr-hash-key"];
 
-
+    console.log('ASD0')
     const dataParse = JSON.parse(formAnswer)
     /* Check the signature using password */
     if (!checkHash(dataParse, hash, hashKey)) {
         return res.status(400).send("Payment hash mismatch!");
     }
-
+    console.log('ASD1')
     /* Retrieve the transaction id from the IPN data */
     const transaction = dataParse.transactions[0];
-
+    console.log('ASD2')
     /* get some parameters from the answer */
     const orderStatus = dataParse.orderStatus;
     const orderId = dataParse.orderDetails.orderId;
     const transactionUUID = transaction.uuid;
 
+    console.log(orderStatus)
+    console.log(orderId)
+    console.log(transactionUUID)
+
     if (orderStatus === "PAID") {
+        console.log('ASD3')
         //--- Actualizar a pagado ---//
         const [affectedRows] = await SocioPedido.update(
             {
@@ -93,10 +98,11 @@ const notificationIPN = async (req, res) => {
             },
             { codigo: orderId },
         )
-
+        console.log('ASD4')
         console.log(affectedRows)
         console.log(`Estado de pago actualizado para socio_pedido ${orderId}`)
     }
+    console.log('ASD5')
 
     /**
      * Message returned to the IPN caller
