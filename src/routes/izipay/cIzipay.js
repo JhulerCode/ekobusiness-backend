@@ -2,7 +2,7 @@ import { checkHash, createFormToken } from "../../lib/izipay.js"
 import { genId } from '../../utils/mine.js'
 
 const createPayment = async (req, res) => {
-    const { monto, correo } = req.body;
+    const { monto, correo, user_id, paymentMethodToken } = req.body;
 
     const orderId = genId()
     // console.log(orderId)
@@ -11,14 +11,28 @@ const createPayment = async (req, res) => {
         amount: monto * 100,
         currency: "PEN",
         orderId,
-        customer: {
+    }
+
+    if (user_id) {
+        if (paymentMethodToken == 'nueva') {
+            dataPayment.formAction = 'REGISTER_PAY'
+            dataPayment.customer = {
+                reference: user_id,
+                email: correo,
+            }
+        }
+        else {
+            dataPayment.paymentMethodToken = paymentMethodToken
+        }
+    }
+    else {
+        dataPayment.customer = {
             email: correo,
-        },
+        }
     }
 
     try {
         const response = await createFormToken(dataPayment);
-        // console.log(response)
 
         if (response.status !== "SUCCESS") {
             let msg = ''
@@ -28,11 +42,10 @@ const createPayment = async (req, res) => {
 
             return res.status(400).json({ code: 1, msg, error: response });
         } else {
-            res.json({ code: 0, data: response.answer });
+            res.json({ code: 0, data: response.answer, orderId });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json(error);
+        res.status(500).json({ code: -1, msg: error.message, error });
     }
 };
 

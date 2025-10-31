@@ -28,3 +28,17 @@ export const checkHash = (answer, hash, hashKey) => {
     const answerHash = Hex.stringify(hmacSHA256(JSON.stringify(answer), key));
     return hash === answerHash;
 };
+
+export const customerWalletGet = async (paymentConf) => {
+    const endPoint = `https://${config.IZIPAY_MERCHANT_ID}:${config.IZIPAY_SECRET_KEY}@api.micuentaweb.pe/api-payment/V4/CustomerWallet/Get`
+
+    try {
+        const response = await axios.post(endPoint, paymentConf, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

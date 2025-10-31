@@ -11,6 +11,7 @@ import { guardarSesion, actualizarSesion, borrarSesion, sessionStore } from '../
 import dayjs from '../../utils/dayjs.js'
 import { nodeMailer } from "../../lib/nodeMailer.js"
 import { companyName, htmlCodigoVerificacion } from '../../utils/layouts.js'
+import { customerWalletGet } from "../../lib/izipay.js"
 
 const includes = {
     precio_lista1: {
@@ -473,6 +474,29 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const getCustomerWallet = async (req, res) => {
+    const { id } = req.params
+
+    const dataPayment = {
+        customerReference: id,
+        tokenStatus: "ACTIVE"
+    }
+
+    try {
+        const response = await customerWalletGet(dataPayment)
+        // console.log(response)
+        if (response.status !== "SUCCESS") {
+            let msg = ''
+
+            return res.json({ code: 1, msg, error: response });
+        } else {
+            res.json({ code: 0, data: response.answer });
+        }
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error });
+    }
+};
+
 export default {
     create,
     find,
@@ -491,4 +515,5 @@ export default {
     verifyCodigo,
     updatePassword,
     deleteUser,
+    getCustomerWallet,
 }

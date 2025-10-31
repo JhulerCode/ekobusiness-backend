@@ -15,4 +15,6 @@ router.post('/verify-codigo', controller.verifyCodigo)
 router.post('/update-password', controller.updatePassword)
 router.delete('/:id', controller.deleteUser)
 
+router.get("/customer-wallet/:id", controller.getCustomerWallet);
+
 export default router
