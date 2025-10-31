@@ -60,10 +60,9 @@ const create = async (req, res) => {
             socio_pedido_items,
         } = req.body
 
-        if (!origin) {
-            var { colaborador } = req.user
-        }
-
+        // if (!origin) {
+        //     var { colaborador } = req.user
+        // }
 
         // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
@@ -84,37 +83,37 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        if (origin == 'ecommerce') {
-            try {
-                const entrega_tipos = [
-                    {
-                        id: 'envio',
-                        nombre: 'Envío a domicilio',
-                    },
-                    {
-                        id: 'retiro',
-                        nombre: 'Retira tu producto',
-                    },
-                ]
+        // if (origin == 'ecommerce') {
+        //     try {
+        //         const entrega_tipos = [
+        //             {
+        //                 id: 'envio',
+        //                 nombre: 'Envío a domicilio',
+        //             },
+        //             {
+        //                 id: 'retiro',
+        //                 nombre: 'Retira tu producto',
+        //             },
+        //         ]
 
-                const entrega_tipo1 = entrega_tipos.find(a => a.id == entrega_tipo).nombre
-                const html = htmlConfirmacionCompra(
-                    socio_datos.nombres, socio_datos.apellidos,
-                    codigo, entrega_tipo1, monto,
-                    socio_pedido_items
-                )
+        //         const entrega_tipo1 = entrega_tipos.find(a => a.id == entrega_tipo).nombre
+        //         const html = htmlConfirmacionCompra(
+        //             socio_datos.nombres, socio_datos.apellidos,
+        //             codigo, entrega_tipo1, monto,
+        //             socio_pedido_items
+        //         )
                 
-                const nodemailer = nodeMailer()
-                const result = await nodemailer.sendMail({
-                    from: `${companyName} <${config.SOPORTE_EMAIL}>`,
-                    to: socio_datos.correo,
-                    subject: `Confirmación de compra - Código ${codigo}`,
-                    html
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
+        //         const nodemailer = nodeMailer()
+        //         const result = await nodemailer.sendMail({
+        //             from: `${companyName} <${config.SOPORTE_EMAIL}>`,
+        //             to: socio_datos.correo,
+        //             subject: `Confirmación de compra - Código ${codigo}`,
+        //             html
+        //         })
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
