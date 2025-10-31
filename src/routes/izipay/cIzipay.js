@@ -160,14 +160,21 @@ const notificationIPN = async (req, res) => {
 
     if (orderStatus === "PAID") {
         //--- Actualizar a pagado ---//
-        await SocioPedido.update({
-            pagado: true,
-            pago_id: transactionUUID
-        }, {
-            where: { codigo: orderId }
-        })
+        // const [affectedRows] = await SocioPedido.update({
+        //     pagado: true,
+        //     pago_id: transactionUUID
+        // }, {
+        //     where: { codigo: orderId }
+        // })
 
-        console.log(`Estado de pago actualizado para pedido: ${orderId}`)
+        // if (affectedRows === 0) {
+
+        // }
+
+        // console.log(`Estado de pago actualizado para pedido: ${orderId}`)
+
+        await updateSocioPedidoPagado(orderId, transactionUUID)
+
     }
 
     /**
@@ -176,6 +183,37 @@ const notificationIPN = async (req, res) => {
      * HTTP response code should be 200
      */
     res.status(200).send(`OK! OrderStatus is ${orderStatus}`);
+}
+
+async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
+    const MAX_ATTEMPTS = 10;
+    const RETRY_DELAY = 30_000; // 30 segundos
+
+    const [affectedRows] = await SocioPedido.update(
+        {
+            pagado: true,
+            pago_id: transactionUUID
+        },
+        {
+            where: { codigo: orderId }
+        }
+    );
+
+    if (affectedRows === 0) {
+        console.log(`Intento ${attempt}: No se actualizó ningún registro.`);
+
+        if (attempt < MAX_ATTEMPTS) {
+            console.log(`Reintentando en 30 segundos...`);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+            return updateSocioPedidoPagado(orderId, transactionUUID, attempt + 1);
+        } else {
+            console.warn(`⚠️ Se alcanzó el número máximo de intentos (${MAX_ATTEMPTS}) sin actualizar nada.`);
+            return false;
+        }
+    }
+
+    console.log(`Estado de pago actualizado para pedido: ${orderId}, en el intento ${attempt}.`);
+    return true;
 }
 
 export default {
