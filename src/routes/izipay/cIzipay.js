@@ -159,22 +159,7 @@ const notificationIPN = async (req, res) => {
     const transactionUUID = transaction.uuid;
 
     if (orderStatus === "PAID") {
-        //--- Actualizar a pagado ---//
-        // const [affectedRows] = await SocioPedido.update({
-        //     pagado: true,
-        //     pago_id: transactionUUID
-        // }, {
-        //     where: { codigo: orderId }
-        // })
-
-        // if (affectedRows === 0) {
-
-        // }
-
-        // console.log(`Estado de pago actualizado para pedido: ${orderId}`)
-
-        await updateSocioPedidoPagado(orderId, transactionUUID)
-
+        updateSocioPedidoPagado(orderId, transactionUUID)
     }
 
     /**
@@ -213,7 +198,6 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
     }
 
     console.log(`Estado de pago actualizado para pedido: ${orderId}, en el intento ${attempt}.`);
-    return true;
 }
 
 export default {
