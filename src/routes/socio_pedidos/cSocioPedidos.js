@@ -19,7 +19,7 @@ const includes = {
     moneda1: {
         model: Moneda,
         as: 'moneda1',
-        attributes: ['nombre']
+        attributes: ['nombre', 'simbolo']
     },
     socio_pedido_items: {
         model: SocioPedidoItem,
