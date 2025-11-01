@@ -32,10 +32,12 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     comprobante_ruc: { type: DataTypes.STRING }, //required
     comprobante_razon_social: { type: DataTypes.STRING }, //required
 
+    pago_metodo: { type: DataTypes.STRING }, //required
+    pago_id: { type: DataTypes.STRING },
+
     observacion: { type: DataTypes.STRING },
     estado: { type: DataTypes.STRING, defaultValue: '1' }, //required
     pagado: { type: DataTypes.BOOLEAN, defaultValue: false },
-    pago_id: { type: DataTypes.STRING },
 
     anulado_motivo: { type: DataTypes.STRING },
     empresa_datos: { type: DataTypes.JSON },

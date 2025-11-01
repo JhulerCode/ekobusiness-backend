@@ -27,7 +27,7 @@ const includes = {
         include: {
             model: Articulo,
             as: 'articulo1',
-            attributes: ['nombre', 'unidad']
+            attributes: ['nombre', 'unidad', 'fotos']
         }
     },
     createdBy1: {
@@ -290,7 +290,7 @@ const findById = async (req, res) => {
                     include: {
                         model: Articulo,
                         as: 'articulo1',
-                        attributes: ['nombre', 'unidad', 'has_fv']
+                        attributes: ['nombre', 'unidad', 'has_fv', 'fotos']
                     }
                 },
                 {
