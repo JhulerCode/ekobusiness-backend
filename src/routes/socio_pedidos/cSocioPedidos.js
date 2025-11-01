@@ -10,14 +10,6 @@ import { applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { PrecioLista } from '../../database/models/PrecioLista.js'
 
-import config from '../../config.js'
-import { nodeMailer } from "../../lib/nodeMailer.js"
-import { companyName, htmlConfirmacionCompra } from '../../utils/layouts.js'
-
-const attributes = [
-    'id'
-]
-
 const includes = {
     socio1: {
         model: Socio,
@@ -49,6 +41,7 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
+        const { colaborador } = req.user
         const {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
@@ -59,10 +52,6 @@ const create = async (req, res) => {
             empresa_datos,
             socio_pedido_items,
         } = req.body
-
-        // if (!origin) {
-        //     var { colaborador } = req.user
-        // }
 
         // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
@@ -82,38 +71,6 @@ const create = async (req, res) => {
         await SocioPedidoItem.bulkCreate(items, { transaction })
 
         await transaction.commit()
-
-        // if (origin == 'ecommerce') {
-        //     try {
-        //         const entrega_tipos = [
-        //             {
-        //                 id: 'envio',
-        //                 nombre: 'Envío a domicilio',
-        //             },
-        //             {
-        //                 id: 'retiro',
-        //                 nombre: 'Retira tu producto',
-        //             },
-        //         ]
-
-        //         const entrega_tipo1 = entrega_tipos.find(a => a.id == entrega_tipo).nombre
-        //         const html = htmlConfirmacionCompra(
-        //             socio_datos.nombres, socio_datos.apellidos,
-        //             codigo, entrega_tipo1, monto,
-        //             socio_pedido_items
-        //         )
-                
-        //         const nodemailer = nodeMailer()
-        //         const result = await nodemailer.sendMail({
-        //             from: `${companyName} <${config.SOPORTE_EMAIL}>`,
-        //             to: socio_datos.correo,
-        //             subject: `Confirmación de compra - Código ${codigo}`,
-        //             html
-        //         })
-        //     } catch (error) {
-        //         console.log(error)
-        //     }
-        // }
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
@@ -271,7 +228,7 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
-            attributes,
+            attributes: ['id'],
             order: [['fecha', 'DESC']],
             where: {},
             include: []

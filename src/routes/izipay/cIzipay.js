@@ -133,7 +133,7 @@ const validatePayment = async (req, res) => {
         console.log(error)
     }
 
-    res.json({ code: 0, data: { id: nuevo.id, send_email_err } });
+    res.json({ code: 0, data: { id: nuevo.id }, send_email_err });
 };
 
 const notificationIPN = async (req, res) => {
@@ -185,14 +185,13 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
     );
 
     if (affectedRows === 0) {
-        console.log(`Intento ${attempt}: No se actualizó ningún registro.`);
+        console.log(`Intento ${attempt}: No se actualizó el pedido: ${orderId}`);
 
         if (attempt < MAX_ATTEMPTS) {
-            console.log(`Reintentando en 30 segundos...`);
             await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
             return updateSocioPedidoPagado(orderId, transactionUUID, attempt + 1);
         } else {
-            console.warn(`⚠️ Se alcanzó el número máximo de intentos (${MAX_ATTEMPTS}) sin actualizar nada.`);
+            console.warn(`Se alcanzó el número máximo de intentos para actualizar el pedido: ${orderId}.`);
             return false;
         }
     }
