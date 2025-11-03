@@ -106,6 +106,17 @@ const sistemaData = {
     cf_re_bpm_31_tipos: [
         { id: '1', nombre: 'EJERCICIO' },
         { id: '2', nombre: 'CASO REAL' },
+    ],
+
+    entrega_tipos: [
+        {
+            id: 'envio',
+            nombre: 'Envío a domicilio',
+        },
+        {
+            id: 'retiro',
+            nombre: 'Retira tu producto',
+        },
     ]
 }
 

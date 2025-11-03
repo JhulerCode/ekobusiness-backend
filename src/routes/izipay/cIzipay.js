@@ -6,6 +6,7 @@ import { genId } from '../../utils/mine.js'
 import config from '../../config.js'
 import { nodeMailer } from "../../lib/nodeMailer.js"
 import { companyName, htmlConfirmacionCompra } from '../../utils/layouts.js'
+import cSistema from '../_sistema/cSistema.js'
 
 const createPayment = async (req, res) => {
     const { monto, correo, user_id, paymentMethodToken } = req.body;
@@ -63,6 +64,7 @@ const validatePayment = async (req, res) => {
         pago_condicion, moneda, tipo_cambio, monto,
         entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
         comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+        pago_metodo, pago_id,
         observacion, estado, pagado,
         empresa_datos,
         socio_pedido_items,
@@ -82,6 +84,7 @@ const validatePayment = async (req, res) => {
             pago_condicion, moneda, tipo_cambio, monto,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+            pago_metodo, pago_id,
             observacion, estado, pagado,
             empresa_datos,
         }, { transaction })
@@ -101,20 +104,9 @@ const validatePayment = async (req, res) => {
     }
 
     // ----- ENVIAR CORREO ----- //
-    let send_email_err = false
+    let send_email_err = null
     try {
-        const entrega_tipos = [
-            {
-                id: 'envio',
-                nombre: 'Envío a domicilio',
-            },
-            {
-                id: 'retiro',
-                nombre: 'Retira tu producto',
-            },
-        ]
-
-        const entrega_tipo1 = entrega_tipos.find(a => a.id == entrega_tipo).nombre
+        const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
         const html = htmlConfirmacionCompra(
             socio_datos.nombres, socio_datos.apellidos,
             codigo, entrega_tipo1, monto,
@@ -129,7 +121,7 @@ const validatePayment = async (req, res) => {
             html
         })
     } catch (error) {
-        send_email_err = true
+        send_email_err = error
         console.log(error)
     }
 

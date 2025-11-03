@@ -41,17 +41,21 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
-        const { colaborador } = req.user
         const {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, moneda, tipo_cambio, monto,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+            pago_metodo, pago_id,
             observacion, estado, pagado,
             empresa_datos,
             socio_pedido_items,
         } = req.body
+
+        if (origin != 'ecommerce') {
+            var { colaborador } = req.user
+        }
 
         // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
@@ -60,6 +64,7 @@ const create = async (req, res) => {
             pago_condicion, moneda, tipo_cambio, monto,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+            pago_metodo, pago_id,
             observacion, estado, pagado,
             empresa_datos,
             createdBy: colaborador
@@ -72,9 +77,32 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
+        // ----- ENVIAR CORREO ----- //
+        let send_email_err = null
+        if (origin == 'ecommerce') {
+            try {
+                const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
+                const html = htmlConfirmacionCompra(
+                    socio_datos.nombres, socio_datos.apellidos,
+                    codigo, entrega_tipo1, monto,
+                    socio_pedido_items
+                )
+    
+                const nodemailer = nodeMailer()
+                const result = await nodemailer.sendMail({
+                    from: `${companyName} <${config.SOPORTE_EMAIL}>`,
+                    to: socio_datos.correo,
+                    subject: `Confirmación de compra - Código ${codigo}`,
+                    html
+                })
+            } catch (error) {
+                send_email_err = error
+            }
+        }
+
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
-        res.json({ code: 0, data })
+        res.json({ code: 0, data, send_email_err })
     }
     catch (error) {
         await transaction.rollback()
