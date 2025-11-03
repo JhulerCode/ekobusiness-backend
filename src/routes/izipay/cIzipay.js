@@ -1,6 +1,6 @@
 import sequelize from '../../database/sequelize.js'
 import { SocioPedido, SocioPedidoItem } from "../../database/models/SocioPedido.js";
-import { checkHash, createFormToken } from "../../lib/izipay.js"
+import { checkHash, createFormToken, cancelPaymentMethodToken } from "../../lib/izipay.js"
 import { genId } from '../../utils/mine.js'
 
 import config from '../../config.js'
@@ -21,7 +21,9 @@ const createPayment = async (req, res) => {
 
     if (user_id) {
         if (paymentMethodToken == 'nueva') {
-            dataPayment.formAction = 'REGISTER_PAY'
+            // dataPayment.formAction = 'REGISTER_PAY'
+            // dataPayment.formAction = "CUSTOMER_WALLET"
+            dataPayment.formAction = 'ASK_REGISTER_PAY'
             dataPayment.customer = {
                 reference: user_id,
                 email: correo,
@@ -41,12 +43,13 @@ const createPayment = async (req, res) => {
         const response = await createFormToken(dataPayment);
 
         if (response.status !== "SUCCESS") {
-            let msg = ''
+            let msg = null
+
             if (response.answer.errorCode == 'INT_015') {
                 msg = 'Correo inválido'
             }
 
-            return res.status(400).json({ code: 1, msg, error: response });
+            return res.json({ code: 1, msg, error: response });
         } else {
             res.json({ code: 0, data: response.answer, orderId });
         }
@@ -191,8 +194,31 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
     console.log(`Estado de pago actualizado para pedido: ${orderId}, en el intento ${attempt}.`);
 }
 
+const deleteTokenTarjeta = async (req, res) => {
+    const { id } = req.params;
+
+    const dataPayment = {
+        paymentMethodToken: id
+    }
+
+    try {
+        const response = await cancelPaymentMethodToken(dataPayment);
+
+        if (response.status !== "SUCCESS") {
+            let msg = null
+
+            return res.json({ code: 1, msg, error: response });
+        } else {
+            res.json({ code: 0, data: response.answer });
+        }
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error });
+    }
+};
+
 export default {
     createPayment,
     validatePayment,
     notificationIPN,
+    deleteTokenTarjeta,
 }

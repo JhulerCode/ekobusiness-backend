@@ -42,3 +42,17 @@ export const customerWalletGet = async (paymentConf) => {
         throw error;
     }
 }
+
+export const cancelPaymentMethodToken = async (paymentConf) => {
+    const endPoint = `https://${config.IZIPAY_MERCHANT_ID}:${config.IZIPAY_SECRET_KEY}@api.micuentaweb.pe/api-payment/V4/Token/Cancel`
+
+    try {
+        const response = await axios.post(endPoint, paymentConf, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
