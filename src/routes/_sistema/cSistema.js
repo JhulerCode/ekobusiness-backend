@@ -2,8 +2,20 @@ const sistemaData = {
     empresa: {
         ruc: '20557053213',
         nombre: 'EKO BUSINESS S.A.C.',
-        telefono: '01 432 865',
+        nombre_comercial: 'SUNKA',
+        telefono: '(01) 432 865',
         correo: 'comercial@sunkatea.com',
+
+        ecommerce_url: 'https://www.sunka.pe',
+        facebook_url: 'https://www.facebook.com/SunkaTea',
+        instagram_url: 'https://www.instagram.com/sunka.pe',
+        whatsapp_ventas: '+51 999 888 777',
+        whatsapp_ventas_url: 'https://wa.me/51999888777',
+
+        email_ventas: 'comercial@sunkatea.com',
+        email_soporte: 'soporte@sunkatea.com',
+        yape_number: '913621456',
+
         igv_porcentaje: 18,
         direcciones: [
             { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'Cal.7 Mza. D Lote. 10 Urb. Los Productores', distrito: 'Santa Anita - Lima - Lima', principal: true },
@@ -117,7 +129,15 @@ const sistemaData = {
             id: 'retiro',
             nombre: 'Retira tu producto',
         },
-    ]
+    ],
+    pago_metodos: [
+        { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },
+        { id: 'yape', nombre: 'Yape' },
+    ],
+    comprobante_tipos: [
+        { id: '03', nombre: 'Boleta', codigo: 'BOLETA' },
+        { id: '01', nombre: 'Factura', codigo: 'FACTURA' },
+    ],
 }
 
 export const calidad_formatos = [

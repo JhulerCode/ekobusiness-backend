@@ -71,6 +71,7 @@ function routes(app) {
     app.use('/api/tipo_cambios', tipo_cambios)
     app.use('/api/transacciones', transacciones)
 
+    app.use('/store/sistema', sistema)
     app.use('/store/categorias', store_categorias)
     app.use('/store/productos', store_productos)
     app.use('/store/newsletter', store_socios)
