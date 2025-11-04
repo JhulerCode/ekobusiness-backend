@@ -21,16 +21,19 @@ export const Articulo = sequelize.define('articulos', {
     produccion_tipo: { type: DataTypes.STRING },
     filtrantes: { type: DataTypes.INTEGER },
     contenido_neto: { type: DataTypes.DOUBLE },
+    
     is_combo: { type: DataTypes.BOOLEAN },
     combo_articulos: { type: DataTypes.JSON },
 
-    precio: { type: DataTypes.DOUBLE },
+    is_ecommerce: { type: DataTypes.BOOLEAN, defaultValue: false },
     descripcion: { type: DataTypes.TEXT },
+    precio: { type: DataTypes.DOUBLE },
+    precio_anterior: { type: DataTypes.DOUBLE },
     fotos: { type: DataTypes.JSON, defaultValue: [] },
     dimenciones: { type: DataTypes.STRING },
     envase_tipo: { type: DataTypes.STRING },
-    ingredientes: { type: DataTypes.JSON },
-    beneficios: { type: DataTypes.JSON },
+    ingredientes: { type: DataTypes.JSON, defaultValue: [] },
+    beneficios: { type: DataTypes.JSON, defaultValue: [] },
 
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }

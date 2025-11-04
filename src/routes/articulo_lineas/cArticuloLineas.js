@@ -1,4 +1,4 @@
-import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
+import { ArticuloLinea } from '../../database/models/ArticuloLinea.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
@@ -6,14 +6,14 @@ import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
 const create = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { tipo, nombre, descripcion, activo } = req.body
+        const { nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(ArticuloCategoria, { nombre }, res) == true) return
+        if (await existe(ArticuloLinea, { nombre }, res) == true) return
 
         // ----- CREAR ----- //
-        const nuevo = await ArticuloCategoria.create({
-            tipo, nombre, descripcion, activo,
+        const nuevo = await ArticuloLinea.create({
+            nombre, descripcion, activo,
             createdBy: colaborador,
         })
 
@@ -30,14 +30,14 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { tipo, nombre, descripcion, activo } = req.body
+        const { nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(ArticuloCategoria, { nombre, id }, res) == true) return
+        if (await existe(ArticuloLinea, { nombre, id }, res) == true) return
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await ArticuloCategoria.update({
-            tipo, nombre, descripcion, activo,
+        const [affectedRows] = await ArticuloLinea.update({
+            nombre, descripcion, activo,
             updatedBy: colaborador
         }, { where: { id } })
 
@@ -56,7 +56,7 @@ const update = async (req, res) => {
 }
 
 async function loadOne(id) {
-    let data = await ArticuloCategoria.findByPk(id)
+    let data = await ArticuloLinea.findByPk(id)
 
     if (data) {
         data = data.toJSON()
@@ -90,7 +90,7 @@ const find = async (req, res) => {
             }
         }
 
-        let data = await ArticuloCategoria.findAll(findProps)
+        let data = await ArticuloLinea.findAll(findProps)
 
         if (data.length > 0 && qry && qry.cols) {
             data = data.map(a => a.toJSON())
@@ -114,11 +114,7 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        let data = await ArticuloCategoria.findByPk(id)
-
-        // if (data) {
-        //     data = data.toJSON()
-        // }
+        let data = await ArticuloLinea.findByPk(id)
 
         res.json({ code: 0, data })
     }
@@ -132,7 +128,7 @@ const delet = async (req, res) => {
         const { id } = req.params
 
         // ----- ELIMINAR ----- //
-        const deletedCount = await ArticuloCategoria.destroy({ where: { id } })
+        const deletedCount = await ArticuloLinea.destroy({ where: { id } })
 
         const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
 
@@ -189,7 +185,7 @@ const updateFotos = async (req, res) => {
         }
 
         // --- ACTUALIZAR EN BASE DE DATOS ---
-        const [affectedRows] = await ArticuloCategoria.update(
+        const [affectedRows] = await ArticuloLinea.update(
             {
                 fotos: new_fotos,
                 updatedBy: colaborador

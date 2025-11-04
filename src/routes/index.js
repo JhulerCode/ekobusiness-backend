@@ -3,6 +3,7 @@ import sistema from './_sistema/rSistema.js'
 import verifyToken from '../middlewares/verifyToken.js'
 
 import activity_logs from './activity_logs/rActivityLogs.js'
+import articulo_lineas from './articulo_lineas/rArticuloLineas.js'
 import articulo_categorias from './articulo_categorias/rArticuloCategorias.js'
 import articulos from './articulos/rArticulos.js'
 import caja_aperturas from './caja_aperturas/rCajaAperturas.js'
@@ -27,6 +28,7 @@ import socios from './socios/rSocios.js'
 import tipo_cambios from './tipo_cambios/rTipoCambios.js'
 import transacciones from './transacciones/rTransacciones.js'
 
+import store_lineas from './store/rArticuloLineas.js'
 import store_categorias from './store/rArticuloCategorias.js'
 import store_productos from './store/rArticulos.js'
 import store_socios from './store/rSocios.js'
@@ -48,6 +50,7 @@ function routes(app) {
     app.use('/api/activity_logs', activity_logs)
     app.use('/api/sistema', sistema)
     app.use('/api/articulo_categorias', articulo_categorias)
+    app.use('/api/articulo_lineas', articulo_lineas)
     app.use('/api/articulos', articulos)
     app.use('/api/caja_aperturas', caja_aperturas)
     app.use('/api/caja_movimientos', caja_movimientos)
@@ -72,6 +75,7 @@ function routes(app) {
     app.use('/api/transacciones', transacciones)
 
     app.use('/store/sistema', sistema)
+    app.use('/store/lineas', store_lineas)
     app.use('/store/categorias', store_categorias)
     app.use('/store/productos', store_productos)
     app.use('/store/newsletter', store_socios)
