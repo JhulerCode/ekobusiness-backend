@@ -29,6 +29,7 @@ router.get(
     verifyPermiso([
         'vCompras:ver',
         'vVentas:ver',
+        'vArticulos:kardex',
     ]),
     controller.findById
 )
