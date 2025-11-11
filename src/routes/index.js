@@ -6,6 +6,7 @@ import activity_logs from './activity_logs/rActivityLogs.js'
 import articulo_lineas from './articulo_lineas/rArticuloLineas.js'
 import articulo_categorias from './articulo_categorias/rArticuloCategorias.js'
 import articulos from './articulos/rArticulos.js'
+import asistencias from './asistencias/rAsistencias.js'
 import caja_aperturas from './caja_aperturas/rCajaAperturas.js'
 import caja_movimientos from './caja_movimientos/rCajaMovimientos.js'
 import colaboradores from './colaboradores/rColaboradores.js'
@@ -52,6 +53,7 @@ function routes(app) {
     app.use('/api/articulo_categorias', articulo_categorias)
     app.use('/api/articulo_lineas', articulo_lineas)
     app.use('/api/articulos', articulos)
+    app.use('/api/asistencias', asistencias)
     app.use('/api/caja_aperturas', caja_aperturas)
     app.use('/api/caja_movimientos', caja_movimientos)
     app.use('/api/colaboradores', colaboradores)
