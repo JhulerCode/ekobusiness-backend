@@ -37,7 +37,7 @@ const includes = {
             as: 'articulo1',
             attributes: ['nombre', stock1]
         }
-    }
+    },
 }
 
 const sqlStock = [Sequelize.literal(`(
@@ -59,7 +59,7 @@ const create = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
         } = req.body
@@ -73,7 +73,7 @@ const create = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
             createdBy: colaborador
@@ -96,7 +96,7 @@ const update = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
         } = req.body
@@ -110,7 +110,7 @@ const update = async (req, res) => {
                 codigo, codigo_barra, nombre, unidad, marca,
                 vende, has_fv, activo,
                 igv_afectacion,
-                tipo, categoria, produccion_tipo, filtrantes, contenido_neto,
+                tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
                 is_combo, combo_articulos,
                 is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
                 updatedBy: colaborador
@@ -136,7 +136,7 @@ const update = async (req, res) => {
 
 async function loadOne(id) {
     let data = await Articulo.findByPk(id, {
-        include: [includes.categoria1, includes.linea1]
+        include: [includes.categoria1, includes.produccion_tipo1]
     })
 
     if (data) {

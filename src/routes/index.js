@@ -31,7 +31,7 @@ import transacciones from './transacciones/rTransacciones.js'
 
 import store_lineas from './store/rArticuloLineas.js'
 import store_categorias from './store/rArticuloCategorias.js'
-import store_productos from './store/rArticulos.js'
+import store_articulos from './store/rArticulos.js'
 import store_socios from './store/rSocios.js'
 import store_arcos from './store/rArco.js'
 import libro_reclamos from './store/rLibroReclamos.js'
@@ -79,7 +79,8 @@ function routes(app) {
     app.use('/store/sistema', sistema)
     app.use('/store/lineas', store_lineas)
     app.use('/store/categorias', store_categorias)
-    app.use('/store/productos', store_productos)
+    app.use('/store/productos', store_articulos)
+    app.use('/store/insumos', store_articulos)
     app.use('/store/newsletter', store_socios)
     app.use('/store/arco', store_arcos)
     app.use('/store/libro-reclamos', libro_reclamos)

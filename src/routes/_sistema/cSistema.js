@@ -138,6 +138,13 @@ const sistemaData = {
         { id: '03', nombre: 'Boleta', codigo: 'BOLETA' },
         { id: '01', nombre: 'Factura', codigo: 'FACTURA' },
     ],
+
+    mp_tipos: [
+        { id: 1, nombre: 'HIERBA BASE' },
+        { id: 2, nombre: 'HIERBA COMPLEMENTO' },
+        { id: 3, nombre: 'FRUTA' },
+        { id: 4, nombre: 'ESPECIA' },
+    ]
 }
 
 export const calidad_formatos = [
