@@ -1,12 +1,14 @@
 import sequelize from '../../database/sequelize.js'
 import { Transaccion, TransaccionItem } from '../../database/models/Transaccion.js'
-import { Op, where } from 'sequelize'
+import { Op, Sequelize, where } from 'sequelize'
 import { Socio } from '../../database/models/Socio.js'
 import { Articulo } from '../../database/models/Articulo.js'
 import { Maquina } from '../../database/models/Maquina.js'
 import { ProduccionOrden } from '../../database/models/ProduccionOrden.js'
 import { applyFilters, cleanFloat } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
+import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
+import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()
@@ -437,6 +439,172 @@ const updateProduccionProductos = async (req, res) => {
 }
 
 
+//--- Inventario hasta fecha ---//
+const findInventario = async (req, res) => {
+    try {
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        const data = await findMovimientosCantidad(qry, { fecha: { [Op.lte]: qry.transaccion_items.f2.val } })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+
+///// ----- PARA PRODUCCIÓN ----- /////
+const findReporteProduccion = async (req, res) => {
+    try {
+        const { linea, f1, f2 } = req.params
+
+        const qry = {
+            incl: ['categoria1'],
+            cols: ['nombre'],
+            fltr: { produccion_tipo: { op: 'Es', val: linea } }
+        }
+        const ti_where = {
+            fecha: { [Op.between]: [f1, f2] },
+            tipo: 4
+        }
+        const produccion_mes = await findMovimientosCantidad(qry, ti_where)
+
+        const produccion_mes_insumos = await RecetaInsumo.findAll({
+            attributes: ['articulo_principal', 'articulo', 'cantidad'],
+            where: {
+                articulo_principal: { [Op.in]: produccion_mes.map(a => a.id) },
+            },
+            include: {
+                model: Articulo,
+                as: 'articulo1',
+                attributes: ['nombre'],
+            },
+            raw: true,
+        });
+
+        //--- Lo que debería haberse consumido ---//
+        const recetaMap = {};
+        for (const r of produccion_mes_insumos) {
+            if (!recetaMap[r.articulo_principal]) recetaMap[r.articulo_principal] = [];
+            recetaMap[r.articulo_principal].push(r);
+        }
+
+        const insumos_esperados_obj = {};
+        for (const prod of produccion_mes) {
+            const receta = recetaMap[prod.id] || [];
+
+            for (const r of receta) {
+                const total = r.cantidad * prod.cantidad;
+
+                if (!insumos_esperados_obj[r.articulo]) {
+                    insumos_esperados_obj[r.articulo] = {
+                        id: r.articulo,
+                        nombre: r['articulo1.nombre'],
+                        cantidad_plan: total
+                    };
+                }
+                else {
+                    insumos_esperados_obj[r.articulo].cantidad_plan += total;
+                }
+            }
+        }
+
+        //--- Lo que se consumió realmente ---//
+        const qry1 = {
+            incl: ['categoria1'],
+            cols: ['nombre'],
+            fltr: { id: { op: 'Es', val: produccion_mes_insumos.map(a => a.articulo) } }
+        }
+        const ti_where1 = {
+            fecha: { [Op.between]: [f1, f2] },
+            tipo: { [Op.in]: [2, 3] }
+        }
+        const insumos_mes_consumos = await findMovimientosCantidad(qry1, ti_where1)
+
+        const insumos_utilizados_obj = {}
+        for (const a of insumos_mes_consumos) {
+            if (!insumos_utilizados_obj[a.id]) {
+                insumos_utilizados_obj[a.id] = {
+                    id: a.id,
+                    nombre: a.nombre,
+                    cantidad_plan: insumos_esperados_obj[a.id].cantidad_plan,
+                    cantidad_real: a.cantidad * -1,
+                    diferencia: insumos_esperados_obj[a.id].cantidad_plan - (a.cantidad * -1)
+                }
+            }
+            else {
+                insumos_utilizados_obj[a.id].cantidad_real += a.cantidad
+            }
+        }
+        const insumos = Object.values(insumos_utilizados_obj);
+
+        const data = {
+            produccion_mes,
+            insumos,
+        }
+
+        res.json({ code: 0, data })
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+async function findMovimientosCantidad(qry, ti_where) {
+    const findProps = {
+        include: [],
+        attributes: ['id'],
+        where: {},
+        order: [['nombre', 'ASC']],
+        group: ['articulos.id'],
+        raw: true,
+    }
+
+    const include1 = {
+        categoria1: {
+            model: ArticuloCategoria,
+            as: 'categoria1',
+            attributes: ['id', 'nombre']
+        }
+    }
+
+    if (qry) {
+        if (qry.incl) {
+            for (const a of qry.incl) {
+                if (qry.incl.includes(a)) findProps.include.push(include1[a])
+            }
+        }
+
+        if (qry.cols) {
+            const columns = Object.keys(Articulo.getAttributes());
+            const cols1 = qry.cols.filter(a => columns.includes(a))
+            findProps.attributes = findProps.attributes.concat(cols1)
+        }
+
+        if (qry.fltr) {
+            Object.assign(findProps.where, applyFilters(qry.fltr))
+        }
+    }
+
+    findProps.include.push({
+        model: TransaccionItem,
+        as: 'transaccion_items',
+        attributes: [],
+        required: false,
+        where: ti_where
+    })
+
+    const operacionesMap = cSistema.arrayMap('transaccion_tipos')
+    const caseParts = Object.entries(operacionesMap)
+        .map(([tipo, obj]) => `WHEN transaccion_items.tipo = ${tipo} THEN ${obj.operacion} * transaccion_items.cantidad`)
+        .join(' ');
+    const caseExpression = `CASE ${caseParts} ELSE 0 END`;
+
+    findProps.attributes.push([Sequelize.fn('COALESCE', Sequelize.fn('SUM', Sequelize.literal(caseExpression)), 0), 'cantidad'])
+
+    return await Articulo.findAll(findProps)
+}
+
 export default {
     update,
     find,
@@ -446,4 +614,7 @@ export default {
     findLotes,
 
     updateProduccionProductos,
+
+    findInventario,
+    findReporteProduccion,
 }

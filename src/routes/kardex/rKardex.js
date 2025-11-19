@@ -90,4 +90,19 @@ router.post(
     controller.updateProduccionProductos
 )
 
+
+
+///// ----- PARA PRODUCCIÓN ----- /////
+router.get(
+    '/produccion/:linea&:f1&:f2',
+    controller.findReporteProduccion
+)
+
+
+//--- Inventario hasta fecha ---///
+router.get(
+    '/inventario',
+    controller.findInventario
+)
+
 export default router

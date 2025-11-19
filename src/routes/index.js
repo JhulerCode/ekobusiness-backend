@@ -45,7 +45,7 @@ function routes(app) {
         // const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress
         res.send(`Eko Business's server is running`)
     })
-
+    
     app.use('/signin', signin)
     app.use('/api', verifyToken)
     app.use('/api/activity_logs', activity_logs)
