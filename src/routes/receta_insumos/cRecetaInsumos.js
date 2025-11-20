@@ -1,43 +1,14 @@
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
 import { Articulo } from '../../database/models/Articulo.js'
 import { applyFilters } from '../../utils/mine.js'
+import { Op } from 'sequelize'
+import controllerArticulos from "../articulos/cArticulos.js"
 
 const find = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            attributes: ['id'],
-            order: [['orden', 'ASC']],
-            where: {},
-            include: []
-        }
-
-        const include1 = {
-            articulo1: {
-                model: Articulo,
-                as: 'articulo1',
-                attributes: ['nombre', 'unidad'],
-            }
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-            }
-
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
-                }
-            }
-        }
-
-        const data = await RecetaInsumo.findAll(findProps)
+        const data = await findAll(qry)
 
         res.json({ code: 0, data })
     }
@@ -115,9 +86,76 @@ const delet = async (req, res) => {
     }
 }
 
+const calcularNecesidad = async (req, res) => {
+    try {
+        const { articulos } = req.body
+
+        const qry = {
+            fltr: {
+                id: { op: 'Es', val: articulos.map(a => a.articulo) }
+            },
+            incl: ['receta_insumos']
+        }
+
+        let data = await controllerArticulos.findAll(qry)
+
+        if (data.length > 0) {
+            data = data.map(a => a.toJSON())
+        }
+
+        for (const a of articulos) {
+            const receta = data.find(b => b.id == a.articulo).receta_insumos
+
+            a.receta = receta.map(b => ({
+                ...b,
+                cantidad_necesitada: b.cantidad * a.cantidad,
+            }));
+        }
+
+        res.json({ code: 0, data: articulos })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+async function findAll({ incl, cols, fltr }) {
+    const findProps = {
+        include: [],
+        attributes: ['id'],
+        where: {},
+        order: [['orden', 'ASC']],
+    }
+
+    const include1 = {
+        articulo1: {
+            model: Articulo,
+            as: 'articulo1',
+            attributes: ['nombre', 'unidad'],
+        }
+    }
+
+    if (fltr) {
+        Object.assign(findProps.where, applyFilters(fltr))
+    }
+
+    if (cols) {
+        findProps.attributes = findProps.attributes.concat(cols)
+    }
+
+    if (incl) {
+        for (const a of incl) {
+            if (incl.includes(a)) findProps.include.push(include1[a])
+        }
+    }
+
+    return await RecetaInsumo.findAll(findProps)
+}
+
 export default {
     find,
     create,
     delet,
     update,
+    calcularNecesidad,
 }

@@ -87,6 +87,12 @@ const find = async (req, res) => {
         }
 
         if (qry) {
+            if (qry.cols) {
+                const columns = Object.keys(Articulo.getAttributes())
+                const cols1 = cols.filter(a => columns.includes(a))
+                findProps.attributes = findProps.attributes.concat(cols1)
+            }
+
             if (qry.fltr) {
                 const fltr_produccionOrden = {}
                 if (qry.fltr.produccionOrden_fecha) fltr_produccionOrden.fecha = qry.fltr.produccionOrden_fecha
@@ -101,14 +107,8 @@ const find = async (req, res) => {
                 delete qry.fltr.produccionOrden_articulo
                 Object.assign(findProps.where, applyFilters(qry.fltr))
             }
-
-            if (qry.cols) {
-                const cols1 = qry.cols.filter(a => a !== 'produccionOrden_fecha' && a !== 'produccionOrden_tipo' && a !== 'produccionOrden_maquina' && a !== 'produccionOrden_articulo')
-
-                findProps.attributes = findProps.attributes.concat(cols1)
-            }
         }
-        
+
         let data = await CuarentenaProducto.findAll(findProps)
 
         if (data.length > 0) {

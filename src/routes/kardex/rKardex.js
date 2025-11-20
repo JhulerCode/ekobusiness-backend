@@ -16,17 +16,17 @@ router.post(
         'vArticulos:ajusteStock',
         'vProductosTerminados:ajusteStock',
 
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
+        'vPrograma:salidaInsumos',
+        // 'vProgramaGranel:salidaInsumos',
+        // 'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:salidaInsumos',
 
-        'vProgramaFiltrantes:productosTerminados',
-        'vProgramaGranel:productosTerminados',
-        'vProgramaLuxury:productosTerminados',
+        'vPrograma:productosTerminados',
+        // 'vProgramaGranel:productosTerminados',
+        // 'vProgramaLuxury:productosTerminados',
         'vProduccionHistorial:productosTerminados',
 
-        'vProgramaFiltrantes:salidaInsumosCompartidos',
+        'vPrograma:salidaInsumosCompartidos',
     ]),
     controller.create
 )
@@ -34,9 +34,9 @@ router.post(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vProgramaFiltrantes:productosTerminados',
-        'vProgramaGranel:productosTerminados',
-        'vProgramaLuxury:productosTerminados',
+        'vPrograma:productosTerminados',
+        // 'vProgramaGranel:productosTerminados',
+        // 'vProgramaLuxury:productosTerminados',
         'vProduccionHistorial:productosTerminados',
     ]),
     controller.update
@@ -45,17 +45,17 @@ router.patch(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
+        'vPrograma:salidaInsumos',
+        // 'vProgramaGranel:salidaInsumos',
+        // 'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:salidaInsumos',
 
-        'vProgramaFiltrantes:productosTerminados',
-        'vProgramaGranel:productosTerminados',
-        'vProgramaLuxury:productosTerminados',
+        'vPrograma:productosTerminados',
+        // 'vProgramaGranel:productosTerminados',
+        // 'vProgramaLuxury:productosTerminados',
         'vProduccionHistorial:productosTerminados',
 
-        'vProgramaFiltrantes:salidaInsumosCompartidos',
+        'vPrograma:salidaInsumosCompartidos',
     ]),
     controller.delet
 )
@@ -69,12 +69,12 @@ router.get(
         'vVentaPedidos:entregarMercaderia',
         'vVentas:crear',
 
-        'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:salidaInsumos',
+        'vPrograma:salidaInsumos',
+        // 'vProgramaGranel:salidaInsumos',
+        // 'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:salidaInsumos',
 
-        'vProgramaFiltrantes:salidaInsumosCompartidos',
+        'vPrograma:salidaInsumosCompartidos',
     ]),
     controller.findLotes
 )

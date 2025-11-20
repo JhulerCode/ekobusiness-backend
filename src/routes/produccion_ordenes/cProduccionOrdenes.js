@@ -97,34 +97,48 @@ const find = async (req, res) => {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
         const findProps = {
+            include: [],
             attributes: ['id', 'calidad_revisado', 'cf_ppc'],
-            order: [['fecha', 'DESC'], ['maquina', 'ASC'], ['orden', 'ASC']],
             where: {},
-            include: [
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad'],
-                    where: {},
+            order: [['fecha', 'DESC'], ['maquina', 'ASC'], ['orden', 'ASC']],
+        }
+
+        const include1 = {
+            articulo1: {
+                model: Articulo,
+                as: 'articulo1',
+                attributes: ['nombre', 'unidad'],
+                where: {},
+            },
+            maquina1: {
+                model: Maquina,
+                as: 'maquina1',
+                attributes: ['nombre', 'produccion_tipo'],
+            },
+            transaccion_items: {
+                model: TransaccionItem,
+                as: 'transaccion_items',
+                attributes: ['tipo', 'cantidad'],
+                where: {
+                    tipo: 4
                 },
-                {
-                    model: Maquina,
-                    as: 'maquina1',
-                    attributes: ['nombre', 'produccion_tipo'],
-                },
-                {
-                    model: TransaccionItem,
-                    as: 'transaccion_items',
-                    attributes: ['tipo', 'cantidad'],
-                    where: {
-                        tipo: 4
-                    },
-                    required: false,
-                }
-            ]
+                required: false,
+            }
         }
 
         if (qry) {
+            if (qry.incl) {
+                for (const a of qry.incl) {
+                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
+                }
+            }
+
+            if (qry.cols) {
+                const columns = Object.keys(ProduccionOrden.getAttributes());
+                const cols1 = qry.cols.filter(a => columns.includes(a))
+                findProps.attributes = findProps.attributes.concat(cols1)
+            }
+
             if (qry.fltr) {
                 const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
                 delete qry.fltr.articulo
@@ -132,18 +146,6 @@ const find = async (req, res) => {
 
                 if (fltr1.articulo) {
                     Object.assign(findProps.include[0].where, applyFilters({ nombre: fltr1.articulo }))
-                }
-            }
-
-            if (qry.cols) {
-                const excludeCols = ['productos_terminados', 'tiempo']
-                const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
-                findProps.attributes = findProps.attributes.concat(cols1)
-            }
-
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(includes[a])
                 }
             }
         }
@@ -165,8 +167,10 @@ const find = async (req, res) => {
 
                 a.productos_terminados = 0
 
-                for (const b of a.transaccion_items) {
-                    a.productos_terminados += b.cantidad
+                if (a.transaccion_items) {
+                    for (const b of a.transaccion_items) {
+                        a.productos_terminados += b.cantidad
+                    }
                 }
             }
         }

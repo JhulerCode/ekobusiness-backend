@@ -9,9 +9,9 @@ router.get(
     verifyPermiso([
         'vProductosCuarentena:listar',
         'vPtsIngresos:verCuarentena',
-        'vProgramaFiltrantes:productosCuarentena',
-        'vProgramaGranel:productosCuarentena',
-        'vProgramaLuxury:productosCuarentena',
+        'vPrograma:productosCuarentena',
+        // 'vProgramaGranel:productosCuarentena',
+        // 'vProgramaLuxury:productosCuarentena',
         'vProduccionHistorial:productosCuarentena',
     ]),
     controller.find

@@ -10,6 +10,7 @@ router.get(
     verifyPermiso([
         'vProductoLineas:listar',
         'vProductosTerminados:listar', 'vProductosTerminados:crear', 'vProductosTerminados:editar', 'vProductosTerminados:clonar', 'vProductosTerminados:crearCombo', 'vProductosTerminados:importar', 'vProductosTerminados:editarBulk',
+        'vPrograma:listar', 'vPrograma:crear'
     ]),
     controller.find
 )

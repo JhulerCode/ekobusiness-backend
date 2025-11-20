@@ -155,40 +155,44 @@ async function loadOne(id) {
     return data
 }
 
+async function findAll({ incl, cols, fltr }) {
+    const findProps = {
+        include: [],
+        attributes,
+        where: {},
+        order: [['tipo', 'ASC'], ['nombre', 'ASC']],
+    }
+
+    if (incl) {
+        for (const a of incl) {
+            if (incl.includes(a)) findProps.include.push(includes[a])
+        }
+    }
+
+    if (cols) {
+        const columns = Object.keys(Articulo.getAttributes());
+        const cols1 = cols.filter(a => columns.includes(a))
+        findProps.attributes = findProps.attributes.concat(cols1)
+
+        if (cols.includes('stock')) findProps.attributes.push(sqlStock)
+        if (cols.includes('valor')) findProps.attributes.push(sqlValor)
+
+        // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+        if (cols.includes('categoria')) findProps.include.push(includes.categoria1)
+    }
+
+    if (fltr) {
+        Object.assign(findProps.where, applyFilters(fltr))
+    }
+
+    return await Articulo.findAll(findProps)
+}
+
 const find = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            attributes,
-            order: [['tipo', 'ASC'], ['nombre', 'ASC']],
-            where: {},
-            include: []
-        }
-
-        if (qry) {
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(includes[a])
-                }
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols.filter(a => a != 'stock' && a != 'valor'))
-
-                if (qry.cols.includes('stock')) findProps.attributes.push(sqlStock)
-                if (qry.cols.includes('valor')) findProps.attributes.push(sqlValor)
-
-                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
-                if (qry.cols.includes('categoria')) findProps.include.push(includes.categoria1)
-            }
-
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-        }
-
-        let data = await Articulo.findAll(findProps)
+        let data = await findAll(qry)
 
         // ----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
         if (data.length > 0 && qry && qry.cols) {
@@ -430,4 +434,5 @@ export default {
     updateBulk,
 
     updateFotos,
+    findAll,
 }

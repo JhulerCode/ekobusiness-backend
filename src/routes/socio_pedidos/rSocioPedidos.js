@@ -71,9 +71,9 @@ router.get(
     '/pendientes',
     verifyPermiso([
         'vVentaPedidos:verProductosPedidos',
-        'vProgramaFiltrantes:verProductosPedidos',
-        'vProgramaGranel:verProductosPedidos',
-        'vProgramaLuxury:verProductosPedidos',
+        'vPrograma:verProductosPedidos',
+        // 'vProgramaGranel:verProductosPedidos',
+        // 'vProgramaLuxury:verProductosPedidos',
     ]),
     controller.findDetail
 )

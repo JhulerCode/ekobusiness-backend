@@ -459,6 +459,13 @@ const findReporteProduccion = async (req, res) => {
     try {
         const { linea, f1, f2 } = req.params
 
+        const data = {
+            produccion_mes: [],
+            produccion_mes_total: 0,
+            insumos: [],
+            insumos_categorias: [],
+        }
+
         const qry = {
             incl: ['categoria1'],
             cols: ['nombre'],
@@ -468,12 +475,14 @@ const findReporteProduccion = async (req, res) => {
             fecha: { [Op.between]: [f1, f2] },
             tipo: 4
         }
-        const produccion_mes = await findMovimientosCantidad(qry, ti_where)
+        data.produccion_mes = await findMovimientosCantidad(qry, ti_where)
+
+        data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + a.cantidad, 0);
 
         const produccion_mes_insumos = await RecetaInsumo.findAll({
             attributes: ['articulo_principal', 'articulo', 'cantidad'],
             where: {
-                articulo_principal: { [Op.in]: produccion_mes.map(a => a.id) },
+                articulo_principal: { [Op.in]: data.produccion_mes.map(a => a.id) },
             },
             include: {
                 model: Articulo,
@@ -491,7 +500,7 @@ const findReporteProduccion = async (req, res) => {
         }
 
         const insumos_esperados_obj = {};
-        for (const prod of produccion_mes) {
+        for (const prod of data.produccion_mes) {
             const receta = recetaMap[prod.id] || [];
 
             for (const r of receta) {
@@ -501,12 +510,11 @@ const findReporteProduccion = async (req, res) => {
                     insumos_esperados_obj[r.articulo] = {
                         id: r.articulo,
                         nombre: r['articulo1.nombre'],
-                        cantidad_plan: total
+                        cantidad: 0
                     };
                 }
-                else {
-                    insumos_esperados_obj[r.articulo].cantidad_plan += total;
-                }
+
+                insumos_esperados_obj[r.articulo].cantidad += total;
             }
         }
 
@@ -526,23 +534,38 @@ const findReporteProduccion = async (req, res) => {
         for (const a of insumos_mes_consumos) {
             if (!insumos_utilizados_obj[a.id]) {
                 insumos_utilizados_obj[a.id] = {
-                    id: a.id,
-                    nombre: a.nombre,
-                    cantidad_plan: insumos_esperados_obj[a.id].cantidad_plan,
-                    cantidad_real: a.cantidad * -1,
-                    diferencia: insumos_esperados_obj[a.id].cantidad_plan - (a.cantidad * -1)
+                    ...a,
+                    cantidad_plan: 0,
+                    cantidad: 0,
+                    diferencia: 0,
                 }
             }
-            else {
-                insumos_utilizados_obj[a.id].cantidad_real += a.cantidad
-            }
-        }
-        const insumos = Object.values(insumos_utilizados_obj);
 
-        const data = {
-            produccion_mes,
-            insumos,
+            insumos_utilizados_obj[a.id].cantidad_plan += insumos_esperados_obj[a.id].cantidad
+            insumos_utilizados_obj[a.id].cantidad += a.cantidad * -1
+            insumos_utilizados_obj[a.id].diferencia += insumos_utilizados_obj[a.id].cantidad_plan - insumos_utilizados_obj[a.id].cantidad
         }
+        data.insumos = Object.values(insumos_utilizados_obj);
+
+        //--- Agrupar por categoria ---//
+        const insumos_categorias_obj = {};
+        for (const a of data.insumos) {
+            const cat = a['categoria1.nombre'] || 'SIN CATEGORÍA';
+
+            if (!insumos_categorias_obj[cat]) {
+                insumos_categorias_obj[cat] = {
+                    nombre: cat,
+                    cantidad_plan: 0,
+                    cantidad: 0,
+                    diferencia: 0,
+                };
+            }
+
+            insumos_categorias_obj[cat].cantidad_plan += a.cantidad_plan;
+            insumos_categorias_obj[cat].cantidad += a.cantidad;
+            insumos_categorias_obj[cat].diferencia += a.diferencia;
+        }
+        data.insumos_categorias = Object.values(insumos_categorias_obj);
 
         res.json({ code: 0, data })
     } catch (error) {

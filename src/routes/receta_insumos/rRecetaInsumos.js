@@ -30,4 +30,12 @@ router.delete(
     controller.delet
 )
 
+router.post(
+    '/calcular-necesidad',
+    verifyPermiso([
+        'vPrograma:crear',
+    ]),
+    controller.calcularNecesidad
+)
+
 export default router

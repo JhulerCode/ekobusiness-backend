@@ -9,8 +9,8 @@ router.get(
     verifyPermiso([
         'vMaquinas:listar',
         'vEquipos:listar',
-        'vProgramaFiltrantes:listar',
-        'vProgramaLuxury:listar',
+        'vPrograma:listar',
+        // 'vProgramaLuxury:listar',
         'vProduccionHistorial:listar',
         'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
         'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',

@@ -7,9 +7,9 @@ const router = Router()
 router.get(
     '/',
     verifyPermiso([
-        'vProgramaFiltrantes:listar',
-        'vProgramaGranel:listar',
-        'vProgramaLuxury:listar',
+        'vPrograma:listar',
+        // 'vProgramaGranel:listar',
+        // 'vProgramaLuxury:listar',
         'vProduccionHistorial:listar',
     ]),
     controller.find
@@ -18,9 +18,9 @@ router.get(
 router.post(
     '/',
     verifyPermiso([
-        'vProgramaFiltrantes:crear',
-        'vProgramaGranel:crear',
-        'vProgramaLuxury:crear'
+        'vPrograma:crear',
+        // 'vProgramaGranel:crear',
+        // 'vProgramaLuxury:crear'
     ]),
     controller.create
 )
@@ -28,9 +28,9 @@ router.post(
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vProgramaFiltrantes:ver', 'vProgramaFiltrantes:editar', 'vProgramaFiltrantes:salidaInsumos',
-        'vProgramaGranel:ver', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
-        'vProgramaLuxury:ver', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
+        'vPrograma:ver', 'vPrograma:editar', 'vPrograma:salidaInsumos',
+        // 'vProgramaGranel:ver', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
+        // 'vProgramaLuxury:ver', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:ver', 'vProduccionHistorial:salidaInsumos',
     ]),
     controller.findById
@@ -39,9 +39,9 @@ router.get(
 router.patch(
     '/:id',
     verifyPermiso([
-        'vProgramaFiltrantes:editar',
-        'vProgramaGranel:editar',
-        'vProgramaLuxury:editar'
+        'vPrograma:editar',
+        // 'vProgramaGranel:editar',
+        // 'vProgramaLuxury:editar'
     ]),
     controller.update
 )
@@ -49,9 +49,9 @@ router.patch(
 router.patch(
     '/terminar/:id',
     verifyPermiso([
-        'vProgramaFiltrantes:terminar',
-        'vProgramaGranel:terminar',
-        'vProgramaLuxury:terminar'
+        'vPrograma:terminar',
+        // 'vProgramaGranel:terminar',
+        // 'vProgramaLuxury:terminar'
     ]),
     controller.terminar
 )
@@ -59,9 +59,9 @@ router.patch(
 router.delete(
     '/:id',
     verifyPermiso([
-        'vProgramaFiltrantes:eliminar',
-        'vProgramaGranel:eliminar',
-        'vProgramaLuxury:eliminar'
+        'vPrograma:eliminar',
+        // 'vProgramaGranel:eliminar',
+        // 'vProgramaLuxury:eliminar'
     ]),
     controller.delet
 )
