@@ -1,6 +1,8 @@
+import verifyVersion from '../middlewares/verifyVersion.js'
+import verifyToken from '../middlewares/verifyToken.js'
+
 import signin from './_signin/signin.js'
 import sistema from './_sistema/rSistema.js'
-import verifyToken from '../middlewares/verifyToken.js'
 
 import activity_logs from './activity_logs/rActivityLogs.js'
 import articulo_lineas from './articulo_lineas/rArticuloLineas.js'
@@ -46,6 +48,7 @@ function routes(app) {
         res.send(`Eko Business's server is running`)
     })
     
+    app.use('/', verifyVersion)
     app.use('/signin', signin)
     app.use('/api', verifyToken)
     app.use('/api/activity_logs', activity_logs)
