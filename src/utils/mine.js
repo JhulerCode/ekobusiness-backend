@@ -141,12 +141,21 @@ function cleanFloat(num) {
 
 function generarCodigo6() {
     const codigo = Math.floor(100000 + Math.random() * 900000);
-  
+
     return codigo.toString()
 }
 
 function genId() {
     return `${Date.now()}${Math.floor(Math.random() * 900) + 100}`
+}
+
+function redondear(num, dec = 2) {
+    if (num === null || num === undefined) return num
+
+    return num.toLocaleString('en-US', {
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec
+    })
 }
 
 export {
@@ -155,4 +164,5 @@ export {
     cleanFloat,
     generarCodigo6,
     genId,
+    redondear,
 }

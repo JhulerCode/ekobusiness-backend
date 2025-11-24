@@ -1,6 +1,7 @@
 import sequelize from '../../database/sequelize.js'
-import { Transaccion, TransaccionItem } from '../../database/models/Transaccion.js'
-import { Op, Sequelize, where } from 'sequelize'
+import { Transaccion } from '../../database/models/Transaccion.js'
+import { Kardex } from '../../database/models/Kardex.js'
+import { Op, Sequelize } from 'sequelize'
 import { Socio } from '../../database/models/Socio.js'
 import { Articulo } from '../../database/models/Articulo.js'
 import { Maquina } from '../../database/models/Maquina.js'
@@ -9,6 +10,7 @@ import { applyFilters, cleanFloat } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
 import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
+import { redondear } from '../../utils/mine.js'
 
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()
@@ -21,19 +23,19 @@ const create = async (req, res) => {
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            observacion, calidad_revisado,
-            transaccion, produccion_orden, maquina,
+            // observacion, estado,
+            transaccion, transaccion_item, produccion_orden, maquina,
         } = req.body
 
         // ----- CREAR ----- //
-        const nuevo = await TransaccionItem.create({
+        const nuevo = await Kardex.create({
             tipo, fecha,
             articulo, cantidad,
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            observacion, calidad_revisado,
-            transaccion, produccion_orden, maquina,
+            // observacion, estado,
+            transaccion, transaccion_item, produccion_orden, maquina,
             createdBy: colaborador
         }, { transaction })
 
@@ -43,7 +45,7 @@ const create = async (req, res) => {
         // ----- ACTUALIZAR STOCK ----- //
         if ([2, 3, 6, 7].includes(Number(tipo))) {
             if (lote_padre) {
-                await TransaccionItem.update(
+                await Kardex.update(
                     {
                         stock: sequelize.literal(`COALESCE(stock, 0) ${tipoInfo.operacion == 1 ? '+' : '-'} ${cantidad}`)
                     },
@@ -68,14 +70,14 @@ const create = async (req, res) => {
                     attributes: ['nombre', 'unidad']
                 },
                 {
-                    model: TransaccionItem,
+                    model: Kardex,
                     as: 'lote_padre1',
                     attributes: ['pu', 'moneda', 'lote', 'fv'],
                 },
             )
         }
 
-        let data = await TransaccionItem.findByPk(nuevo.id, findProps)
+        let data = await Kardex.findByPk(nuevo.id, findProps)
 
         if (data) {
             data = data.toJSON()
@@ -108,22 +110,22 @@ const update = async (req, res) => {
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            observacion, calidad_revisado,
-            transaccion, produccion_orden, maquina,
+            // observacion, estado,
+            transaccion, transaccion_item, produccion_orden, maquina,
         } = req.body
 
-        await TransaccionItem.update({
+        await Kardex.update({
             tipo, fecha,
             articulo, cantidad,
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            observacion, calidad_revisado,
-            transaccion, produccion_orden, maquina,
+            // observacion, estado,
+            transaccion, transaccion_item, produccion_orden, maquina,
             updatedBy: colaborador
         }, { where: { id } })
 
-        const data = await TransaccionItem.findByPk(id)
+        const data = await Kardex.findByPk(id)
 
         res.json({ code: 0, data })
     }
@@ -145,7 +147,7 @@ const find = async (req, res) => {
 
         const include1 = {
             lote_padre1: {
-                model: TransaccionItem,
+                model: Kardex,
                 as: 'lote_padre1',
                 attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote'],
                 required: false
@@ -246,7 +248,7 @@ const find = async (req, res) => {
             }
         }
 
-        let data = await TransaccionItem.findAll(findProps)
+        let data = await Kardex.findAll(findProps)
 
         if (data.length > 0) {
             data = data.map(a => a.toJSON())
@@ -316,7 +318,7 @@ const delet = async (req, res) => {
         const { tipo, lote_padre, cantidad } = req.body
 
         // ----- ELIMINAR ----- //
-        await TransaccionItem.destroy({
+        await Kardex.destroy({
             where: { id },
             transaction
         })
@@ -326,7 +328,7 @@ const delet = async (req, res) => {
             const ope = cSistema.sistemaData.transaccion_tipos.find(a => a.id == tipo)
             const signo = ope.operacion == 1 ? '-' : '+'
 
-            await TransaccionItem.update(
+            await Kardex.update(
                 {
                     stock: sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)
                 },
@@ -362,16 +364,6 @@ const findLotes = async (req, res) => {
                 is_lote_padre: true,
             },
             include: [
-                // {
-                //     model: Transaccion,
-                //     as: 'transaccion1',
-                //     attributes: ['id', 'fecha'],
-                //     where: {
-                //         estado: {
-                //             [Op.in]: [1, 2]
-                //         }
-                //     }
-                // },
                 {
                     model: Articulo,
                     as: 'articulo1',
@@ -380,7 +372,7 @@ const findLotes = async (req, res) => {
             ],
         }
 
-        let data = await TransaccionItem.findAll(findProps)
+        let data = await Kardex.findAll(findProps)
 
         if (data.length > 0) {
             data = data.map(a => a.toJSON())
@@ -395,7 +387,7 @@ const findLotes = async (req, res) => {
                     const [año, mes, dia] = a.fv.split("-")
                     fecha_vencimiento = `${dia}-${mes}-${año}`
                 }
-                a.lote_fv_stock = a.lote + (a.fv ? ` | ${fecha_vencimiento}` : '') + (` | ${a.stock.toLocaleString('es-US', { maximumFractionDigits: 2 })}`)
+                a.lote_fv_stock = a.lote + (a.fv ? ` | ${fecha_vencimiento}` : '') + (` | ${redondear(Number(a.stock))}`)
             }
         }
 
@@ -408,7 +400,7 @@ const findLotes = async (req, res) => {
 
 
 ///// ----- PARA PRODUCCION PRODUCTOS ----- /////
-const updateProduccionProductos = async (req, res) => {
+const ingresarProduccionProductos = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
@@ -416,7 +408,7 @@ const updateProduccionProductos = async (req, res) => {
         const { fecha, transaccion_items } = req.body
 
         for (const a of transaccion_items) {
-            await TransaccionItem.update(
+            await Kardex.update(
                 {
                     fecha: fecha,
                     cantidad: a.cantidad_real,
@@ -477,7 +469,7 @@ const findReporteProduccion = async (req, res) => {
         }
         data.produccion_mes = await findMovimientosCantidad(qry, ti_where)
 
-        data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + a.cantidad, 0);
+        data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + Number(a.cantidad), 0);
 
         const produccion_mes_insumos = await RecetaInsumo.findAll({
             attributes: ['articulo_principal', 'articulo', 'cantidad'],
@@ -501,6 +493,7 @@ const findReporteProduccion = async (req, res) => {
 
         const insumos_esperados_obj = {};
         for (const prod of data.produccion_mes) {
+            prod.cantidad = Number(prod.cantidad);
             const receta = recetaMap[prod.id] || [];
 
             for (const r of receta) {
@@ -573,6 +566,7 @@ const findReporteProduccion = async (req, res) => {
     }
 }
 
+
 async function findMovimientosCantidad(qry, ti_where) {
     const findProps = {
         include: [],
@@ -610,8 +604,8 @@ async function findMovimientosCantidad(qry, ti_where) {
     }
 
     findProps.include.push({
-        model: TransaccionItem,
-        as: 'transaccion_items',
+        model: Kardex,
+        as: 'kardexes',
         attributes: [],
         required: false,
         where: ti_where
@@ -619,7 +613,7 @@ async function findMovimientosCantidad(qry, ti_where) {
 
     const operacionesMap = cSistema.arrayMap('transaccion_tipos')
     const caseParts = Object.entries(operacionesMap)
-        .map(([tipo, obj]) => `WHEN transaccion_items.tipo = ${tipo} THEN ${obj.operacion} * transaccion_items.cantidad`)
+        .map(([tipo, obj]) => `WHEN kardexes.tipo = ${tipo} THEN ${obj.operacion} * kardexes.cantidad`)
         .join(' ');
     const caseExpression = `CASE ${caseParts} ELSE 0 END`;
 
@@ -636,7 +630,7 @@ export default {
 
     findLotes,
 
-    updateProduccionProductos,
+    ingresarProduccionProductos,
 
     findInventario,
     findReporteProduccion,

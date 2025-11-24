@@ -44,13 +44,13 @@ router.delete(
     controller.delet
 )
 
-router.patch(
-    '/anular/:id',
-    verifyPermiso([
-        'vCompras:anular',
-        'vVentas:anular',
-    ]),
-    controller.anular
-)
+// router.patch(
+//     '/anular/:id',
+//     verifyPermiso([
+//         'vCompras:anular',
+//         'vVentas:anular',
+//     ]),
+//     controller.anular
+// )
 
 export default router

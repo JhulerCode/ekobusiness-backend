@@ -1,11 +1,11 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
+import { Colaborador } from './Colaborador.js'
 import { Socio } from './Socio.js'
 import { Articulo } from './Articulo.js'
 import { Moneda } from './Moneda.js'
 import { SocioPedido } from './SocioPedido.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
-import { Colaborador } from './Colaborador.js'
 import { Maquina } from './Maquina.js'
 
 export const Transaccion = sequelize.define('transacciones', {
@@ -58,34 +58,40 @@ Transaccion.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' }
 
 export const TransaccionItem = sequelize.define('transaccion_items', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tipo: { type: DataTypes.SMALLINT }, //required
-    fecha: { type: DataTypes.DATEONLY }, //required
-
     articulo: { type: DataTypes.STRING }, //required //linked
     cantidad: { type: DataTypes.DOUBLE }, //required
 
     pu: { type: DataTypes.DOUBLE }, //required
     igv_afectacion: { type: DataTypes.STRING }, //required
     igv_porcentaje: { type: DataTypes.DOUBLE }, //required
-    moneda: { type: DataTypes.STRING }, //required //linked
-    tipo_cambio: { type: DataTypes.DOUBLE }, //required
 
     lote: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
 
-    is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked
-    stock: { type: DataTypes.DOUBLE },
-    lote_padre: { type: DataTypes.STRING }, //required //linked
-
     observacion: { type: DataTypes.STRING },
     calidad_revisado: { type: DataTypes.STRING },
 
-    transaccion: { type: DataTypes.STRING }, //required //linked
-    produccion_orden: { type: DataTypes.STRING }, //required //linked
-    maquina: { type: DataTypes.STRING },
+    transaccion: { type: DataTypes.STRING }, ////linked
 
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
+
+    tipo: { type: DataTypes.SMALLINT }, //required //--- Eliminar ---//
+    fecha: { type: DataTypes.DATEONLY }, //required //--- Eliminar ---//
+
+    moneda: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
+    tipo_cambio: { type: DataTypes.DOUBLE }, //required //--- Eliminar ---//
+
+    lote: { type: DataTypes.STRING }, //--- Eliminar ---//
+    fv: { type: DataTypes.DATEONLY }, //--- Eliminar ---//
+
+    is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked //--- Eliminar ---//
+    stock: { type: DataTypes.DOUBLE }, //--- Eliminar ---//
+    lote_padre: { type: DataTypes.STRING }, //required //linked //--- Eliminar ---//
+
+    produccion_orden: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
+    maquina: { type: DataTypes.STRING }, //--- Eliminar ---//
+
 })
 
 Articulo.hasMany(TransaccionItem, { foreignKey: 'articulo', as: 'transaccion_items', onDelete: 'RESTRICT' })

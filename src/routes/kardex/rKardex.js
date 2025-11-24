@@ -24,7 +24,7 @@ router.post(
         'vPrograma:productosTerminados',
         // 'vProgramaGranel:productosTerminados',
         // 'vProgramaLuxury:productosTerminados',
-        'vProduccionHistorial:productosTerminados',
+        // 'vProduccionHistorial:productosTerminados',
 
         'vPrograma:salidaInsumosCompartidos',
     ]),
@@ -37,7 +37,7 @@ router.patch(
         'vPrograma:productosTerminados',
         // 'vProgramaGranel:productosTerminados',
         // 'vProgramaLuxury:productosTerminados',
-        'vProduccionHistorial:productosTerminados',
+        // 'vProduccionHistorial:productosTerminados',
     ]),
     controller.update
 )
@@ -61,6 +61,7 @@ router.delete(
 )
 
 
+///// ----- LOTES ----- /////
 router.get(
     '/lotes/:id',
     verifyPermiso([
@@ -87,7 +88,7 @@ router.post(
     verifyPermiso([
         'vPtsIngresos:listar'
     ]),
-    controller.updateProduccionProductos
+    controller.ingresarProduccionProductos
 )
 
 

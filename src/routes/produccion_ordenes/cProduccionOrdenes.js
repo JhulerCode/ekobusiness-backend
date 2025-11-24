@@ -3,8 +3,7 @@ import { Articulo } from '../../database/models/Articulo.js'
 import { Maquina } from '../../database/models/Maquina.js'
 import { applyFilters } from '../../utils/mine.js'
 import cSistema from '../_sistema/cSistema.js'
-import { CuarentenaProducto } from '../../database/models/CuarentenaProducto.js'
-import { TransaccionItem } from '../../database/models/Transaccion.js'
+import { Kardex } from '../../database/models/Kardex.js'
 
 const includes = {
     articulo1: {
@@ -115,9 +114,9 @@ const find = async (req, res) => {
                 as: 'maquina1',
                 attributes: ['nombre', 'produccion_tipo'],
             },
-            transaccion_items: {
-                model: TransaccionItem,
-                as: 'transaccion_items',
+            kardexes: {
+                model: Kardex,
+                as: 'kardexes',
                 attributes: ['tipo', 'cantidad'],
                 where: {
                     tipo: 4
@@ -252,11 +251,11 @@ const findTrazabilidad = async (req, res) => {
                     attributes: ['nombre', 'produccion_tipo'],
                 },
                 {
-                    model: TransaccionItem,
-                    as: 'transaccion_items',
+                    model: Kardex,
+                    as: 'kardexes',
                     include: [
                         {
-                            model: TransaccionItem,
+                            model: Kardex,
                             as: 'lote_padre1',
                             attributes: ['moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote'],
                         },

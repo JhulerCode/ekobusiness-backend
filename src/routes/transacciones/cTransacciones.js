@@ -1,14 +1,11 @@
 import sequelize from '../../database/sequelize.js'
 import { Transaccion, TransaccionItem } from '../../database/models/Transaccion.js'
-import { Op } from 'sequelize'
 import { Socio } from '../../database/models/Socio.js'
 import { SocioPedido, SocioPedidoItem } from '../../database/models/SocioPedido.js'
 import { Articulo } from '../../database/models/Articulo.js'
-import { Maquina } from '../../database/models/Maquina.js'
 import { Moneda } from '../../database/models/Moneda.js'
-import { ProduccionOrden } from '../../database/models/ProduccionOrden.js'
-import { CuarentenaProducto } from '../../database/models/CuarentenaProducto.js'
-import { applyFilters, cleanFloat } from '../../utils/mine.js'
+import { Kardex } from '../../database/models/Kardex.js'
+import { applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 const includes = {
@@ -53,6 +50,19 @@ const create = async (req, res) => {
 
         // ----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
+            ...a,
+            // tipo, fecha,
+            // is_lote_padre: tipo == 1 ? true : false,
+            // stock: tipo == 1 ? a.cantidad : tipo == 5 ? a.stock : null,
+            transaccion: nuevo.id,
+            createdBy: colaborador
+        }))
+
+        await TransaccionItem.bulkCreate(items, { transaction })
+
+
+        // ----- GUARDAR KARDEX ----- //
+        const kardex_items = transaccion_items.map(a => ({
             tipo, fecha,
             ...a,
             is_lote_padre: tipo == 1 ? true : false,
@@ -61,7 +71,8 @@ const create = async (req, res) => {
             createdBy: colaborador
         }))
 
-        await TransaccionItem.bulkCreate(items, { transaction })
+        await Kardex.bulkCreate(kardex_items, { transaction })
+
 
         // ----- ACTUALIZAR CANTIDAD ENTREGADA ----- //
         if (socio_pedido) {
@@ -204,18 +215,11 @@ const findById = async (req, res) => {
                 {
                     model: TransaccionItem,
                     as: 'transaccion_items',
-                    include: [
-                        {
-                            model: Articulo,
-                            as: 'articulo1',
-                            attributes: ['nombre', 'unidad', 'has_fv']
-                        },
-                        {
-                            model: TransaccionItem,
-                            as: 'lote_padre1',
-                            attributes: ['id', 'lote', 'pu', 'moneda', 'fv'],
-                        }
-                    ]
+                    include: {
+                        model: Articulo,
+                        as: 'articulo1',
+                        attributes: ['nombre', 'unidad', 'has_fv']
+                    }
                 },
                 {
                     model: Socio,
@@ -262,9 +266,9 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { tipo, estado } = req.body
 
-        const transaccion_items = await TransaccionItem.findAll({
+        await Kardex.destroy({
             where: { transaccion: id },
-            attributes: ['id', 'lote_padre', 'cantidad'],
+            transaction
         })
 
         await TransaccionItem.destroy({
@@ -277,14 +281,20 @@ const delet = async (req, res) => {
             transaction
         })
 
-        if (estado != 0) {
+        if (tipo == 5) {
+            const kardexes = await Kardex.findAll({
+                where: { transaccion: id },
+                attributes: ['id', 'lote_padre', 'cantidad'],
+            })
+
             const positivos = cSistema.sistemaData.transaccion_tipos
                 .filter(a => a.operacion == 1)
                 .map(a => a.id)
 
-            for (const a of transaccion_items) {
+            for (const a of kardexes) {
                 const signo = positivos.includes(tipo.toString()) ? '-' : '+'
-                await TransaccionItem.update(
+
+                await Kardex.update(
                     {
                         stock: sequelize.literal(`COALESCE(stock, 0) ${signo} ${a.cantidad}`)
                     },
@@ -307,82 +317,82 @@ const delet = async (req, res) => {
     }
 }
 
-const anular = async (req, res) => {
-    const transaction = await sequelize.transaction()
+// const anular = async (req, res) => {
+//     const transaction = await sequelize.transaction()
 
-    try {
-        const { colaborador } = req.user
-        const { id } = req.params
-        const { anulado_motivo, item } = req.body
+//     try {
+//         const { colaborador } = req.user
+//         const { id } = req.params
+//         const { anulado_motivo, item } = req.body
 
-        const transaccion_itemsPast = await TransaccionItem.findAll({
-            where: { transaccion: id },
-        })
+//         const transaccion_itemsPast = await TransaccionItem.findAll({
+//             where: { transaccion: id },
+//         })
 
-        const transaccionPast = await Transaccion.findByPk(id)
+//         const transaccionPast = await Transaccion.findByPk(id)
 
-        await TransaccionItem.destroy({
-            where: { transaccion: id },
-            transaction
-        })
+//         await TransaccionItem.destroy({
+//             where: { transaccion: id },
+//             transaction
+//         })
 
-        await Transaccion.destroy({
-            where: { id },
-            transaction
-        })
-        let transaccionData = transaccionPast.toJSON()
+//         await Transaccion.destroy({
+//             where: { id },
+//             transaction
+//         })
+//         let transaccionData = transaccionPast.toJSON()
 
-        if (item.tipo == 5) {
-            for (const a of transaccion_itemsPast) {
-                await TransaccionItem.update(
-                    {
-                        stock: sequelize.literal(`COALESCE(stock, 0) + ${a.cantidad}`)
-                    },
-                    {
-                        where: { id: a.lote_padre },
-                        transaction
-                    }
-                )
-            }
-        }
+//         if (item.tipo == 5) {
+//             for (const a of transaccion_itemsPast) {
+//                 await TransaccionItem.update(
+//                     {
+//                         stock: sequelize.literal(`COALESCE(stock, 0) + ${a.cantidad}`)
+//                     },
+//                     {
+//                         where: { id: a.lote_padre },
+//                         transaction
+//                     }
+//                 )
+//             }
+//         }
 
-        if (transaccionData.socio_pedido) {
-            for (const a of transaccion_itemsPast) {
-                await SocioPedidoItem.update(
-                    {
-                        entregado: sequelize.literal(`COALESCE(entregado, 0) - ${a.cantidad}`)
-                    },
-                    {
-                        where: { articulo: a.articulo, socio_pedido: transaccionData.socio_pedido },
-                        transaction
-                    }
-                )
-            }
-        }
+//         if (transaccionData.socio_pedido) {
+//             for (const a of transaccion_itemsPast) {
+//                 await SocioPedidoItem.update(
+//                     {
+//                         entregado: sequelize.literal(`COALESCE(entregado, 0) - ${a.cantidad}`)
+//                     },
+//                     {
+//                         where: { articulo: a.articulo, socio_pedido: transaccionData.socio_pedido },
+//                         transaction
+//                     }
+//                 )
+//             }
+//         }
 
-        // ----- GUARDAR EL ANULADO ----- //
-        transaccionData.estado = 0
-        transaccionData.anulado_motivo = anulado_motivo
-        transaccionData.updatedBy = colaborador
-        const transaccionNew = await Transaccion.create(transaccionData, { transaction })
+//         // ----- GUARDAR EL ANULADO ----- //
+//         transaccionData.estado = 0
+//         transaccionData.anulado_motivo = anulado_motivo
+//         transaccionData.updatedBy = colaborador
+//         const transaccionNew = await Transaccion.create(transaccionData, { transaction })
 
-        const itemsNew = transaccion_itemsPast.map(a => {
-            const plain = a.toJSON()
-            plain.transaccion = transaccionNew.id
-            return plain
-        })
-        await TransaccionItem.bulkCreate(itemsNew, { transaction })
+//         const itemsNew = transaccion_itemsPast.map(a => {
+//             const plain = a.toJSON()
+//             plain.transaccion = transaccionNew.id
+//             return plain
+//         })
+//         await TransaccionItem.bulkCreate(itemsNew, { transaction })
 
-        await transaction.commit()
+//         await transaction.commit()
 
-        res.json({ code: 0 })
-    }
-    catch (error) {
-        await transaction.rollback()
+//         res.json({ code: 0 })
+//     }
+//     catch (error) {
+//         await transaction.rollback()
 
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
 
 export default {
     create,
@@ -390,5 +400,5 @@ export default {
     find,
     findById,
     delet,
-    anular,
+    // anular,
 }

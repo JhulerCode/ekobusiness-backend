@@ -1,7 +1,7 @@
 import sequelize from "./sequelize.js";
 import "./models/_all.js";
 // import initData from './initData.js'
-// import { Articulo } from './models/Articulo.js'
+// import { Kardex } from './models/Kardex.js'
 
 async function connect() {
 	try {
@@ -11,7 +11,7 @@ async function connect() {
 		console.log("Unable to connect to the database:", error.message);
 	}
 
-	// await Articulo.sync({ alter: true })
+	// await Kardex.sync({ alter: true })
 	// console.log('Tabla alterada')
 
 	// await sequelize.sync({ alter: true })

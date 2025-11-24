@@ -1,7 +1,8 @@
 import { Op } from 'sequelize'
 import sequelize from '../../database/sequelize.js'
 import { TipoCambio } from '../../database/models/TipoCambio.js'
-import { Transaccion, TransaccionItem } from '../../database/models/Transaccion.js'
+import { Transaccion } from '../../database/models/Transaccion.js'
+import { Kardex } from '../../database/models/Kardex.js'
 import { applyFilters, existe } from '../../utils/mine.js'
 
 const create = async (req, res) => {
@@ -20,33 +21,27 @@ const create = async (req, res) => {
             createdBy: colaborador
         }, { transaction })
 
-        // ----- ACTUALIZAR TRANSACCIONES ----- //
-        const updatedIds = await Transaccion.findAll({
-            where: { fecha, moneda },
-            attributes: ['id'],
-            transaction
-        })
-
-        let idsArray = []
-        for (const a of updatedIds) idsArray.push(a.id)
-
+        // ----- ACTUALIZAR EN TRANSACCIONES ----- //
         await Transaccion.update(
             {
                 tipo_cambio: venta
             },
             {
-                where: { id: { [Op.in]: idsArray } },
+                where: { fecha, moneda },
                 transaction
             }
         )
 
-        await TransaccionItem.update(
+        // ----- ACTUALIZAR EN KARDEX ----- //
+        await Kardex.update(
             {
                 tipo_cambio: venta
             },
             {
                 where: {
-                    transaccion: { [Op.in]: idsArray }
+                    fecha,
+                    moneda,
+                    is_lote_padre: true,
                 },
                 transaction
             }
@@ -86,33 +81,27 @@ const update = async (req, res) => {
         )
 
         if (affectedRows > 0) {
-            // ----- ACTUALIZAR TRANSACCIONES ----- //
-            const updatedIds = await Transaccion.findAll({
-                where: { fecha, moneda },
-                attributes: ['id'],
-                transaction
-            })
-
-            let idsArray = []
-            for (const a of updatedIds) idsArray.push(a.id)
-
+            // ----- ACTUALIZAR EN TRANSACCIONES ----- //
             await Transaccion.update(
                 {
                     tipo_cambio: venta
                 },
                 {
-                    where: { id: { [Op.in]: idsArray } },
+                    where: { fecha, moneda },
                     transaction
                 }
             )
 
-            await TransaccionItem.update(
+            // ----- ACTUALIZAR EN KARDEX ----- //
+            await Kardex.update(
                 {
                     tipo_cambio: venta
                 },
                 {
                     where: {
-                        transaccion: { [Op.in]: idsArray }
+                        fecha,
+                        moneda,
+                        is_lote_padre: true,
                     },
                     transaction
                 }
@@ -194,32 +183,27 @@ const delet = async (req, res) => {
 
         await TipoCambio.destroy({ where: { id } })
 
-        const updatedIds = await Transaccion.findAll({
-            where: { fecha, moneda },
-            attributes: ['id'],
-            transaction
-        })
-
-        let idsArray = []
-        for (const a of updatedIds) idsArray.push(a.id)
-
+        // ----- ACTUALIZAR EN TRANSACCIONES ----- //
         await Transaccion.update(
             {
                 tipo_cambio: null
             },
             {
-                where: { id: { [Op.in]: idsArray } },
+                where: { fecha, moneda },
                 transaction
             }
         )
 
-        await TransaccionItem.update(
+        // ----- ACTUALIZAR EN KARDEX ----- //
+        await Kardex.update(
             {
                 tipo_cambio: null
             },
             {
                 where: {
-                    transaccion: { [Op.in]: idsArray }
+                    fecha,
+                    moneda,
+                    is_lote_padre: true,
                 },
                 transaction
             }
