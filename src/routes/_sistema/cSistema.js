@@ -65,11 +65,6 @@ const sistemaData = {
         { id: 2, nombre: 'CRÉDITO 30 DÍAS' },
         { id: 3, nombre: 'CRÉDITO 60 DÍAS' }
     ],
-    produccion_tipos: [
-        { id: 1, nombre: 'FILTRANTE' },
-        { id: 2, nombre: 'GRANEL' },
-        { id: 3, nombre: 'PIRAMIDAL' }
-    ],
     produccion_orden_estados: [
         { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'ABIERTO' },

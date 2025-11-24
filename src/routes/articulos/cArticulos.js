@@ -182,7 +182,7 @@ async function findAll({ incl, cols, fltr }) {
     if (fltr) {
         Object.assign(findProps.where, applyFilters(fltr))
     }
-
+    
     return await Articulo.findAll(findProps)
 }
 

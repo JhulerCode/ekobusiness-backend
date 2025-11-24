@@ -11,6 +11,7 @@ import cSistema from "../_sistema/cSistema.js"
 import { RecetaInsumo } from '../../database/models/RecetaInsumo.js'
 import { ArticuloCategoria } from '../../database/models/ArticuloCategoria.js'
 import { redondear } from '../../utils/mine.js'
+import { ArticuloLinea } from '../../database/models/ArticuloLinea.js'
 
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()
@@ -180,6 +181,11 @@ const find = async (req, res) => {
                         model: Maquina,
                         as: 'maquina1',
                         attributes: ['id', 'nombre'],
+                    },
+                    {
+                        model: ArticuloLinea,
+                        as: 'tipo1',
+                        attributes: ['id', 'nombre'],
                     }
                 ],
                 required: false,
@@ -254,7 +260,6 @@ const find = async (req, res) => {
             data = data.map(a => a.toJSON())
 
             const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
-            const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
             const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
             const estadosMap = cSistema.arrayMap('estados')
 
@@ -289,12 +294,6 @@ const find = async (req, res) => {
                 if (qry.cols.includes('producto_estado')) {
                     a.producto_estado = a.is_lote_padre ? 2 : 1
                     a.producto_estado1 = cuarentena_productos_estadosMap[a.producto_estado]
-                }
-
-                if (qry.cols.includes('produccion_orden_tipo')) {
-                    if (a.produccion_orden1) {
-                        a.produccion_orden1.tipo1 = produccion_tiposMap[a.produccion_orden1.tipo]
-                    }
                 }
 
                 if (qry.cols.includes('calidad_revisado')) {

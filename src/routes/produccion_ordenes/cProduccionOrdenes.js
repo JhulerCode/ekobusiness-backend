@@ -1,9 +1,11 @@
 import { ProduccionOrden } from '../../database/models/ProduccionOrden.js'
 import { Articulo } from '../../database/models/Articulo.js'
 import { Maquina } from '../../database/models/Maquina.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters, setFindAllProps } from '../../utils/mine.js'
 import cSistema from '../_sistema/cSistema.js'
 import { Kardex } from '../../database/models/Kardex.js'
+import { ArticuloLinea } from '../../database/models/ArticuloLinea.js'
+import { Sequelize } from 'sequelize'
 
 const includes = {
     articulo1: {
@@ -95,82 +97,52 @@ const find = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            include: [],
-            attributes: ['id', 'calidad_revisado', 'cf_ppc'],
-            where: {},
-            order: [['fecha', 'DESC'], ['maquina', 'ASC'], ['orden', 'ASC']],
-        }
-
         const include1 = {
             articulo1: {
                 model: Articulo,
                 as: 'articulo1',
-                attributes: ['nombre', 'unidad'],
+                attributes: ['id', 'nombre', 'unidad'],
                 where: {},
             },
             maquina1: {
                 model: Maquina,
                 as: 'maquina1',
-                attributes: ['nombre', 'produccion_tipo'],
+                attributes: ['id', 'nombre'],
+                where: {},
             },
-            kardexes: {
-                model: Kardex,
-                as: 'kardexes',
-                attributes: ['tipo', 'cantidad'],
-                where: {
-                    tipo: 4
-                },
-                required: false,
-            }
+            tipo1: {
+                model: ArticuloLinea,
+                as: 'tipo1',
+                attributes: ['id', 'nombre'],
+                where: {},
+            },
         }
 
-        if (qry) {
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
-                }
-            }
-
-            if (qry.cols) {
-                const columns = Object.keys(ProduccionOrden.getAttributes());
-                const cols1 = qry.cols.filter(a => columns.includes(a))
-                findProps.attributes = findProps.attributes.concat(cols1)
-            }
-
-            if (qry.fltr) {
-                const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
-                delete qry.fltr.articulo
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-
-                if (fltr1.articulo) {
-                    Object.assign(findProps.include[0].where, applyFilters({ nombre: fltr1.articulo }))
-                }
-            }
+        const sqls1 = {
+            productos_terminados: [
+                Sequelize.literal(`(
+                    SELECT COALESCE(SUM(k.cantidad), 0)
+                    FROM kardexes AS k
+                    WHERE k.produccion_orden = produccion_ordenes.id AND k.tipo = 4
+                )`),
+                'productos_terminados'
+            ]
         }
+
+        const findProps = setFindAllProps(ProduccionOrden, qry, include1, sqls1)
 
         let data = await ProduccionOrden.findAll(findProps)
 
         if (data.length > 0) {
             data = data.map(a => a.toJSON())
 
-            const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
             const produccion_orden_estadosMap = cSistema.arrayMap('produccion_orden_estados')
             const cumplidado_estadosMap = cSistema.arrayMap('cumplidado_estados')
 
             for (const a of data) {
-                if (qry.cols.includes('tipo')) a.tipo1 = produccion_tiposMap[a.tipo]
                 if (qry.cols.includes('estado')) a.estado1 = produccion_orden_estadosMap[a.estado]
                 if (a.estado_calidad_revisado) a.estado_calidad_revisado1 = cumplidado_estadosMap[a.estado_calidad_revisado]
                 if (a.estado_cf_ppc) a.estado_cf_ppc1 = cumplidado_estadosMap[a.estado_cf_ppc]
-
-                a.productos_terminados = 0
-
-                if (a.transaccion_items) {
-                    for (const b of a.transaccion_items) {
-                        a.productos_terminados += b.cantidad
-                    }
-                }
             }
         }
 

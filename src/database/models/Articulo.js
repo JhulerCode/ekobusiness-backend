@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
-import { ArticuloCategoria } from './ArticuloCategoria.js'
 import { ArticuloLinea } from './ArticuloLinea.js'
+import { ArticuloCategoria } from './ArticuloCategoria.js'
 import { Colaborador } from './Colaborador.js'
 
 export const Articulo = sequelize.define('articulos', {

@@ -1,6 +1,15 @@
 import { Maquina } from '../../database/models/Maquina.js'
+import { ArticuloLinea } from '../../database/models/ArticuloLinea.js'
 import { applyFilters, existe } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
+
+const include1 = {
+    produccion_tipo1: {
+        model: ArticuloLinea,
+        as: 'produccion_tipo1',
+        attributes: ['id', 'nombre']
+    }
+}
 
 const create = async (req, res) => {
     try {
@@ -58,15 +67,9 @@ const update = async (req, res) => {
 }
 
 async function loadOne(id) {
-    let data = await Maquina.findByPk(id)
-
-    if (data) {
-        data = data.toJSON()
-
-        const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
-
-        data.produccion_tipo1 = produccion_tiposMap[data.produccion_tipo]
-    }
+    let data = await Maquina.findByPk(id, {
+        include: [include1.produccion_tipo1]
+    })
 
     return data
 }
@@ -82,26 +85,22 @@ const find = async (req, res) => {
         }
 
         if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
+            if (qry.incl) {
+                for (const a of qry.incl) {
+                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
+                }
             }
 
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
             }
-        }
 
-        let data = await Maquina.findAll(findProps)
-
-        if (data.length > 0 && qry.cols) {
-            data = data.map(a => a.toJSON())
-
-            const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
-
-            for (const a of data) {
-                a.produccion_tipo1 = produccion_tiposMap[a.produccion_tipo]
+            if (qry.fltr) {
+                Object.assign(findProps.where, applyFilters(qry.fltr))
             }
         }
+
+        const data = await Maquina.findAll(findProps)
 
         res.json({ code: 0, data })
     }

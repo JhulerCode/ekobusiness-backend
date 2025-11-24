@@ -135,6 +135,57 @@ function buildCondition({ op, val, val1 }) {
 //     return whereClause
 // }
 
+function setFindAllProps(model, qry, include1, sqls1) {
+    const columns = Object.keys(model.getAttributes());
+
+    const findProps = {
+        include: [],
+        attributes: ['id'],
+        where: {},
+        order: [],
+    }
+
+    if (qry.incl) {
+        for (const a of qry.incl) {
+            if (qry.incl.includes(a)) findProps.include.push(include1[a])
+        }
+    }
+
+    if (qry.cols) {
+        const cols1 = qry.cols.filter(a => columns.includes(a))
+        findProps.attributes = findProps.attributes.concat(cols1)
+    }
+
+    if (qry.sqls) {
+        for (const a of qry.sqls) {
+            if (qry.sqls.includes(a)) findProps.attributes.push(sqls1[a])
+        }
+    }
+
+    if (qry.fltr) {
+        const fltr1 = Object.fromEntries(
+            Object.entries(qry.fltr).filter(([key]) => columns.includes(key))
+        )
+        Object.assign(findProps.where, applyFilters(fltr1))
+
+        // Filtros de relaciones
+        Object.entries(qry.fltr)
+            .filter(([k]) => Object.keys(include1).some(pref => k.startsWith(pref)))
+            .forEach(([k, v]) =>
+                Object.assign(findProps.where, applyFilters({ [`$${k}$`]: v }))
+            )
+    }
+
+    if (qry.ordr) {
+        findProps.order = qry.ordr
+    }
+    else {
+        findProps.order = [['createdAt', 'DESC']]
+    }
+
+    return findProps
+}
+
 function cleanFloat(num) {
     return Math.round((num + Number.EPSILON) * 1e12) / 1e12;
 }
@@ -161,6 +212,8 @@ function redondear(num, dec = 2) {
 export {
     existe,
     applyFilters,
+    setFindAllProps,
+
     cleanFloat,
     generarCodigo6,
     genId,

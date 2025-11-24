@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
+import { ArticuloLinea } from './ArticuloLinea.js'
 import { Colaborador } from './Colaborador.js'
 
 export const Maquina = sequelize.define('maquinas', {
@@ -8,7 +9,7 @@ export const Maquina = sequelize.define('maquinas', {
     codigo: { type: DataTypes.STRING }, //required
     nombre: { type: DataTypes.STRING }, //required
     fecha_compra: { type: DataTypes.DATEONLY }, //required
-    
+
     produccion_tipo: { type: DataTypes.STRING }, //required
     velocidad: { type: DataTypes.DOUBLE },
     limpieza_tiempo: { type: DataTypes.DOUBLE },
@@ -17,7 +18,10 @@ export const Maquina = sequelize.define('maquinas', {
     updatedBy: { type: DataTypes.STRING }
 })
 
-Colaborador.hasMany(Maquina, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-Maquina.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(Maquina, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-Maquina.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+ArticuloLinea.hasMany(Maquina, { foreignKey: 'produccion_tipo', as: 'maquinas', onDelete: 'RESTRICT' })
+Maquina.belongsTo(ArticuloLinea, { foreignKey: 'produccion_tipo', as: 'produccion_tipo1' })
+
+Colaborador.hasMany(Maquina, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+Maquina.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(Maquina, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+Maquina.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

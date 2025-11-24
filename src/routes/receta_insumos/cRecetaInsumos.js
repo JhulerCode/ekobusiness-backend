@@ -101,15 +101,15 @@ const calcularNecesidad = async (req, res) => {
 
         if (data.length > 0) {
             data = data.map(a => a.toJSON())
-        }
 
-        for (const a of articulos) {
-            const receta = data.find(b => b.id == a.articulo).receta_insumos
+            for (const a of articulos) {
+                const receta = data.find(b => b.id == a.articulo).receta_insumos
 
-            a.receta = receta.map(b => ({
-                ...b,
-                cantidad_necesitada: b.cantidad * a.cantidad,
-            }));
+                a.receta = receta.map(b => ({
+                    ...b,
+                    cantidad_necesitada: b.cantidad * a.cantidad,
+                }));
+            }
         }
 
         res.json({ code: 0, data: articulos })
