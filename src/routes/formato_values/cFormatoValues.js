@@ -6,7 +6,7 @@ import { Articulo } from '../../database/models/Articulo.js'
 import { ProduccionOrden } from '../../database/models/ProduccionOrden.js'
 import { Maquina } from '../../database/models/Maquina.js'
 import { Colaborador } from '../../database/models/Colaborador.js'
-import { CuarentenaProducto } from '../../database/models/CuarentenaProducto.js'
+// import { CuarentenaProducto } from '../../database/models/CuarentenaProducto.js'
 import { existe, applyFilters } from '../../utils/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
@@ -64,28 +64,28 @@ const includes = {
             }
         ]
     },
-    cuarentena_producto1: {
-        model: CuarentenaProducto,
-        as: 'cuarentena_producto1',
-        attributes: ['id', 'lote', 'fv', 'cantidad', 'estado', 'produccion_orden'],
-        include: {
-            model: ProduccionOrden,
-            as: 'produccion_orden1',
-            attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
-            include: [
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad'],
-                },
-                {
-                    model: Maquina,
-                    as: 'maquina1',
-                    attributes: ['nombre'],
-                },
-            ]
-        }
-    },
+    // cuarentena_producto1: {
+    //     model: CuarentenaProducto,
+    //     as: 'cuarentena_producto1',
+    //     attributes: ['id', 'lote', 'fv', 'cantidad', 'estado', 'produccion_orden'],
+    //     include: {
+    //         model: ProduccionOrden,
+    //         as: 'produccion_orden1',
+    //         attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
+    //         include: [
+    //             {
+    //                 model: Articulo,
+    //                 as: 'articulo1',
+    //                 attributes: ['nombre', 'unidad'],
+    //             },
+    //             {
+    //                 model: Maquina,
+    //                 as: 'maquina1',
+    //                 attributes: ['nombre'],
+    //             },
+    //         ]
+    //     }
+    // },
     maquina1: {
         model: Maquina,
         as: 'maquina1',
@@ -167,18 +167,18 @@ const create = async (req, res) => {
             )
         }
 
-        if (cuarentena_producto) {
-            await CuarentenaProducto.update(
-                {
-                    cf_liberacion_lote: nuevo.id,
-                    updatedBy: colaborador
-                },
-                {
-                    where: { id: cuarentena_producto },
-                    transaction
-                }
-            )
-        }
+        // if (cuarentena_producto) {
+        //     await CuarentenaProducto.update(
+        //         {
+        //             cf_liberacion_lote: nuevo.id,
+        //             updatedBy: colaborador
+        //         },
+        //         {
+        //             where: { id: cuarentena_producto },
+        //             transaction
+        //         }
+        //     )
+        // }
 
         await transaction.commit()
 

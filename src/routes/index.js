@@ -12,7 +12,6 @@ import asistencias from './asistencias/rAsistencias.js'
 import caja_aperturas from './caja_aperturas/rCajaAperturas.js'
 import caja_movimientos from './caja_movimientos/rCajaMovimientos.js'
 import colaboradores from './colaboradores/rColaboradores.js'
-import cuarentena_productos from './cuarentena_productos/rCuarentenaProductos.js'
 import documentos from './documentos/rDocumentos.js'
 import formatos from './formatos/rFormatos.js'
 import formato_values from './formato_values/rFormatoValues.js'
@@ -47,7 +46,7 @@ function routes(app) {
         // const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress
         res.send(`Eko Business's server is running`)
     })
-    
+
     app.use('/', verifyVersion)
     app.use('/signin', signin)
     app.use('/api', verifyToken)
@@ -60,7 +59,6 @@ function routes(app) {
     app.use('/api/caja_aperturas', caja_aperturas)
     app.use('/api/caja_movimientos', caja_movimientos)
     app.use('/api/colaboradores', colaboradores)
-    app.use('/api/cuarentena_productos', cuarentena_productos)
     app.use('/api/documentos', documentos)
     app.use('/api/formatos', formatos)
     app.use('/api/formato_values', formato_values)

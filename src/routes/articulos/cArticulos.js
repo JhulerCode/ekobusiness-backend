@@ -144,12 +144,10 @@ async function loadOne(id) {
 
         const estadosMap = cSistema.arrayMap('estados')
         const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
-        // const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
 
         data.has_fv1 = estadosMap[data.has_fv]
         data.activo1 = estadosMap[data.activo]
         data.igv_afectacion1 = igv_afectacionesMap[data.igv_afectacion]
-        // data.produccion_tipo1 = produccion_tiposMap[data.produccion_tipo]
     }
 
     return data
@@ -200,13 +198,11 @@ const find = async (req, res) => {
 
             const estadosMap = cSistema.arrayMap('estados')
             const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
-            // const produccion_tiposMap = cSistema.arrayMap('produccion_tipos')
 
             for (const a of data) {
                 if (qry.cols.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
                 if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
                 if (qry.cols.includes('igv_afectacion')) a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-                // if (qry.cols.includes('produccion_tipo')) a.produccion_tipo1 = produccion_tiposMap[a.produccion_tipo]
             }
         }
 

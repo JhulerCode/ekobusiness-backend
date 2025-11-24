@@ -5,7 +5,6 @@ import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { Articulo } from './Articulo.js'
 import { Colaborador } from './Colaborador.js'
-import { CuarentenaProducto } from './CuarentenaProducto.js'
 
 export const FormatoValue = sequelize.define('formato_values', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -41,8 +40,8 @@ FormatoValue.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 Colaborador.hasMany(FormatoValue, { foreignKey: 'colaborador', as: 'formato_values', onDelete: 'RESTRICT' })
 FormatoValue.belongsTo(Colaborador, { foreignKey: 'colaborador', as: 'colaborador1' })
 
-CuarentenaProducto.hasMany(FormatoValue, { foreignKey: 'cuarentena_producto', as: 'formato_values', onDelete: 'RESTRICT' })
-FormatoValue.belongsTo(CuarentenaProducto, { foreignKey: 'cuarentena_producto', as: 'cuarentena_producto1' })
+// CuarentenaProducto.hasMany(FormatoValue, { foreignKey: 'cuarentena_producto', as: 'formato_values', onDelete: 'RESTRICT' })
+// FormatoValue.belongsTo(CuarentenaProducto, { foreignKey: 'cuarentena_producto', as: 'cuarentena_producto1' })
 
 Colaborador.hasMany(FormatoValue, {foreignKey:'createdBy', onDelete:'RESTRICT'})
 FormatoValue.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
