@@ -1,31 +1,20 @@
 import { ActivityLog } from '#db/models/ActivityLog.js'
 import { Colaborador } from "#db/models/Colaborador.js"
-import { applyFilters } from "#shared/mine.js"
+import { jdFindAll } from '#db/helpers.js'
 
 const find = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            order: [['createdAt', 'DESC']],
-            where: {},
-            include: [
-                {
-                    model: Colaborador,
-                    as: 'colaborador1',
-                    attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-                }
-            ],
-            logging: console.log
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
+        const include1 = {
+            colaborador1: {
+                model: Colaborador,
+                as: 'colaborador1',
+                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
             }
         }
 
-        const data = await ActivityLog.findAll(findProps)
+        const data = await jdFindAll(ActivityLog, qry, include1)
 
         res.json({ code: 0, data })
     }

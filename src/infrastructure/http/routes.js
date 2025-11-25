@@ -51,8 +51,6 @@ router.get('/', (req, res) => {
     res.send(`Eko Business's server is running`)
 })
 
-// router.use('/socios', socios1)
-
 router.use('/', verifyVersion)
 router.use('/signin', signin)
 router.use('/api', verifyToken)

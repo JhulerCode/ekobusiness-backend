@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 function applyFilters(filters = {}) {
     const whereClause = {};
 
@@ -48,7 +50,7 @@ function buildCondition({ op, val, val1 }) {
     }
 }
 
-function setFindAllProps(model, qry, include1, sqls1) {
+async function jdFindAll(model, qry, include1, sqls1, transform) {
     const columns = Object.keys(model.getAttributes());
 
     const findProps = {
@@ -96,11 +98,18 @@ function setFindAllProps(model, qry, include1, sqls1) {
         findProps.order = [['createdAt', 'DESC']]
     }
 
-    return findProps
+    const data = await model.findAll(findProps)
+
+    if (transform) {
+        return data.map(a => a.toJSON())
+    }
+    else {
+        return data
+    }
 }
 
 export {
-    applyFilters,
-    buildCondition,
-    setFindAllProps,
+    // applyFilters,
+    // buildCondition,
+    jdFindAll,
 }

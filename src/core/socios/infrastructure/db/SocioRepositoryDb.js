@@ -1,29 +1,28 @@
 import { Socio } from "#db/models/Socio.js"
 import { PrecioLista } from "#db/models/PrecioLista.js"
-import { applyFilters, setFindAllProps } from '#db/helpers.js'
+import { applyFilters, jdFindAll } from '#db/helpers.js'
 import SocioRepository from '../../domain/SocioRepository.js'
+
+const include1 = {
+    precio_lista1: {
+        model: PrecioLista,
+        as: 'precio_lista1',
+        attributes: ['id', 'nombre']
+    }
+}
 
 export default class SocioRepositoryDb extends SocioRepository {
     async find(qry) {
-        const include1 = {
-            precio_lista1: {
-                model: PrecioLista,
-                as: 'precio_lista1',
-                attributes: ['id', 'nombre']
-            }
-        }
+        const findProps = jdFindAll(Socio, qry, include1)
 
-        const findProps = setFindAllProps(Socio, qry, include1)
-
-        return await Socio.findAll(findProps)
+        const data = await Socio.findAll(findProps)
+        return data.map(a => a.toJSON())
     }
 
     async findById(id) {
-        return await Socio.findByPk(id)
-    }
+        const data = await Socio.findByPk(id)
 
-    async findByDocNumero(doc_numero) {
-        return await Socio.findOne({ where: { doc_numero } })
+        return data ? data.toJSON() : null
     }
 
     async create(data) {

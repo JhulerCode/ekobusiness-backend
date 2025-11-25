@@ -1,7 +1,7 @@
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
 import { Articulo } from '#db/models/Articulo.js'
 import { Maquina } from '#db/models/Maquina.js'
-import { applyFilters, setFindAllProps } from '#shared/mine.js'
+import { jdFindAll } from '#db/helpers.js'
 import cSistema from '../_sistema/cSistema.js'
 import { Kardex } from '#db/models/Kardex.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
@@ -129,13 +129,9 @@ const find = async (req, res) => {
             ]
         }
 
-        const findProps = setFindAllProps(ProduccionOrden, qry, include1, sqls1)
-
-        let data = await ProduccionOrden.findAll(findProps)
+        const data = await jdFindAll(ProduccionOrden, qry, include1, sqls1, true)
 
         if (data.length > 0) {
-            data = data.map(a => a.toJSON())
-
             const produccion_orden_estadosMap = cSistema.arrayMap('produccion_orden_estados')
             const cumplidado_estadosMap = cSistema.arrayMap('cumplidado_estados')
 
