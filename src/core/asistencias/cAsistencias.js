@@ -1,6 +1,6 @@
 import { Asistencia } from '#db/models/Asistencia.js'
 import { Colaborador } from '#db/models/Colaborador.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 
 const include1 = {
     colaborador1: {

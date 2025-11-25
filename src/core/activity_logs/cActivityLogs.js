@@ -1,6 +1,6 @@
 import { ActivityLog } from '#db/models/ActivityLog.js'
 import { Colaborador } from "#db/models/Colaborador.js"
-import { applyFilters } from "../../utils/mine.js"
+import { applyFilters } from "#shared/mine.js"
 
 const find = async (req, res) => {
     try {

@@ -1,7 +1,7 @@
 import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
 import { Socio } from '#db/models/Socio.js'
 import { Articulo } from '#db/models/Articulo.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 
 const find = async (req, res) => {
     try {

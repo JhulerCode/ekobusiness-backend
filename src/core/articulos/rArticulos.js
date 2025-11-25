@@ -1,7 +1,7 @@
 import { Router } from "express"
 import controller from "./cArticulos.js"
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
-import { uploadMem } from '../../utils/uploadFiles.js'
+import { uploadMem } from '#http/middlewares/uploadFiles.js'
 
 const router = Router()
 

@@ -1,4 +1,4 @@
-import jat from "../../../utils/jat.js"
+import jat from "#shared/jat.js"
 import config from "../../../config.js"
 import { sessionStore, obtenerSesion } from "#core/_signin/sessions.js"
 

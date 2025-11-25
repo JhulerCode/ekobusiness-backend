@@ -1,7 +1,7 @@
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
 import { Articulo } from '#db/models/Articulo.js'
 import { Maquina } from '#db/models/Maquina.js'
-import { applyFilters, setFindAllProps } from '../../utils/mine.js'
+import { applyFilters, setFindAllProps } from '#shared/mine.js'
 import cSistema from '../_sistema/cSistema.js'
 import { Kardex } from '#db/models/Kardex.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'

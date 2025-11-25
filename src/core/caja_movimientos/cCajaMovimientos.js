@@ -1,5 +1,5 @@
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 
 const find = async (req, res) => {
     try {

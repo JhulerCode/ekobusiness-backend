@@ -1,6 +1,6 @@
 import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
 import { Articulo } from '#db/models/Articulo.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 import { Op } from 'sequelize'
 import controllerArticulos from "../articulos/cArticulos.js"
 

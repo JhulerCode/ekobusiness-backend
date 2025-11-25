@@ -1,5 +1,5 @@
 import { PrecioListaItem } from '#db/models/PrecioListaItem.js'
-import { existe, applyFilters } from '../../utils/mine.js'
+import { existe, applyFilters } from '#shared/mine.js'
 import { Articulo } from '#db/models/Articulo.js'
 
 const includes = {

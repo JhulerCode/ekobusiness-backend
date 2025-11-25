@@ -5,7 +5,7 @@ import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
 import { Articulo } from '#db/models/Articulo.js'
 import { Moneda } from '#db/models/Moneda.js'
 import { Kardex } from '#db/models/Kardex.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 const includes = {

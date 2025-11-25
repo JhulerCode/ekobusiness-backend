@@ -1,17 +1,17 @@
 import { Socio } from '#db/models/Socio.js'
 import { Sequelize, Op } from 'sequelize'
-import { applyFilters, existe, generarCodigo6 } from '../../utils/mine.js'
+import { applyFilters, existe, generarCodigo6 } from '#shared/mine.js'
 import { PrecioLista } from '#db/models/PrecioLista.js'
 import cSistema from "../_sistema/cSistema.js"
 import sequelize from '#db/sequelize.js'
 import bcrypt from 'bcrypt'
 import config from "../../config.js"
-import jat from '../../utils/jat.js'
+import jat from '#shared/jat.js'
 import { guardarSesion, actualizarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
-import dayjs from '../../utils/dayjs.js'
-import { nodeMailer } from "../../lib/nodeMailer.js"
-import { companyName, htmlCodigoVerificacion } from '../../utils/layouts.js'
-import { customerWalletGet } from "../../lib/izipay.js"
+import dayjs from '#shared/dayjs.js'
+import { nodeMailer } from "#mail/nodeMailer.js"
+import { companyName, htmlCodigoVerificacion } from '#mail/templates.js'
+import { customerWalletGet } from "#infrastructure/izipay.js"
 
 const includes = {
     precio_lista1: {

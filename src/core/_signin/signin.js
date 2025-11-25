@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import config from "../../config.js"
-import jat from '../../utils/jat.js'
+import jat from '#shared/jat.js'
 import { guardarSesion, borrarSesion, sessionStore } from './sessions.js'
 
 import { Router } from "express"

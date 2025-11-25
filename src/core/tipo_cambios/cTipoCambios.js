@@ -3,7 +3,7 @@ import sequelize from '#db/sequelize.js'
 import { TipoCambio } from '#db/models/TipoCambio.js'
 import { Transaccion } from '#db/models/Transaccion.js'
 import { Kardex } from '#db/models/Kardex.js'
-import { applyFilters, existe } from '../../utils/mine.js'
+import { applyFilters, existe } from '#shared/mine.js'
 
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()

@@ -12,8 +12,11 @@
   },
   "imports": {
     "#core/*": "./src/core/*",
+    "#infrastructure/*": "./src/infrastructure/*",
     "#db/*": "./src/infrastructure/db/*",
-    "#http/*": "./src/infrastructure/http/*"
+    "#http/*": "./src/infrastructure/http/*",
+    "#mail/*": "./src/infrastructure/mail/*",
+    "#shared/*": "./src/shared/*"
   },
   "keywords": [],
   "author": "",

@@ -1,9 +1,9 @@
 import { DerechoArco } from '#db/models/DerechoArco.js'
 import config from '../../config.js'
-import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
-// import { nodeMailer } from "../../lib/nodeMailer.js"
+import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
+import { nodeMailer } from "#mail/nodeMailer.js"
 import { Resend } from 'resend'
-import { companyName, htmlArco } from '../../utils/layouts.js'
+import { companyName, htmlArco } from '#mail/templates.js'
 
 const create = async (req, res) => {
     try {

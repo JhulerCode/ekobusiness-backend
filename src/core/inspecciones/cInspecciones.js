@@ -1,5 +1,5 @@
 import { Inspeccion } from '#db/models/Inspeccion.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 import { Socio } from '#db/models/Socio.js'
 
 const create = async (req, res) => {

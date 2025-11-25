@@ -1,7 +1,7 @@
 import { LibroReclamo } from '#db/models/LibroReclamo.js'
 import config from '../../config.js'
-import { nodeMailer } from "../../lib/nodeMailer.js"
-import { companyName, htmlLibroReclamos } from '../../utils/layouts.js'
+import { nodeMailer } from "#mail/nodeMailer.js"
+import { companyName, htmlLibroReclamos } from '#mail/templates.js'
 
 const create = async (req, res) => {
     try {

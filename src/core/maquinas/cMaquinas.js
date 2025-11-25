@@ -1,6 +1,6 @@
 import { Maquina } from '#db/models/Maquina.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
-import { applyFilters, existe } from '../../utils/mine.js'
+import { applyFilters, existe } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 const include1 = {

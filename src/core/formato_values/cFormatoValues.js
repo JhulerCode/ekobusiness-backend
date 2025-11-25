@@ -7,7 +7,7 @@ import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
 import { Maquina } from '#db/models/Maquina.js'
 import { Colaborador } from '#db/models/Colaborador.js'
 // import { CuarentenaProducto } from '#db/models/CuarentenaProducto.js'
-import { existe, applyFilters } from '../../utils/mine.js'
+import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 const includes = {

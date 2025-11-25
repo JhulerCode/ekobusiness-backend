@@ -6,7 +6,7 @@
 // dayjs.extend(timezone)
 // dayjs.tz.setDefault('America/Lima')
 
-import dayjs from '../utils/dayjs.js'
+import dayjs from '#shared/dayjs.js'
 
 const primary_color = '#2492c2'
 const companyName = 'Sunka Herbal Tea'

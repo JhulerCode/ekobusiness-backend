@@ -5,9 +5,9 @@ import { Articulo } from '#db/models/Articulo.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
 import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
 import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
-import { existe, applyFilters } from '../../utils/mine.js'
+import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
+import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
 
 // ----- PARA INCLUDES EN SELECT ----- //
 const attributes = ['id', 'nombre', 'unidad']

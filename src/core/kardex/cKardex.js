@@ -6,11 +6,11 @@ import { Socio } from '#db/models/Socio.js'
 import { Articulo } from '#db/models/Articulo.js'
 import { Maquina } from '#db/models/Maquina.js'
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
-import { applyFilters, cleanFloat } from '../../utils/mine.js'
+import { applyFilters, cleanFloat } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
 import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
-import { redondear } from '../../utils/mine.js'
+import { redondear } from '#shared/mine.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
 
 const create = async (req, res) => {

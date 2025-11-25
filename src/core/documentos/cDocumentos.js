@@ -1,7 +1,7 @@
 import { Documento } from '#db/models/Documento.js'
-import { applyFilters } from '../../utils/mine.js'
+import { applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-// import { deleteFile, getFile, getFilePath } from '../../utils/uploadFiles.js'
+// import { deleteFile, getFile, getFilePath } from '#http/middlewares/uploadFiles.js'
 
 const create = async (req, res) => {
     try {

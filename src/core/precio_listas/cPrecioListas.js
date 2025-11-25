@@ -1,6 +1,6 @@
 import { PrecioLista } from '#db/models/PrecioLista.js'
 import { Moneda } from '#db/models/Moneda.js'
-import { existe, applyFilters } from '../../utils/mine.js'
+import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
 const attributes = [

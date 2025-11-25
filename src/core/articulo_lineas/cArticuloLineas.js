@@ -1,7 +1,7 @@
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
-import { existe, applyFilters } from '../../utils/mine.js'
+import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import { minioClient, minioDomain, minioBucket } from "../../lib/minioClient.js"
+import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
 
 const create = async (req, res) => {
     try {

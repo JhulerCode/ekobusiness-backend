@@ -1,11 +1,11 @@
 import sequelize from '#db/sequelize.js'
 import { SocioPedido, SocioPedidoItem } from "#db/models/SocioPedido.js";
-import { checkHash, createFormToken, cancelPaymentMethodToken } from "../../lib/izipay.js"
-import { genId } from '../../utils/mine.js'
+import { checkHash, createFormToken, cancelPaymentMethodToken } from "#infrastructure/izipay.js"
+import { genId } from '#shared/mine.js'
 
 import config from '../../config.js'
-import { nodeMailer } from "../../lib/nodeMailer.js"
-import { companyName, htmlConfirmacionCompra } from '../../utils/layouts.js'
+import { nodeMailer } from "#mail/nodeMailer.js"
+import { companyName, htmlConfirmacionCompra } from '#mail/templates.js'
 import cSistema from '../_sistema/cSistema.js'
 
 const createPayment = async (req, res) => {

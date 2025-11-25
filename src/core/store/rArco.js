@@ -1,6 +1,6 @@
 import { Router } from "express"
 import controller from "../derecho_arcos/cDerechoArcos.js"
-import { uploadMem } from '../../utils/uploadFiles.js'
+import { uploadMem } from '#http/middlewares/uploadFiles.js'
 
 const router = Router()
 

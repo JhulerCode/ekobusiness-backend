@@ -1,6 +1,6 @@
 import { Ubigeo } from '#db/models/Ubigeo.js'
 import { Sequelize, Op } from 'sequelize'
-import { applyFilters, existe } from '../../utils/mine.js'
+import { applyFilters, existe } from '#shared/mine.js'
 
 const find = async (req, res) => {
     try {

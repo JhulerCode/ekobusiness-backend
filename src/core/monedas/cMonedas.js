@@ -1,6 +1,6 @@
 import { Moneda } from '#db/models/Moneda.js'
 import { TipoCambio } from '#db/models/TipoCambio.js'
-import { applyFilters, existe } from '../../utils/mine.js'
+import { applyFilters, existe } from '#shared/mine.js'
 
 const includes = {
     tipo_cambios: {
