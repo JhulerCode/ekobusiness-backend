@@ -2,28 +2,24 @@ import express from 'express'
 import cors from 'cors'
 import config from './config.js'
 import routes from './routes/index.js'
-import connDb from './database/connect.js'
 // import { pathUploads } from './utils/uploadFiles.js'
 
 const app = express()
 
 // ----- MIDDLEWARES -----//
 app.disable('x-powered-by')
-const corsOptions = {
-    origin: JSON.parse(config.hostFrontend)
-}
-app.use(cors(corsOptions))
+app.use(cors({ origin: JSON.parse(config.hostFrontend) }))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 // app.use('/uploads', express.static(pathUploads))
-app.set('port', process.env.PORT || 4000)
 
 // ----- RUTAS -----//
-routes(app)
+app.use(routes)
 
 // ----- START SERVER -----//
-app.listen(app.get('port'), async () => {
-    console.log('Server on port', app.get('port'))
+const PORT = config.PORT || 4000
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`)
 })
 
 // ----- TEST CONN DB -----//

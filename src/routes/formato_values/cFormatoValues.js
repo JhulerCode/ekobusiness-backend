@@ -225,7 +225,7 @@ async function loadOne(id, transaccion_item, produccion_orden, transaccion, cuar
     if (transaccion_item) include.push(includes.transaccion_item1)
     if (produccion_orden) include.push(includes.produccion_orden1)
     if (transaccion) include.push(includes.transaccion1)
-    if (cuarentena_producto) include.push(includes.cuarentena_producto1)
+    // if (cuarentena_producto) include.push(includes.cuarentena_producto1)
     if (maquina) include.push(includes.maquina1)
     if (articulo) include.push(includes.articulo1)
     if (colaborador) include.push(includes.colaborador1)
@@ -296,7 +296,7 @@ const find = async (req, res) => {
                 if (qry.cols.includes('transaccion_item')) findProps.include.push(includes.transaccion_item1)
                 if (qry.cols.includes('produccion_orden')) findProps.include.push(includes.produccion_orden1)
                 if (qry.cols.includes('transaccion')) findProps.include.push(includes.transaccion1)
-                if (qry.cols.includes('cuarentena_producto')) findProps.include.push(includes.cuarentena_producto1)
+                // if (qry.cols.includes('cuarentena_producto')) findProps.include.push(includes.cuarentena_producto1)
                 if (qry.cols.includes('maquina')) findProps.include.push(includes.maquina1)
                 if (qry.cols.includes('articulo')) findProps.include.push(includes.articulo1)
                 if (qry.cols.includes('colaborador')) findProps.include.push(includes.colaborador1)
@@ -359,7 +359,7 @@ const findById = async (req, res) => {
                 includes.transaccion_item1,
                 includes.produccion_orden1,
                 includes.transaccion1,
-                includes.cuarentena_producto1,
+                // includes.cuarentena_producto1,
                 includes.maquina1,
                 includes.articulo1,
                 includes.colaborador1,

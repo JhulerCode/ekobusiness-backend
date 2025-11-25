@@ -1,3 +1,5 @@
+import { Router } from 'express'
+
 import verifyVersion from '../middlewares/verifyVersion.js'
 import verifyToken from '../middlewares/verifyToken.js'
 
@@ -41,56 +43,59 @@ import izipay from './store/rIzipay.js'
 import store_socio_pedidos from './store/rSocioPedidos.js'
 import ubigeos from './ubigeos/rUbigeos.js'
 
-function routes(app) {
-    app.get('/', (req, res) => {
-        // const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress
-        res.send(`Eko Business's server is running`)
-    })
+// import socios1 from './socios/infraestructure/http/SocioRoutes.js'
 
-    app.use('/', verifyVersion)
-    app.use('/signin', signin)
-    app.use('/api', verifyToken)
-    app.use('/api/activity_logs', activity_logs)
-    app.use('/api/sistema', sistema)
-    app.use('/api/articulo_categorias', articulo_categorias)
-    app.use('/api/articulo_lineas', articulo_lineas)
-    app.use('/api/articulos', articulos)
-    app.use('/api/asistencias', asistencias)
-    app.use('/api/caja_aperturas', caja_aperturas)
-    app.use('/api/caja_movimientos', caja_movimientos)
-    app.use('/api/colaboradores', colaboradores)
-    app.use('/api/documentos', documentos)
-    app.use('/api/formatos', formatos)
-    app.use('/api/formato_values', formato_values)
-    app.use('/api/inspecciones', inspecciones)
-    app.use('/api/kardex', kardex)
-    app.use('/api/maquinas', maquinas)
-    app.use('/api/monedas', monedas)
-    app.use('/api/precio_listas', precio_listas)
-    app.use('/api/precio_lista_items', precio_lista_items)
-    app.use('/api/produccion_ordenes', produccion_ordenes)
-    app.use('/api/receta_insumos', receta_insumos)
-    app.use('/api/sessions', sessions)
-    app.use('/api/socios', socios)
-    app.use('/api/socio_pedidos', socio_pedidos)
-    app.use('/api/socio_pedido_items', socio_pedido_items)
-    app.use('/api/tipo_cambios', tipo_cambios)
-    app.use('/api/transacciones', transacciones)
+const router = Router()
 
-    app.use('/store/sistema', sistema)
-    app.use('/store/lineas', store_lineas)
-    app.use('/store/categorias', store_categorias)
-    app.use('/store/productos', store_articulos)
-    app.use('/store/insumos', store_articulos)
-    app.use('/store/newsletter', store_socios)
-    app.use('/store/arco', store_arcos)
-    app.use('/store/libro-reclamos', libro_reclamos)
-    app.use('/store/ubigeos', ubigeos)
-    app.use('/store/izipay', izipay)
-    app.use('/store/socio-pedidos', store_socio_pedidos)
-    app.use('/store/auth', store_auth)
-    app.use('/store/account', verifyToken)
-    app.use('/store/account', store_auth)
-}
+router.get('/', (req, res) => {
+    // const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress
+    res.send(`Eko Business's server is running`)
+})
 
-export default routes
+// router.use('/socios', socios1)
+router.use('/', verifyVersion)
+router.use('/signin', signin)
+router.use('/api', verifyToken)
+router.use('/api/activity_logs', activity_logs)
+router.use('/api/sistema', sistema)
+router.use('/api/articulo_categorias', articulo_categorias)
+router.use('/api/articulo_lineas', articulo_lineas)
+router.use('/api/articulos', articulos)
+router.use('/api/asistencias', asistencias)
+router.use('/api/caja_aperturas', caja_aperturas)
+router.use('/api/caja_movimientos', caja_movimientos)
+router.use('/api/colaboradores', colaboradores)
+router.use('/api/documentos', documentos)
+router.use('/api/formatos', formatos)
+router.use('/api/formato_values', formato_values)
+router.use('/api/inspecciones', inspecciones)
+router.use('/api/kardex', kardex)
+router.use('/api/maquinas', maquinas)
+router.use('/api/monedas', monedas)
+router.use('/api/precio_listas', precio_listas)
+router.use('/api/precio_lista_items', precio_lista_items)
+router.use('/api/produccion_ordenes', produccion_ordenes)
+router.use('/api/receta_insumos', receta_insumos)
+router.use('/api/sessions', sessions)
+router.use('/api/socios', socios)
+router.use('/api/socio_pedidos', socio_pedidos)
+router.use('/api/socio_pedido_items', socio_pedido_items)
+router.use('/api/tipo_cambios', tipo_cambios)
+router.use('/api/transacciones', transacciones)
+
+router.use('/store/sistema', sistema)
+router.use('/store/lineas', store_lineas)
+router.use('/store/categorias', store_categorias)
+router.use('/store/productos', store_articulos)
+router.use('/store/insumos', store_articulos)
+router.use('/store/newsletter', store_socios)
+router.use('/store/arco', store_arcos)
+router.use('/store/libro-reclamos', libro_reclamos)
+router.use('/store/ubigeos', ubigeos)
+router.use('/store/izipay', izipay)
+router.use('/store/socio-pedidos', store_socio_pedidos)
+router.use('/store/auth', store_auth)
+router.use('/store/account', verifyToken)
+router.use('/store/account', store_auth)
+
+export default router
