@@ -103,7 +103,18 @@ router.get(
 //--- Inventario hasta fecha ---///
 router.get(
     '/inventario',
+    verifyPermiso([
+        'vInventarioArticulos:listar',
+        'vInventarioProductos:listar',
+    ]),
     controller.findInventario
+)
+
+
+//--- PONER BIEN EL STOCK EN LOTES PADRE ---//
+router.post(
+    '/recalcular-stock',
+    controller.recalcularStock
 )
 
 export default router

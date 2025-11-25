@@ -92,7 +92,7 @@ const create = async (req, res) => {
         // ----- SI ES UNA VENTA ----- //
         if (tipo == 5) {
             for (const a of transaccion_items) {
-                await TransaccionItem.update(
+                await Kardex.update(
                     {
                         stock: sequelize.literal(`COALESCE(stock, 0) - ${a.cantidad}`)
                     },

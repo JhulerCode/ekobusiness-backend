@@ -621,6 +621,68 @@ async function findMovimientosCantidad(qry, ti_where) {
     return await Articulo.findAll(findProps)
 }
 
+
+//--- PONER BIEN EL STOCK EN LOTES PADRE ---//
+const recalcularStock = async (req, res) => {
+    try {
+        const tipos = cSistema.sistemaData.transaccion_tipos
+        const cases = tipos
+            .map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`)
+            .join(' ')
+
+        let lotes_padre = await Kardex.findAll({
+            where: {
+                is_lote_padre: true,
+                // fecha: { [Op.between]: ['2025-11-15', '2025-11-30'] }
+            },
+            attributes: [
+                'id',
+                'cantidad',
+                [
+                    sequelize.literal(`
+                        (
+                            SELECT SUM(CASE ${cases} ELSE 0 END)
+                            FROM kardexes AS lote_padre_items
+                            WHERE lote_padre_items.lote_padre = kardexes.id
+                        )
+                    `),
+                    'movimientos'
+                ]
+            ],
+            order: [['createdAt', 'ASC']]
+        })
+
+        if (lotes_padre.length > 0) {
+            console.log('Total a actualizar:', lotes_padre.length)
+            let i = 1
+
+            for (let a of lotes_padre) {
+                a = a.toJSON()
+
+                const real_stock = Number(a.cantidad) + Number(a.movimientos)
+                console.log('Actualizando ', i, `Cantidad: ${a.cantidad}`, `Movimientos: ${a.movimientos}`, `Stock: ${real_stock}`)
+
+                await Kardex.update(
+                    {
+                        stock: Number(a.cantidad) + Number(a.movimientos)
+                    },
+                    { where: { id: a.id } }
+                )
+
+                i++
+            }
+
+            console.log('Registros actualizados:', lotes_padre.length)
+        }
+
+        res.json({ code: 0, data: lotes_padre })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+
 export default {
     update,
     find,
@@ -633,4 +695,5 @@ export default {
 
     findInventario,
     findReporteProduccion,
+    recalcularStock,
 }
