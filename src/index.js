@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import config from './config.js'
-import routes from './routes/index.js'
+import routes from '#http/routes.js'
 // import { pathUploads } from './utils/uploadFiles.js'
 
 const app = express()
@@ -21,6 +21,3 @@ const PORT = config.PORT || 4000
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`)
 })
-
-// ----- TEST CONN DB -----//
-// await connDb()

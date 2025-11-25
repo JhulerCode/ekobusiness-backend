@@ -10,6 +10,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "conndb": "node src/database/helpers/connect.js"
   },
+  "imports": {
+    "#core/*": "./src/core/*",
+    "#db/*": "./src/infrastructure/db/*",
+    "#http/*": "./src/infrastructure/http/*"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
