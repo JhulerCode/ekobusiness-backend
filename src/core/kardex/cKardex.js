@@ -28,7 +28,7 @@ const create = async (req, res) => {
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            // observacion, estado,
+            observacion,
             transaccion, transaccion_item, produccion_orden, maquina,
         } = req.body
 
@@ -39,7 +39,7 @@ const create = async (req, res) => {
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            // observacion, estado,
+            observacion,
             transaccion, transaccion_item, produccion_orden, maquina,
             createdBy: colaborador
         }, { transaction })
@@ -115,7 +115,7 @@ const update = async (req, res) => {
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            // observacion, estado,
+            observacion,
             transaccion, transaccion_item, produccion_orden, maquina,
         } = req.body
 
@@ -125,7 +125,7 @@ const update = async (req, res) => {
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
             lote, fv,
             is_lote_padre, stock, lote_padre,
-            // observacion, estado,
+            observacion,
             transaccion, transaccion_item, produccion_orden, maquina,
             updatedBy: colaborador
         }, { where: { id } })
