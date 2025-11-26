@@ -50,10 +50,18 @@ const create = async (req, res) => {
 
         // ----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map(a => ({
-            ...a,
-            // tipo, fecha,
-            // is_lote_padre: tipo == 1 ? true : false,
-            // stock: tipo == 1 ? a.cantidad : tipo == 5 ? a.stock : null,
+            articulo: a.articulo,
+            cantidad: a.cantidad,
+
+            pu: a.pu,
+            igv_afectacion: a.igv_afectacion,
+            igv_porcentaje: a.igv_porcentaje,
+
+            lote: a.lote,
+            fv: a.fv,
+
+            observacion: a.observacion,
+
             transaccion: nuevo.id,
             createdBy: colaborador
         }))
@@ -64,9 +72,23 @@ const create = async (req, res) => {
         // ----- GUARDAR KARDEX ----- //
         const kardex_items = transaccion_items.map(a => ({
             tipo, fecha,
-            ...a,
+            articulo: a.articulo,
+            cantidad: a.cantidad,
+
+            pu: a.pu,
+            igv_afectacion: a.igv_afectacion,
+            igv_porcentaje: a.igv_porcentaje,
+            moneda: a.moneda,
+            tipo_cambio: a.tipo_cambio,
+
+            lote: a.lote,
+            fv: a.fv,
+
             is_lote_padre: tipo == 1 ? true : false,
             stock: tipo == 1 ? a.cantidad : tipo == 5 ? a.stock : null,
+
+            observacion: a.observacion,
+
             transaccion: nuevo.id,
             createdBy: colaborador
         }))
@@ -209,7 +231,7 @@ const find = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const { id } = req.params
-
+        console.log(id)
         let data = await Transaccion.findByPk(id, {
             include: [
                 {
@@ -236,6 +258,11 @@ const findById = async (req, res) => {
                     as: 'moneda1',
                     attributes: ['id', 'nombre', 'simbolo', 'estandar']
                 },
+                // {
+                //     model: Kardex,
+                //     as: 'kardexes',
+                //     attributes: ['id', 'lote', 'fv', 'stock', 'lote_fv_stock']
+                // }
             ]
         })
 
@@ -244,10 +271,11 @@ const findById = async (req, res) => {
 
             for (const a of data.transaccion_items) {
                 if (a.lote_padre) {
-                    a.lotes = [{
-                        id: a.lote_padre1.id,
-                        lote_fv_stock: a.lote_padre1.lote + (a.lote_padre1.fv ? ` | ${a.lote_padre1.fv}` : '') + (` | ${a.stock}`)
-                    }]
+                    // a.lotes = [...a.]
+                    // a.lotes = [{
+                    //     id: a.lote_padre1.id,
+                    //     lote_fv_stock: a.lote_padre1.lote + (a.lote_padre1.fv ? ` | ${a.lote_padre1.fv}` : '') + (` | ${a.stock}`)
+                    // }]
                 }
             }
         }

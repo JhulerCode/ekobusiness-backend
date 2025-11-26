@@ -28,15 +28,32 @@ export const Kardex = sequelize.define('kardexes', {
     stock: { type: DataTypes.DECIMAL(10, 2) }, //required
     lote_padre: { type: DataTypes.STRING }, //required //linked
 
+    observacion: { type: DataTypes.TEXT },
+
     transaccion: { type: DataTypes.STRING }, //linked
     transaccion_item: { type: DataTypes.STRING }, //linked
     produccion_orden: { type: DataTypes.STRING }, //linked
     maquina: { type: DataTypes.STRING }, // linked
 
-    observacion: { type: DataTypes.TEXT },
-
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
+
+    lote_fv_stock: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            const lote = this.lote
+            const fv = this.fv
+            const stock = this.stock
+
+            let fecha_vencimiento = ''
+            if (fv) {
+                const [año, mes, dia] = fv.split("-")
+                fecha_vencimiento = `${dia}-${mes}-${año}`
+            }
+
+            return `${lote} | ${fecha_vencimiento} | ${stock}`
+        }
+    }
 })
 
 Articulo.hasMany(Kardex, { foreignKey: 'articulo', as: 'kardexes', onDelete: 'RESTRICT' })

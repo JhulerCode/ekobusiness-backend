@@ -356,8 +356,8 @@ const findLotes = async (req, res) => {
         const { id } = req.params
 
         const findProps = {
-            attributes: ['id', 'fecha', 'moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote', 'stock'],
-            order: [['fv', 'DESC'], ['createdAt', 'DESC']],
+            attributes: ['id', 'fecha', 'moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote', 'stock', 'lote_fv_stock'],
+            order: [['lote', 'DESC']],
             where: {
                 articulo: id,
                 is_lote_padre: true,
@@ -376,18 +376,11 @@ const findLotes = async (req, res) => {
         if (data.length > 0) {
             data = data.map(a => a.toJSON())
 
-            const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
+            // const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
 
-            for (const a of data) {
-                a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-
-                let fecha_vencimiento = ''
-                if (a.fv) {
-                    const [año, mes, dia] = a.fv.split("-")
-                    fecha_vencimiento = `${dia}-${mes}-${año}`
-                }
-                a.lote_fv_stock = a.lote + (a.fv ? ` | ${fecha_vencimiento}` : '') + (` | ${redondear(Number(a.stock))}`)
-            }
+            // for (const a of data) {
+            //     a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
+            // }
         }
 
         res.json({ code: 0, data })
