@@ -1,6 +1,6 @@
 import { Socio } from "#db/models/Socio.js"
 import { PrecioLista } from "#db/models/PrecioLista.js"
-import { applyFilters, jdFindAll } from '#db/helpers.js'
+import { jdFindAll } from '#db/helpers.js'
 import SocioRepository from '../../domain/SocioRepository.js'
 
 const include1 = {
@@ -13,10 +13,7 @@ const include1 = {
 
 export default class SocioRepositoryDb extends SocioRepository {
     async find(qry) {
-        const findProps = jdFindAll(Socio, qry, include1)
-
-        const data = await Socio.findAll(findProps)
-        return data.map(a => a.toJSON())
+        return await jdFindAll(Socio, qry, include1)
     }
 
     async findById(id) {

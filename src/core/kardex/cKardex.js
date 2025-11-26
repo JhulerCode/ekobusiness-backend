@@ -13,6 +13,10 @@ import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
 import { redondear } from '#shared/mine.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
 
+import KardexRepositoryDb from './KardexRepositoryDb.js'
+
+const repository = new KardexRepositoryDb()
+
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
@@ -139,125 +143,127 @@ const find = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            attributes: ['id'],
-            order: [['createdAt', 'DESC'], ['fecha', 'DESC']],
-            where: {},
-            include: [],
-        }
+        // const findProps = {
+        //     attributes: ['id'],
+        //     order: [['createdAt', 'DESC'], ['fecha', 'DESC']],
+        //     where: {},
+        //     include: [],
+        // }
 
-        const include1 = {
-            lote_padre1: {
-                model: Kardex,
-                as: 'lote_padre1',
-                attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote'],
-                required: false
-            },
-            transaccion1: {
-                model: Transaccion,
-                as: 'transaccion1',
-                attributes: ['id', 'socio', 'guia', 'factura'],
-                required: false,
-                include: [
-                    {
-                        model: Socio,
-                        as: 'socio1',
-                        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-                    }
-                ],
-            },
-            maquina1: {
-                model: Maquina,
-                as: 'maquina1',
-                attributes: ['id', 'nombre'],
-                required: false,
-            },
-            produccion_orden1: {
-                model: ProduccionOrden,
-                as: 'produccion_orden1',
-                attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
-                include: [
-                    {
-                        model: Maquina,
-                        as: 'maquina1',
-                        attributes: ['id', 'nombre'],
-                    },
-                    {
-                        model: ArticuloLinea,
-                        as: 'tipo1',
-                        attributes: ['id', 'nombre'],
-                    }
-                ],
-                required: false,
-            },
-            articulo1: {
-                model: Articulo,
-                as: 'articulo1',
-                attributes: ['nombre', 'unidad'],
-            },
-        }
+        // const include1 = {
+        //     lote_padre1: {
+        //         model: Kardex,
+        //         as: 'lote_padre1',
+        //         attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote'],
+        //         required: false
+        //     },
+        //     transaccion1: {
+        //         model: Transaccion,
+        //         as: 'transaccion1',
+        //         attributes: ['id', 'socio', 'guia', 'factura'],
+        //         required: false,
+        //         include: [
+        //             {
+        //                 model: Socio,
+        //                 as: 'socio1',
+        //                 attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+        //             }
+        //         ],
+        //     },
+        //     maquina1: {
+        //         model: Maquina,
+        //         as: 'maquina1',
+        //         attributes: ['id', 'nombre'],
+        //         required: false,
+        //     },
+        //     produccion_orden1: {
+        //         model: ProduccionOrden,
+        //         as: 'produccion_orden1',
+        //         attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
+        //         include: [
+        //             {
+        //                 model: Maquina,
+        //                 as: 'maquina1',
+        //                 attributes: ['id', 'nombre'],
+        //             },
+        //             {
+        //                 model: ArticuloLinea,
+        //                 as: 'tipo1',
+        //                 attributes: ['id', 'nombre'],
+        //             }
+        //         ],
+        //         required: false,
+        //     },
+        //     articulo1: {
+        //         model: Articulo,
+        //         as: 'articulo1',
+        //         attributes: ['nombre', 'unidad'],
+        //     },
+        // }
 
-        if (qry) {
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
-                }
-            }
+        // if (qry) {
+        //     if (qry.incl) {
+        //         for (const a of qry.incl) {
+        //             if (qry.incl.includes(a)) findProps.include.push(include1[a])
+        //         }
+        //     }
 
-            if (qry.fltr) {
-                const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
+        //     if (qry.fltr) {
+        //         const fltr1 = JSON.parse(JSON.stringify(qry.fltr))
 
-                delete qry.fltr.articulo_nombre
+        //         delete qry.fltr.articulo_nombre
 
-                delete qry.fltr.produccion_orden_tipo
-                delete qry.fltr.produccion_orden_maquina
+        //         delete qry.fltr.produccion_orden_tipo
+        //         delete qry.fltr.produccion_orden_maquina
 
-                delete qry.fltr.transaccion_guia
-                delete qry.fltr.transaccion_factura
-                delete qry.fltr.transaccion_socio
+        //         delete qry.fltr.transaccion_guia
+        //         delete qry.fltr.transaccion_factura
+        //         delete qry.fltr.transaccion_socio
 
-                Object.assign(findProps.where, applyFilters(qry.fltr))
+        //         Object.assign(findProps.where, applyFilters(qry.fltr))
 
-                if (fltr1.articulo_nombre) {
-                    Object.assign(findProps.where, applyFilters({ '$articulo1.nombre$': fltr1.articulo_nombre }))
-                }
+        //         if (fltr1.articulo_nombre) {
+        //             Object.assign(findProps.where, applyFilters({ '$articulo1.nombre$': fltr1.articulo_nombre }))
+        //         }
 
-                if (fltr1.produccion_orden_tipo) {
-                    Object.assign(findProps.where, applyFilters({ '$produccion_orden1.tipo$': fltr1.produccion_orden_tipo }))
-                }
+        //         if (fltr1.produccion_orden_tipo) {
+        //             Object.assign(findProps.where, applyFilters({ '$produccion_orden1.tipo$': fltr1.produccion_orden_tipo }))
+        //         }
 
-                if (fltr1.produccion_orden_maquina) {
-                    Object.assign(findProps.where, applyFilters({ '$produccion_orden1.maquina$': fltr1.produccion_orden_maquina }))
-                }
+        //         if (fltr1.produccion_orden_maquina) {
+        //             Object.assign(findProps.where, applyFilters({ '$produccion_orden1.maquina$': fltr1.produccion_orden_maquina }))
+        //         }
 
-                if (fltr1.transaccion_guia) {
-                    Object.assign(findProps.where, applyFilters({ '$transaccion1.guia$': fltr1.transaccion_guia }))
-                }
+        //         if (fltr1.transaccion_guia) {
+        //             Object.assign(findProps.where, applyFilters({ '$transaccion1.guia$': fltr1.transaccion_guia }))
+        //         }
 
-                if (fltr1.transaccion_factura) {
-                    Object.assign(findProps.where, applyFilters({ '$transaccion1.factura$': fltr1.transaccion_factura }))
-                }
+        //         if (fltr1.transaccion_factura) {
+        //             Object.assign(findProps.where, applyFilters({ '$transaccion1.factura$': fltr1.transaccion_factura }))
+        //         }
 
-                if (fltr1.transaccion_socio) {
-                    Object.assign(findProps.where, applyFilters({ '$transaccion1.socio$': fltr1.transaccion_socio }))
-                }
-            }
+        //         if (fltr1.transaccion_socio) {
+        //             Object.assign(findProps.where, applyFilters({ '$transaccion1.socio$': fltr1.transaccion_socio }))
+        //         }
+        //     }
 
-            if (qry.cols) {
-                const excludeCols = [
-                    'articulo_nombre', 'articulo_unidad',
-                    'produccion_orden_tipo', 'produccion_orden_maquina', 'producto_estado',
-                    'transaccion_guia', 'transaccion_factura', 'transaccion_socio',
-                ]
-                const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
-                findProps.attributes = findProps.attributes.concat(cols1)
-            }
-        }
+        //     if (qry.cols) {
+        //         const excludeCols = [
+        //             'articulo_nombre', 'articulo_unidad',
+        //             'produccion_orden_tipo', 'produccion_orden_maquina', 'producto_estado',
+        //             'transaccion_guia', 'transaccion_factura', 'transaccion_socio',
+        //         ]
+        //         const cols1 = qry.cols.filter(a => !excludeCols.includes(a))
+        //         findProps.attributes = findProps.attributes.concat(cols1)
+        //     }
+        // }
 
-        let data = await Kardex.findAll(findProps)
+        // let data = await Kardex.findAll(findProps)
+
+        const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            data = data.map(a => a.toJSON())
+            // data = data.map(a => a.toJSON())
 
             const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
             const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
@@ -345,47 +351,6 @@ const delet = async (req, res) => {
     catch (error) {
         await transaction.rollback()
 
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-
-
-const findLotes = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const findProps = {
-            attributes: ['id', 'fecha', 'moneda', 'tipo_cambio', 'pu', 'igv_afectacion', 'igv_porcentaje', 'fv', 'lote', 'stock', 'lote_fv_stock'],
-            order: [['lote', 'DESC']],
-            where: {
-                articulo: id,
-                is_lote_padre: true,
-            },
-            include: [
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['nombre', 'unidad']
-                },
-            ],
-        }
-
-        let data = await Kardex.findAll(findProps)
-
-        if (data.length > 0) {
-            data = data.map(a => a.toJSON())
-
-            // const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
-
-            // for (const a of data) {
-            //     a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-            // }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -681,8 +646,6 @@ export default {
     find,
     delet,
     create,
-
-    findLotes,
 
     ingresarProduccionProductos,
 

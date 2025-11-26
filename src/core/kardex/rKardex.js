@@ -6,7 +6,17 @@ const router = Router()
 
 router.get(
     '/',
-    verifyPermiso(),
+    // verifyPermiso([
+    //     'vArticulos:ajusteStock',
+    //     'vProductosTerminados:ajusteStock',
+    //     'vVentaPedidos:entregarMercaderia',
+    //     'vVentas:crear',
+
+    //     'vPrograma:salidaInsumos',
+    //     'vPrograma:salidaInsumosCompartidos',
+
+    //     'vProduccionHistorial:salidaInsumos',
+    // ]),
     controller.find
 )
 
@@ -58,26 +68,6 @@ router.delete(
         'vPrograma:salidaInsumosCompartidos',
     ]),
     controller.delet
-)
-
-
-///// ----- LOTES ----- /////
-router.get(
-    '/lotes/:id',
-    verifyPermiso([
-        'vArticulos:ajusteStock',
-        'vProductosTerminados:ajusteStock',
-        'vVentaPedidos:entregarMercaderia',
-        'vVentas:crear',
-
-        'vPrograma:salidaInsumos',
-        // 'vProgramaGranel:salidaInsumos',
-        // 'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
-
-        'vPrograma:salidaInsumosCompartidos',
-    ]),
-    controller.findLotes
 )
 
 

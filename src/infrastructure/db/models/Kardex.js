@@ -45,13 +45,15 @@ export const Kardex = sequelize.define('kardexes', {
             const fv = this.fv
             const stock = this.stock
 
-            let fecha_vencimiento = ''
             if (fv) {
                 const [año, mes, dia] = fv.split("-")
-                fecha_vencimiento = `${dia}-${mes}-${año}`
+                const fecha_vencimiento = `${dia}-${mes}-${año}`
+                return `${lote} | ${fecha_vencimiento} | ${stock}`
+            }
+            else {
+                return `${lote} | ${stock}`
             }
 
-            return `${lote} | ${fecha_vencimiento} | ${stock}`
         }
     }
 })
