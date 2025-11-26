@@ -11,7 +11,7 @@ const include1 = {
     lote_padre1: {
         model: Kardex,
         as: 'lote_padre1',
-        attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote'],
+        attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock'],
         required: false
     },
     transaccion1: {

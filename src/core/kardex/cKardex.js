@@ -178,7 +178,7 @@ const find = async (req, res) => {
                 }
 
                 // DATOS PARA PRODUCTOS TERMINADOS
-                if (qry.cols.includes('is_lote_padre')) {
+                if (qry.cols.includes('producto_estado')) {
                     a.producto_estado = a.is_lote_padre ? 2 : 1
                     a.producto_estado1 = cuarentena_productos_estadosMap[a.producto_estado]
                 }

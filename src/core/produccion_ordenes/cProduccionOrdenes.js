@@ -129,7 +129,7 @@ const find = async (req, res) => {
             ]
         }
 
-        const data = await jdFindAll(ProduccionOrden, qry, include1, sqls1, true)
+        const data = await jdFindAll({ model: ProduccionOrden, qry, include1, sqls1, tojson: true })
 
         if (data.length > 0) {
             const produccion_orden_estadosMap = cSistema.arrayMap('produccion_orden_estados')

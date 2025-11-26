@@ -14,7 +14,7 @@ const find = async (req, res) => {
             }
         }
 
-        const data = await jdFindAll(ActivityLog, qry, include1)
+        const data = await jdFindAll({ model: ActivityLog, qry, include1 })
 
         res.json({ code: 0, data })
     }
