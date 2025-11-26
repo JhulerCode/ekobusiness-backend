@@ -50,7 +50,7 @@ function buildCondition({ op, val, val1 }) {
     }
 }
 
-async function jdFindAll(model, qry, include1, sqls1, tojson) {
+async function jdFindAll({ model, qry, include1, sqls1, tojson }) {
     const columns = Object.keys(model.getAttributes());
 
     const findProps = {
@@ -101,9 +101,11 @@ async function jdFindAll(model, qry, include1, sqls1, tojson) {
     const data = await model.findAll(findProps)
 
     if (tojson) {
+        console.log('QWE')
         return data.map(a => a.toJSON())
     }
     else {
+        console.log('QWE1')
         return data
     }
 }

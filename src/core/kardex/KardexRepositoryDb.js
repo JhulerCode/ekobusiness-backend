@@ -55,7 +55,13 @@ const include1 = {
 
 export default class KardexRepositoryDb {
     async find(qry, tojson) {
-        return await jdFindAll(Kardex, qry, include1, tojson)
+        const send = {
+            model: Kardex,
+            qry,
+            include1,
+            tojson
+        }
+        return await jdFindAll(send)
     }
 
     async findById(id) {
