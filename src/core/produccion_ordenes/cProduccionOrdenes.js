@@ -25,13 +25,13 @@ const create = async (req, res) => {
         const { colaborador } = req.user
         const {
             fecha, tipo, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado,
+            articulo, articulo_info, cantidad, estado, observacion,
         } = req.body
 
         // ----- CREAR ----- //
         const nuevo = await ProduccionOrden.create({
             fecha, tipo, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado,
+            articulo, articulo_info, cantidad, estado, observacion,
             createdBy: colaborador
         })
 
@@ -50,14 +50,14 @@ const update = async (req, res) => {
         const { id } = req.params
         const {
             fecha, tipo, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado,
+            articulo, articulo_info, cantidad, estado, observacion,
         } = req.body
 
         // ----- ACTUALIZAR ----- //
         const [affectedRows] = await ProduccionOrden.update(
             {
                 fecha, tipo, orden, maquina, maquina_info,
-                articulo, articulo_info, cantidad, estado,
+                articulo, articulo_info, cantidad, estado, observacion,
                 updatedBy: colaborador
             },
             { where: { id } }

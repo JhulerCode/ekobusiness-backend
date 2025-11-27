@@ -23,6 +23,8 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     calidad_revisado: { type: DataTypes.STRING },
     cf_ppc: { type: DataTypes.STRING },
 
+    observacion: { type: DataTypes.TEXT },
+
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 
