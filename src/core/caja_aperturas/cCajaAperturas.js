@@ -1,5 +1,6 @@
 import { CajaApertura } from '#db/models/CajaApertura.js'
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
+import { Colaborador } from '#db/models/Colaborador.js'
 import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 
@@ -74,9 +75,24 @@ const find = async (req, res) => {
             attributes: ['id'],
             order: [['createdAt', 'DESC']],
             where: {},
+            include: [],
+        }
+
+        const include1 = {
+            createdBy1: {
+                model: Colaborador,
+                as: 'createdBy1',
+                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
+            }
         }
 
         if (qry) {
+            if (qry.incl) {
+                for (const a of qry.incl) {
+                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
+                }
+            }
+
             if (qry.fltr) {
                 Object.assign(findProps.where, applyFilters(qry.fltr))
             }
