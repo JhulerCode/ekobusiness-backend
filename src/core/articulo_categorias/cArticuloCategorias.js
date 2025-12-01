@@ -1,7 +1,46 @@
-import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
-import { existe, applyFilters } from '#shared/mine.js'
+import { Repository } from '#db/Repository.js'
+import { jdFindAll } from '#db/helpers.js'
+import { existe } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
+
+const modelId = 'ArticuloCategoria'
+const repository = new Repository('ArticuloCategoria')
+
+const find = async (req, res) => {
+    try {
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        const data = await repository.find(qry, true)
+
+        if (data.length > 0) {
+            const estadosMap = cSistema.arrayMap('estados')
+
+            for (const a of data) {
+                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
+                if (qry?.cols?.includes('is_destacado')) a.is_destacado1 = estadosMap[a.is_destacado]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const findById = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const data = await repository.find({ id })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
 
 const create = async (req, res) => {
     try {
@@ -9,10 +48,10 @@ const create = async (req, res) => {
         const { tipo, nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(ArticuloCategoria, { nombre }, res) == true) return
+        if (await repository.existe({ nombre }, res) == true) return
 
         // ----- CREAR ----- //
-        const nuevo = await ArticuloCategoria.create({
+        const nuevo = await repository.create({
             tipo, nombre, descripcion, activo,
             createdBy: colaborador,
         })
@@ -33,92 +72,17 @@ const update = async (req, res) => {
         const { tipo, nombre, descripcion, activo } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(ArticuloCategoria, { nombre, id }, res) == true) return
+        if (await repository.existe({ nombre, id }, res) == true) return
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await ArticuloCategoria.update({
+        const updated = await repository.update(id, {
             tipo, nombre, descripcion, activo,
             updatedBy: colaborador
-        }, { where: { id } })
+        })
 
-        if (affectedRows > 0) {
-            const data = await loadOne(id)
+        if (updated == false) return
 
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await ArticuloCategoria.findByPk(id)
-
-    if (data) {
-        data = data.toJSON()
-
-        const estadosMap = cSistema.arrayMap('estados')
-
-        data.activo1 = estadosMap[data.activo]
-        data.is_destacado1 = estadosMap[data.is_destacado]
-    }
-
-    return data
-}
-
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id', 'nombre'],
-            order: [['nombre', 'ASC']],
-            where: {},
-        }
-        // console.log(qry)
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-            }
-        }
-
-        let data = await ArticuloCategoria.findAll(findProps)
-
-        if (data.length > 0 && qry && qry.cols) {
-            data = data.map(a => a.toJSON())
-
-            const estadosMap = cSistema.arrayMap('estados')
-
-            for (const a of data) {
-                if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry.cols.includes('is_destacado')) a.is_destacado1 = estadosMap[a.is_destacado]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        let data = await ArticuloCategoria.findByPk(id)
-
-        // if (data) {
-        //     data = data.toJSON()
-        // }
+        const data = await loadOne(id)
 
         res.json({ code: 0, data })
     }
@@ -132,11 +96,9 @@ const delet = async (req, res) => {
         const { id } = req.params
 
         // ----- ELIMINAR ----- //
-        const deletedCount = await ArticuloCategoria.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -189,32 +151,45 @@ const updateFotos = async (req, res) => {
         }
 
         // --- ACTUALIZAR EN BASE DE DATOS ---
-        const [affectedRows] = await ArticuloCategoria.update(
-            {
-                fotos: new_fotos,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            fotos: new_fotos,
+            updatedBy: colaborador
+        })
 
-        if (affectedRows > 0) {
-            // --- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---
-            for (const a of eliminados) {
-                try {
-                    await minioClient.removeObject(minioBucket, a.id)
-                } catch (err) {
-                    console.error(`Error al eliminar ${a.id}:`, err.message)
-                }
+        if (updated == false) return
+        
+        // --- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---
+        for (const a of eliminados) {
+            try {
+                await minioClient.removeObject(minioBucket, a.id)
+            } catch (err) {
+                console.error(`Error al eliminar ${a.id}:`, err.message)
             }
-
-            res.json({ code: 0, data: new_fotos })
-        } else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
         }
-    } catch (error) {
+
+        res.json({ code: 0, data: new_fotos })
+    }
+    catch (error) {
         console.error('Error en updateFotos:', error)
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await repository.find({ id })
+
+    if (data) {
+        data = data.toJSON()
+
+        const estadosMap = cSistema.arrayMap('estados')
+
+        data.activo1 = estadosMap[data.activo]
+        data.is_destacado1 = estadosMap[data.is_destacado]
+    }
+
+    return data
 }
 
 export default {

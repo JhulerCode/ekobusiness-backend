@@ -50,34 +50,34 @@ function buildCondition({ op, val, val1 }) {
     }
 }
 
-async function jdFindAll({ model, qry, include1, sqls1, tojson }) {
+async function jdFindAll({ model, id, qry, include1, sqls1, tojson }) {
     const columns = Object.keys(model.getAttributes());
 
     const findProps = {
         include: [],
         attributes: ['id'],
         where: {},
-        order: [],
+        order: [['createdAt', 'DESC']],
     }
 
-    if (qry.incl) {
+    if (qry?.incl) {
         for (const a of qry.incl) {
             if (qry.incl.includes(a)) findProps.include.push(include1[a])
         }
     }
 
-    if (qry.cols) {
+    if (qry?.cols) {
         const cols1 = qry.cols.filter(a => columns.includes(a))
         findProps.attributes = findProps.attributes.concat(cols1)
     }
 
-    if (qry.sqls) {
+    if (qry?.sqls) {
         for (const a of qry.sqls) {
             if (qry.sqls.includes(a)) findProps.attributes.push(sqls1[a])
         }
     }
 
-    if (qry.fltr) {
+    if (qry?.fltr) {
         const fltr1 = Object.fromEntries(
             Object.entries(qry.fltr).filter(([key]) => columns.includes(key))
         )
@@ -91,27 +91,35 @@ async function jdFindAll({ model, qry, include1, sqls1, tojson }) {
             )
     }
 
-    if (qry.ordr) {
+    if (qry?.ordr) {
         findProps.order = qry.ordr
     }
-    else {
-        findProps.order = [['createdAt', 'DESC']]
-    }
 
-    const data = await model.findAll(findProps)
+    if (id) {
+        delete findProps.attributes
+        const data = await model.findByPk(id, findProps)
 
-    if (tojson) {
-        console.log('QWE')
-        return data.map(a => a.toJSON())
+        if (tojson) {
+            return data.toJSON()
+        }
+        else {
+            return data
+        }
     }
     else {
-        console.log('QWE1')
-        return data
+        const data = await model.findAll(findProps)
+
+        if (tojson) {
+            return data.map(a => a.toJSON())
+        }
+        else {
+            return data
+        }
     }
 }
 
 export {
-    // applyFilters,
+    applyFilters,
     // buildCondition,
     jdFindAll,
 }
