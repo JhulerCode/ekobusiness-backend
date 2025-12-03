@@ -51,8 +51,8 @@ router.get('/', (req, res) => {
     res.send(`Eko Business's server is running`)
 })
 
-router.use('/', verifyVersion)
-router.use('/signin', signin)
+router.use('/signin', verifyVersion, signin)
+router.use('/api', verifyVersion)
 router.use('/api', verifyToken)
 router.use('/api/activity_logs', activity_logs)
 router.use('/api/sistema', sistema)

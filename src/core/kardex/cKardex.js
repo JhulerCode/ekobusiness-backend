@@ -245,6 +245,7 @@ const ingresarProduccionProductos = async (req, res) => {
         const { colaborador } = req.user
         const { fecha, transaccion_items } = req.body
 
+        const produccion_ordenes_ids = []
         for (const a of transaccion_items) {
             await Kardex.update(
                 {
@@ -256,7 +257,16 @@ const ingresarProduccionProductos = async (req, res) => {
                 },
                 { where: { id: a.id }, transaction }
             )
+
+            produccion_ordenes_ids.push(a.produccion_orden1.id)
         }
+
+        await ProduccionOrden.update(
+            {
+                estado: 2,
+            },
+            { where: { id: produccion_ordenes_ids }, transaction }
+        )
 
         await transaction.commit()
 

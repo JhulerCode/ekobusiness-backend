@@ -6,6 +6,7 @@ import cSistema from '../_sistema/cSistema.js'
 import { Kardex } from '#db/models/Kardex.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
 import { Sequelize } from 'sequelize'
+import { Colaborador } from '#infrastructure/db/models/Colaborador.js'
 
 const includes = {
     articulo1: {
@@ -17,6 +18,7 @@ const includes = {
         model: Maquina,
         as: 'maquina1',
         attributes: ['nombre', 'produccion_tipo'],
+        required: false,
     },
 }
 
@@ -109,6 +111,7 @@ const find = async (req, res) => {
                 as: 'maquina1',
                 attributes: ['id', 'nombre'],
                 where: {},
+                required: false,
             },
             tipo1: {
                 model: ArticuloLinea,
@@ -116,6 +119,12 @@ const find = async (req, res) => {
                 attributes: ['id', 'nombre'],
                 where: {},
             },
+            createdBy1: {
+                model: Colaborador,
+                as: 'createdBy1',
+                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
+                where: {},
+            }
         }
 
         const sqls1 = {
@@ -243,27 +252,30 @@ const findTrazabilidad = async (req, res) => {
             const insumosMap = {}
             data.productos_terminados = []
 
-            for (const a of data.transaccion_items) {
-                if (a.tipo == 2 || a.tipo == 3) {
-                    const key = a.articulo + '-' + a.lote_padre
+            // if (data.transaccion_items?.length > 0) {
+                for (const a of data.kardexes) {
+                    if (a.tipo == 2 || a.tipo == 3) {
+                        const key = a.articulo + '-' + a.lote_padre
 
-                    if (!insumosMap[key]) {
-                        insumosMap[key] = { ...a, cantidad: 0 };
+                        if (!insumosMap[key]) {
+                            insumosMap[key] = { ...a, cantidad: 0 };
+                        }
+
+                        if (a.tipo == 2) {
+                            insumosMap[key].cantidad += Number(a.cantidad);
+                        } else if (a.tipo == 3) {
+                            insumosMap[key].cantidad -= Number(a.cantidad);
+                        }
                     }
-                    if (a.tipo == 2) {
-                        insumosMap[key].cantidad += a.cantidad;
-                    } else if (a.tipo == 3) {
-                        insumosMap[key].cantidad -= a.cantidad;
+
+                    if (a.tipo == 4) {
+                        data.productos_terminados.push(a)
                     }
                 }
 
-                if (a.tipo == 4) {
-                    data.productos_terminados.push(a)
-                }
-            }
-
-            data.insumos = Object.values(insumosMap)
-            delete data.transaccion_items
+                data.insumos = Object.values(insumosMap)
+                delete data.kardexes
+            // }
         }
 
         res.json({ code: 0, data })
