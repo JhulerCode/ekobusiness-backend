@@ -210,6 +210,27 @@ const terminar = async (req, res) => {
     }
 }
 
+const abrir = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        // ----- ANULAR ----- //
+        await ProduccionOrden.update(
+            {
+                estado: 1,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const findTrazabilidad = async (req, res) => {
     try {
         const { id } = req.params
@@ -253,28 +274,28 @@ const findTrazabilidad = async (req, res) => {
             data.productos_terminados = []
 
             // if (data.transaccion_items?.length > 0) {
-                for (const a of data.kardexes) {
-                    if (a.tipo == 2 || a.tipo == 3) {
-                        const key = a.articulo + '-' + a.lote_padre
+            for (const a of data.kardexes) {
+                if (a.tipo == 2 || a.tipo == 3) {
+                    const key = a.articulo + '-' + a.lote_padre
 
-                        if (!insumosMap[key]) {
-                            insumosMap[key] = { ...a, cantidad: 0 };
-                        }
-
-                        if (a.tipo == 2) {
-                            insumosMap[key].cantidad += Number(a.cantidad);
-                        } else if (a.tipo == 3) {
-                            insumosMap[key].cantidad -= Number(a.cantidad);
-                        }
+                    if (!insumosMap[key]) {
+                        insumosMap[key] = { ...a, cantidad: 0 };
                     }
 
-                    if (a.tipo == 4) {
-                        data.productos_terminados.push(a)
+                    if (a.tipo == 2) {
+                        insumosMap[key].cantidad += Number(a.cantidad);
+                    } else if (a.tipo == 3) {
+                        insumosMap[key].cantidad -= Number(a.cantidad);
                     }
                 }
 
-                data.insumos = Object.values(insumosMap)
-                delete data.kardexes
+                if (a.tipo == 4) {
+                    data.productos_terminados.push(a)
+                }
+            }
+
+            data.insumos = Object.values(insumosMap)
+            delete data.kardexes
             // }
         }
 
@@ -292,5 +313,6 @@ export default {
     update,
     delet,
     terminar,
-    findTrazabilidad
+    abrir,
+    findTrazabilidad,
 }

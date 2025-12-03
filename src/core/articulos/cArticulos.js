@@ -62,7 +62,7 @@ const create = async (req, res) => {
             igv_afectacion,
             tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
+            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -76,7 +76,7 @@ const create = async (req, res) => {
             igv_afectacion,
             tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
+            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
             createdBy: colaborador
         })
 
@@ -99,7 +99,7 @@ const update = async (req, res) => {
             igv_afectacion,
             tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
+            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -113,7 +113,7 @@ const update = async (req, res) => {
                 igv_afectacion,
                 tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
                 is_combo, combo_articulos,
-                is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, ingredientes, beneficios,
+                is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
                 updatedBy: colaborador
             },
             { where: { id } }

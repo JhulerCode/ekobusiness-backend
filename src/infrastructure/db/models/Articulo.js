@@ -31,6 +31,7 @@ export const Articulo = sequelize.define('articulos', {
     descripcion: { type: DataTypes.TEXT },
     precio: { type: DataTypes.DOUBLE },
     precio_anterior: { type: DataTypes.DOUBLE },
+    is_destacado: { type: DataTypes.BOOLEAN, defaultValue: false },
     fotos: { type: DataTypes.JSON, defaultValue: [] },
     dimenciones: { type: DataTypes.STRING },
     envase_tipo: { type: DataTypes.STRING },

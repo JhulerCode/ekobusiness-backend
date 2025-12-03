@@ -56,6 +56,16 @@ router.patch(
     controller.terminar
 )
 
+router.patch(
+    '/abrir/:id',
+    verifyPermiso([
+        'vPrograma:terminar',
+        // 'vProgramaGranel:terminar',
+        // 'vProgramaLuxury:terminar'
+    ]),
+    controller.abrir
+)
+
 router.delete(
     '/:id',
     verifyPermiso([

@@ -483,6 +483,7 @@ const recalcularStock = async (req, res) => {
             where: {
                 is_lote_padre: true,
                 // fecha: { [Op.between]: ['2025-11-15', '2025-11-30'] }
+                articulo: '4a172ce3-ad39-4746-96ee-ed877bd58494'
             },
             attributes: [
                 'id',
