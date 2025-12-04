@@ -8,6 +8,8 @@ import { nodeMailer } from "#mail/nodeMailer.js"
 import { companyName, htmlConfirmacionCompra } from '#mail/templates.js'
 import cSistema from '../_sistema/cSistema.js'
 
+import dayjs from '#shared/dayjs.js'
+
 const createPayment = async (req, res) => {
     const { monto, correo, user_id, paymentMethodToken } = req.body;
 
@@ -78,6 +80,10 @@ const validatePayment = async (req, res) => {
         return
     }
 
+    const etapas = [
+        { id: 1, fecha: dayjs() },
+    ]
+    console.log('ESTO ES ANTES', pagado)
     // ----- GUARDAR PEDIDO ----- //
     const transaction = await sequelize.transaction()
     try {
@@ -88,7 +94,7 @@ const validatePayment = async (req, res) => {
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             pago_metodo, pago_id,
-            observacion, estado, pagado,
+            observacion, estado, pagado, etapas,
             empresa_datos,
         }, { transaction })
 
@@ -169,10 +175,17 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
     const MAX_ATTEMPTS = 10;
     const RETRY_DELAY = 30_000; // 30 segundos
 
+    const ped = await SocioPedido.findOne({
+        where: { codigo: orderId }
+    })
+
+    const etapas = [...ped.etapas, { id: 2, fecha: dayjs() }]
+
     const [affectedRows] = await SocioPedido.update(
         {
             pagado: true,
-            pago_id: transactionUUID
+            pago_id: transactionUUID,
+            etapas,
         },
         {
             where: { codigo: orderId }

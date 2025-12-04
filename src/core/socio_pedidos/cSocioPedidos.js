@@ -13,6 +13,7 @@ import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
 
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
+import dayjs from '#shared/dayjs.js'
 
 const includes = {
     socio1: {
@@ -60,6 +61,11 @@ const create = async (req, res) => {
         if (origin != 'ecommerce') {
             var { colaborador } = req.user
         }
+        else {
+            var etapas = [
+                { id: 1, fecha: dayjs() },
+            ]
+        }
 
         // ----- GUARDAR ----- //
         const nuevo = await SocioPedido.create({
@@ -69,7 +75,7 @@ const create = async (req, res) => {
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             pago_metodo, pago_id,
-            observacion, estado, pagado,
+            observacion, estado, pagado, etapas,
             empresa_datos,
             createdBy: colaborador
         }, { transaction })
@@ -352,11 +358,18 @@ const findById = async (req, res) => {
             const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
             const estadoMap = cSistema.arrayMap('estados')
+            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
+            const pago_metodos = cSistema.arrayMap('pago_metodos')
+            const comprobante_tipos = cSistema.arrayMap('comprobante_tipos')
 
             data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
             data.estado1 = pedido_estadosMap[data.estado]
             data.pagado1 = estadoMap[data.pagado]
+            data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
+            data.pago_metodo1 = pago_metodos[data.pago_metodo]
+            data.comprobante_tipo1 = comprobante_tipos[data.comprobante_tipo]
         }
+
         res.json({ code: 0, data })
     }
     catch (error) {

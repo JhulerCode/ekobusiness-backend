@@ -41,6 +41,13 @@ const sistemaData = {
         { id: '1', nombre: 'ABIERTO' },
         { id: '2', nombre: 'CERRADO' }
     ],
+    socio_pedidos_etapas: [
+        { id: 1, nombre: "Pedido recibido" },
+        { id: 2, nombre: "Pago confirmado" },
+        { id: 3, nombre: "Preparando pedido" },
+        { id: 4, nombre: "Listo para entrega" },
+        { id: 5, nombre: "Pedido completado" },
+    ],
     transaccion_tipos: [
         { id: '1', nombre: 'COMPRA', operacion: 1 },
         { id: '2', nombre: 'PRODUCCIÓN SALIDA', operacion: -1 },
