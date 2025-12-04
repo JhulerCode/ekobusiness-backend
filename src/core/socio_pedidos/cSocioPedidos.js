@@ -9,6 +9,10 @@ import { Transaccion } from '#db/models/Transaccion.js'
 import { applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { PrecioLista } from '#db/models/PrecioLista.js'
+import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
+
+import config from '../../config.js'
+import { nodeMailer } from "#mail/nodeMailer.js"
 
 const includes = {
     socio1: {
@@ -45,7 +49,7 @@ const create = async (req, res) => {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, moneda, tipo_cambio, monto,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             pago_metodo, pago_id,
             observacion, estado, pagado,
@@ -62,7 +66,7 @@ const create = async (req, res) => {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             pago_condicion, moneda, tipo_cambio, monto,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             pago_metodo, pago_id,
             observacion, estado, pagado,
@@ -80,24 +84,22 @@ const create = async (req, res) => {
         // ----- ENVIAR CORREO ----- //
         let send_email_err = null
         if (origin == 'ecommerce') {
-            try {
-                const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
-                const html = htmlConfirmacionCompra(
-                    socio_datos.nombres, socio_datos.apellidos,
-                    codigo, entrega_tipo1, monto,
-                    socio_pedido_items
-                )
-    
-                const nodemailer = nodeMailer()
-                const result = await nodemailer.sendMail({
-                    from: `${companyName} <${config.SOPORTE_EMAIL}>`,
-                    to: socio_datos.correo,
-                    subject: `Confirmación de compra - Código ${codigo}`,
-                    html
-                })
-            } catch (error) {
-                send_email_err = error
-            }
+            // console.log('Enviando correo')
+            const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
+            const html = htmlConfirmacionCompra(
+                socio_datos.nombres, socio_datos.apellidos,
+                codigo, entrega_tipo1, monto,
+                socio_pedido_items
+            )
+            const nodemailer = nodeMailer()
+            const result = await nodemailer.sendMail({
+                from: `${cSistema.sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
+                to: socio_datos.correo,
+                subject: `Confirmación de compra - Código ${codigo}`,
+                html
+            })
+            // console.log(result)
+            if (result.error) send_email_err = result.error
         }
 
         // ----- DEVOLVER ----- //

@@ -306,11 +306,13 @@ const createUser = async (req, res) => {
 
         // ----- CREAR ----- //
         contrasena = await bcrypt.hash(contrasena, 10)
+        const contrasena_updated_at = dayjs()
+        
         const data = await Socio.create({
             tipo: 2,
             correo,
             contrasena,
-            contrasena_updated_at: Sequelize.literal('current_timestamp')
+            contrasena_updated_at
         })
 
         const token = jat.encrypt({
@@ -322,7 +324,7 @@ const createUser = async (req, res) => {
             correo,
             direcciones: [],
             pago_metodos: [],
-            contrasena_updated_at: data.contrasena_updated_at,
+            contrasena_updated_at,
         })
 
         res.json({ code: 0, token })

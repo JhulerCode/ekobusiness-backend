@@ -2,7 +2,7 @@ const sistemaData = {
     empresa: {
         ruc: '20557053213',
         nombre: 'EKO BUSINESS S.A.C.',
-        nombre_comercial: 'SUNKA',
+        nombre_comercial: 'Sunka Herbal Tea',
         telefono: '(01) 432 865',
         correo: 'comercial@sunkatea.com',
 

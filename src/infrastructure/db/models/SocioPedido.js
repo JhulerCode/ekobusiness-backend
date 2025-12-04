@@ -27,6 +27,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     entrega_ubigeo: { type: DataTypes.STRING }, //required
     direccion_entrega: { type: DataTypes.STRING }, //required
     entrega_direccion_datos: { type: DataTypes.JSON }, //required
+    entrega_costo: { type: DataTypes.DOUBLE }, //required
 
     comprobante_tipo: { type: DataTypes.STRING }, //required
     comprobante_ruc: { type: DataTypes.STRING }, //required
@@ -68,6 +69,7 @@ export const SocioPedidoItem = sequelize.define('socio_pedido_items', {
     igv_afectacion: { type: DataTypes.STRING },
     igv_porcentaje: { type: DataTypes.DOUBLE },
 
+    blend_datos: { type: DataTypes.JSON },
     nota: { type: DataTypes.STRING },
 
     socio_pedido: { type: DataTypes.STRING }, //required //linked

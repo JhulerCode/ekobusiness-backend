@@ -20,13 +20,13 @@ async function verifyToken(req, res, next) {
         if (!sesion || sesion.token !== token) {
             return res.status(401).json({ msg: 'Sesión no válida' })
         }
-
+        
         req.user = {
             colaborador: user.colaborador, // este es el id del jwt
             id: user.id,
             ...sesion
         }
-
+        
         next()
     }
     catch (error) {

@@ -37,7 +37,7 @@ const create = async (req, res) => {
             subject: `Confirmación de registro Libro de reclamaciones - Código ${codigo}`,
             html
         })
-
+        console.log(result)
         if (result.error) {
             return res.json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
         }
