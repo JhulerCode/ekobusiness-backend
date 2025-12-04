@@ -149,6 +149,7 @@ async function loadOne(id) {
         data.has_fv1 = estadosMap[data.has_fv]
         data.activo1 = estadosMap[data.activo]
         data.igv_afectacion1 = igv_afectacionesMap[data.igv_afectacion]
+        data.is_ecommerce1 = estadosMap[data.is_ecommerce]
     }
 
     return data
@@ -183,7 +184,7 @@ async function findAll({ incl, cols, fltr }) {
     if (fltr) {
         Object.assign(findProps.where, applyFilters(fltr))
     }
-    
+
     return await Articulo.findAll(findProps)
 }
 
@@ -204,6 +205,7 @@ const find = async (req, res) => {
                 if (qry.cols.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
                 if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
                 if (qry.cols.includes('igv_afectacion')) a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
+                if (qry.cols.includes('is_ecommerce')) a.is_ecommerce1 = estadosMap[a.is_ecommerce]
             }
         }
 
