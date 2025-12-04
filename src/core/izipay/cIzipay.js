@@ -80,7 +80,7 @@ const validatePayment = async (req, res) => {
         return
     }
 
-    console.log('ESTO ES ANTES', pagado)
+    // console.log('ESTO ES ANTES', pagado)
     const etapas = [
         { id: 1, fecha: dayjs() },
     ]

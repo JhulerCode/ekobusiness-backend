@@ -284,7 +284,7 @@ const findInventario = async (req, res) => {
     try {
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await findMovimientosCantidad(qry, { fecha: { [Op.lte]: qry.transaccion_items.f2.val } })
+        const data = await findMovimientosCantidad(qry, applyFilters({ fecha: qry.fltr.fecha }))
 
         res.json({ code: 0, data })
     }
@@ -422,7 +422,6 @@ async function findMovimientosCantidad(qry, ti_where) {
         where: {},
         order: [['nombre', 'ASC']],
         group: ['articulos.id'],
-        raw: true,
     }
 
     const include1 = {
@@ -433,6 +432,8 @@ async function findMovimientosCantidad(qry, ti_where) {
         }
     }
 
+    const columns = Object.keys(Articulo.getAttributes());
+
     if (qry) {
         if (qry.incl) {
             for (const a of qry.incl) {
@@ -441,13 +442,15 @@ async function findMovimientosCantidad(qry, ti_where) {
         }
 
         if (qry.cols) {
-            const columns = Object.keys(Articulo.getAttributes());
             const cols1 = qry.cols.filter(a => columns.includes(a))
             findProps.attributes = findProps.attributes.concat(cols1)
         }
 
         if (qry.fltr) {
-            Object.assign(findProps.where, applyFilters(qry.fltr))
+            const fltr1 = Object.fromEntries(
+                Object.entries(qry.fltr).filter(([key]) => columns.includes(key))
+            )
+            Object.assign(findProps.where, applyFilters(fltr1))
         }
     }
 

@@ -299,6 +299,8 @@ const find = async (req, res) => {
             const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
             const estadoMap = cSistema.arrayMap('estados')
+            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
 
             for (const a of data) {
                 if (qry.cols.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
@@ -307,6 +309,9 @@ const find = async (req, res) => {
                 if (qry.cols.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
                 if (qry.cols.includes('listo')) a.listo1 = estadoMap[a.listo]
                 if (qry.cols.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
+
+                if (qry.cols.includes('pago_metodo')) a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
+                if (qry.cols.includes('entrega_tipo')) a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
             }
         }
 
@@ -362,19 +367,19 @@ const findById = async (req, res) => {
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
             const estadoMap = cSistema.arrayMap('estados')
             const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
-            const pago_metodos = cSistema.arrayMap('pago_metodos')
-            const comprobante_tipos = cSistema.arrayMap('comprobante_tipos')
-            const documentos_identidad = cSistema.arrayMap('documentos_identidad')
+            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+            const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
+            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
 
             data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
             data.estado1 = pedido_estadosMap[data.estado]
             data.pagado1 = estadoMap[data.pagado]
             data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
-            data.pago_metodo1 = pago_metodos[data.pago_metodo]
-            data.comprobante_tipo1 = comprobante_tipos[data.comprobante_tipo]
+            data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
+            data.comprobante_tipo1 = comprobante_tiposMap[data.comprobante_tipo]
 
             if (data.socio_datos.doc_tipo) {
-                data.socio_datos.doc_tipo1 = documentos_identidad[data.socio_datos.doc_tipo]
+                data.socio_datos.doc_tipo1 = documentos_identidadMap[data.socio_datos.doc_tipo]
             }
         }
 
