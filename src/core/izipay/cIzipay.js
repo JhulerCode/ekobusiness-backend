@@ -192,7 +192,6 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
     }
 
     const etapas = JSON.parse(JSON.stringify(ped.etapas))
-    console.log(etapas)
     etapas.push({ id: 2, fecha: dayjs() })
 
     // const [affectedRows] = await SocioPedido.update(

@@ -42,11 +42,10 @@ const sistemaData = {
         { id: '2', nombre: 'CERRADO' }
     ],
     socio_pedidos_etapas: [
-        { id: 1, nombre: "Pedido recibido" },
-        { id: 2, nombre: "Pago confirmado" },
-        { id: 3, nombre: "Preparando pedido" },
-        { id: 4, nombre: "Listo para entrega" },
-        { id: 5, nombre: "Pedido completado" },
+        { id: 1, nombre: "Pedido recibido", descripcion: 'Hemos recibido tu pedido correctamente y está siendo revisado por nuestro equipo.' },
+        { id: 2, nombre: "Pago confirmado", descripcion: 'Tu pago ha sido validado. Ahora preparemos tu pedido lo antes posible.' },
+        { id: 3, nombre: "Listo para entrega", descripcion: 'Tu pedido ya está preparado y listo para ser entregado o recogido.' },
+        { id: 4, nombre: "Entregado", descripcion: 'La entrega se realizó con éxito.' },
     ],
     transaccion_tipos: [
         { id: '1', nombre: 'COMPRA', operacion: 1 },

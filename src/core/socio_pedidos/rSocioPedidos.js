@@ -49,20 +49,44 @@ router.delete(
     controller.delet
 )
 
+// router.patch(
+//     '/anular/:id',
+//     verifyPermiso([
+//         'vCompraPedidos:anular',
+//         'vVentaPedidos:anular',
+//     ]),
+//     controller.anular
+// )
+
 router.patch(
-    '/anular/:id',
+    '/confirmar-pago/:id',
     verifyPermiso([
-        'vCompraPedidos:anular',
-        'vVentaPedidos:anular',
+        'vVentaPedidos:confirmarPago',
     ]),
-    controller.anular
+    controller.confirmarPago
+)
+
+router.patch(
+    '/confirmar-listo/:id',
+    verifyPermiso([
+        'vVentaPedidos:confirmarListo',
+    ]),
+    controller.confirmarListo
+)
+
+router.patch(
+    '/confirmar-entrega/:id',
+    verifyPermiso([
+        'vVentaPedidos:confirmarEntrega',
+    ]),
+    controller.confirmarEntrega
 )
 
 router.patch(
     '/terminar/:id',
     verifyPermiso([
         'vCompraPedidos:terminar',
-        'vVentaPedidos:terminar',
+        // 'vVentaPedidos:terminar',
     ]),
     controller.terminar
 )
@@ -72,8 +96,6 @@ router.get(
     verifyPermiso([
         'vVentaPedidos:verProductosPedidos',
         'vPrograma:verProductosPedidos',
-        // 'vProgramaGranel:verProductosPedidos',
-        // 'vProgramaLuxury:verProductosPedidos',
     ]),
     controller.findDetail
 )

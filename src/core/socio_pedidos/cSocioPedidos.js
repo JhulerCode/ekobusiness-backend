@@ -303,7 +303,10 @@ const find = async (req, res) => {
             for (const a of data) {
                 if (qry.cols.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
                 if (qry.cols.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
+
                 if (qry.cols.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
+                if (qry.cols.includes('listo')) a.listo1 = estadoMap[a.listo]
+                if (qry.cols.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
             }
         }
 
@@ -361,6 +364,7 @@ const findById = async (req, res) => {
             const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
             const pago_metodos = cSistema.arrayMap('pago_metodos')
             const comprobante_tipos = cSistema.arrayMap('comprobante_tipos')
+            const documentos_identidad = cSistema.arrayMap('documentos_identidad')
 
             data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
             data.estado1 = pedido_estadosMap[data.estado]
@@ -368,6 +372,10 @@ const findById = async (req, res) => {
             data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
             data.pago_metodo1 = pago_metodos[data.pago_metodo]
             data.comprobante_tipo1 = comprobante_tipos[data.comprobante_tipo]
+
+            if (data.socio_datos.doc_tipo) {
+                data.socio_datos.doc_tipo1 = documentos_identidad[data.socio_datos.doc_tipo]
+            }
         }
 
         res.json({ code: 0, data })
@@ -405,27 +413,106 @@ const delet = async (req, res) => {
     }
 }
 
-const anular = async (req, res) => {
+// const anular = async (req, res) => {
+//     try {
+//         const { colaborador } = req.user
+//         const { id } = req.params
+//         const { anulado_motivo } = req.body
+
+//         // ----- VERIFY SI YA TIENE TRANSACCIONES ----- //
+//         const hasTransacciones = await Transaccion.findAll({
+//             where: { socio_pedido: id }
+//         })
+
+//         if (hasTransacciones.length > 0) {
+//             res.json({ code: 1, msg: 'Imposible anular, el pedido ya tiene transacciones' })
+//             return
+//         }
+
+//         // ----- ANULAR ----- //
+//         await SocioPedido.update(
+//             {
+//                 estado: 0,
+//                 anulado_motivo,
+//                 updatedBy: colaborador
+//             },
+//             { where: { id } }
+//         )
+
+//         res.json({ code: 0 })
+//     }
+//     catch (error) {
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
+
+
+
+const confirmarPago = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { anulado_motivo } = req.body
 
-        // ----- VERIFY SI YA TIENE TRANSACCIONES ----- //
-        const hasTransacciones = await Transaccion.findAll({
-            where: { socio_pedido: id }
-        })
-
-        if (hasTransacciones.length > 0) {
-            res.json({ code: 1, msg: 'Imposible anular, el pedido ya tiene transacciones' })
-            return
-        }
+        const ped = await SocioPedido.findByPk(id)
+        const etapas = JSON.parse(JSON.stringify(ped.etapas))
+        etapas.push({ id: 2, fecha: dayjs() })
 
         // ----- ANULAR ----- //
         await SocioPedido.update(
             {
-                estado: 0,
-                anulado_motivo,
+                pagado: true,
+                etapas,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const confirmarListo = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        const ped = await SocioPedido.findByPk(id)
+        const etapas = JSON.parse(JSON.stringify(ped.etapas))
+        etapas.push({ id: 3, fecha: dayjs() })
+
+        await SocioPedido.update(
+            {
+                listo: true,
+                etapas,
+                updatedBy: colaborador
+            },
+            { where: { id } }
+        )
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const confirmarEntrega = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+
+        const ped = await SocioPedido.findByPk(id)
+        const etapas = JSON.parse(JSON.stringify(ped.etapas))
+        etapas.push({ id: 4, fecha: dayjs() })
+
+        await SocioPedido.update(
+            {
+                entregado: true,
+                etapas,
+                estado: 2,
                 updatedBy: colaborador
             },
             { where: { id } }
@@ -452,9 +539,7 @@ const terminar = async (req, res) => {
             { where: { id } }
         )
 
-        const data = await loadOne(id)
-
-        res.json({ code: 0, data })
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -605,9 +690,13 @@ export default {
     find,
     findById,
     create,
-    delet,
     update,
-    anular,
+    delet,
+    // anular,
+    confirmarPago,
+    confirmarListo,
+    confirmarEntrega,
     terminar,
+
     findDetail,
 }
