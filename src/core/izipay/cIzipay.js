@@ -179,22 +179,7 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
         where: { codigo: orderId }
     })
 
-    const etapas = JSON.parse(JSON.stringify(ped.etapas))
-    console.log(etapas)
-    etapas.push({ id: 2, fecha: dayjs() })
-
-    const [affectedRows] = await SocioPedido.update(
-        {
-            pagado: true,
-            pago_id: transactionUUID,
-            etapas,
-        },
-        {
-            where: { codigo: orderId }
-        }
-    );
-
-    if (affectedRows === 0) {
+    if (!ped) {
         console.log(`Intento ${attempt}: No se actualizó el pedido: ${orderId}`);
 
         if (attempt < MAX_ATTEMPTS) {
@@ -205,6 +190,34 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
             return false;
         }
     }
+
+    const etapas = JSON.parse(JSON.stringify(ped.etapas))
+    console.log(etapas)
+    etapas.push({ id: 2, fecha: dayjs() })
+
+    // const [affectedRows] = await SocioPedido.update(
+    await SocioPedido.update(
+        {
+            pagado: true,
+            pago_id: transactionUUID,
+            etapas,
+        },
+        {
+            where: { codigo: orderId }
+        }
+    )
+
+    // if (affectedRows === 0) {
+    //     console.log(`Intento ${attempt}: No se actualizó el pedido: ${orderId}`);
+
+    //     if (attempt < MAX_ATTEMPTS) {
+    //         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+    //         return updateSocioPedidoPagado(orderId, transactionUUID, attempt + 1);
+    //     } else {
+    //         console.warn(`Se alcanzó el número máximo de intentos para actualizar el pedido: ${orderId}.`);
+    //         return false;
+    //     }
+    // }
 
     console.log(`Estado de pago actualizado para pedido: ${orderId}, en el intento ${attempt}.`);
 }
