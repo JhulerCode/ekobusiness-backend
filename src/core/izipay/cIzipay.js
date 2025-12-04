@@ -80,10 +80,10 @@ const validatePayment = async (req, res) => {
         return
     }
 
+    console.log('ESTO ES ANTES', pagado)
     const etapas = [
         { id: 1, fecha: dayjs() },
     ]
-    console.log('ESTO ES ANTES', pagado)
     // ----- GUARDAR PEDIDO ----- //
     const transaction = await sequelize.transaction()
     try {
@@ -179,7 +179,9 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
         where: { codigo: orderId }
     })
 
-    const etapas = [...ped.etapas, { id: 2, fecha: dayjs() }]
+    const etapas = JSON.parse(JSON.stringify(ped.etapas))
+    console.log(etapas)
+    etapas.push({ id: 2, fecha: dayjs() })
 
     const [affectedRows] = await SocioPedido.update(
         {
