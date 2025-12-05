@@ -315,10 +315,11 @@ const findReporteProduccion = async (req, res) => {
             fecha: { [Op.between]: [f1, f2] },
             tipo: 4
         }
-        data.produccion_mes = await findMovimientosCantidad(qry, ti_where)
+        data.produccion_mes = await findMovimientosCantidad(qry, ti_where, true)
 
         data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + Number(a.cantidad), 0);
 
+        //--- Lo que debería haberse consumido ---//
         const produccion_mes_insumos = await RecetaInsumo.findAll({
             attributes: ['articulo_principal', 'articulo', 'cantidad'],
             where: {
@@ -332,7 +333,6 @@ const findReporteProduccion = async (req, res) => {
             raw: true,
         });
 
-        //--- Lo que debería haberse consumido ---//
         const recetaMap = {};
         for (const r of produccion_mes_insumos) {
             if (!recetaMap[r.articulo_principal]) recetaMap[r.articulo_principal] = [];
@@ -369,7 +369,7 @@ const findReporteProduccion = async (req, res) => {
             fecha: { [Op.between]: [f1, f2] },
             tipo: { [Op.in]: [2, 3] }
         }
-        const insumos_mes_consumos = await findMovimientosCantidad(qry1, ti_where1)
+        const insumos_mes_consumos = await findMovimientosCantidad(qry1, ti_where1, true)
 
         const insumos_utilizados_obj = {}
         for (const a of insumos_mes_consumos) {
@@ -415,13 +415,14 @@ const findReporteProduccion = async (req, res) => {
 }
 
 
-async function findMovimientosCantidad(qry, ti_where) {
+async function findMovimientosCantidad(qry, ti_where, tojson = false) {
     const findProps = {
         include: [],
         attributes: ['id'],
         where: {},
         order: [['nombre', 'ASC']],
         group: ['articulos.id'],
+        raw: tojson,
     }
 
     const include1 = {

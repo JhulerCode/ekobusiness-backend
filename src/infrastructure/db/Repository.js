@@ -9,10 +9,11 @@ import { jdFindAll } from '#db/helpers.js'
 import { applyFilters } from '#db/helpers.js'
 import { Op } from 'sequelize'
 import { Empresa } from "#db/models/Empresa.js"
+import { Kardex } from "#db/models/Kardex.js"
 
 const include1 = {
     lote_padre1: {
-        model: ArticuloCategoria,
+        model: Kardex,
         as: 'lote_padre1',
         attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock'],
         required: false
@@ -53,6 +54,16 @@ const include1 = {
         model: Articulo,
         as: 'articulo1',
         attributes: ['nombre', 'unidad'],
+    },
+    categoria1: {
+        model: ArticuloCategoria,
+        as: 'categoria1',
+        attributes: ['id', 'nombre']
+    },
+    produccion_tipo1: {
+        model: ArticuloLinea,
+        as: 'produccion_tipo1',
+        attributes: ['id', 'nombre']
     },
 }
 

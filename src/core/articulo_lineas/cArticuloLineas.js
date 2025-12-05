@@ -1,6 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
-import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
 
@@ -10,7 +8,6 @@ const find = async (req, res) => {
     try {
         const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-        console.log(empresa)
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
@@ -51,10 +48,10 @@ const create = async (req, res) => {
         const { nombre, descripcion, activo } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
-        if (await existe(ArticuloLinea, { nombre, empresa }, res) == true) return
+        if (await repository.existe({ nombre, empresa }, res) == true) return
 
         //--- CREAR ---//
-        const nuevo = await ArticuloLinea.create({
+        const nuevo = await repository.create({
             nombre, descripcion, activo,
             empresa,
             createdBy: colaborador,
@@ -76,7 +73,7 @@ const update = async (req, res) => {
         const { nombre, descripcion, activo } = req.body
 
         //---- VERIFY SI EXISTE NOMBRE ---//
-        if (await existe(ArticuloLinea, { nombre, id, empresa }, res) == true) return
+        if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update(id, {
@@ -181,7 +178,7 @@ const updateFotos = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    let data = await repository.find({id})
+    let data = await repository.find({ id })
 
     if (data) {
         data = data.toJSON()

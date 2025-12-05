@@ -1,3 +1,4 @@
+import { Repository } from '#db/Repository.js'
 import { Op, Sequelize } from 'sequelize'
 import sequelize from '#db/sequelize.js'
 
@@ -8,6 +9,8 @@ import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
 import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
+
+const repository = new Repository('Articulo')
 
 // ----- PARA INCLUDES EN SELECT ----- //
 const attributes = ['id', 'nombre', 'unidad']
@@ -41,17 +44,43 @@ const includes = {
     },
 }
 
-const sqlStock = [Sequelize.literal(`(
-    SELECT COALESCE(SUM(t.stock), 0)
-    FROM transaccion_items AS t
-    WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
-)`), 'stock']
+// const sqlStock = [Sequelize.literal(`(
+//     SELECT COALESCE(SUM(t.stock), 0)
+//     FROM transaccion_items AS t
+//     WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
+// )`), 'stock']
 
-const sqlValor = [Sequelize.literal(`(
-    SELECT COALESCE(SUM(t.stock * t.pu), 0)
-    FROM transaccion_items AS t
-    WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
-)`), 'valor']
+// const sqlValor = [Sequelize.literal(`(
+//     SELECT COALESCE(SUM(t.stock * t.pu), 0)
+//     FROM transaccion_items AS t
+//     WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
+// )`), 'valor']
+
+const find = async (req, res) => {
+    try {
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        let data = await repository.find(qry, true)
+
+        // ----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
+        if (data.length > 0) {
+            const estadosMap = cSistema.arrayMap('estados')
+            const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
+
+            for (const a of data) {
+                if (qry?.cols?.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
+                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
+                if (qry?.cols?.includes('igv_afectacion')) a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
+                if (qry?.cols?.includes('is_ecommerce')) a.is_ecommerce1 = estadosMap[a.is_ecommerce]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
 
 const create = async (req, res) => {
     try {
@@ -188,33 +217,7 @@ async function findAll({ incl, cols, fltr }) {
     return await Articulo.findAll(findProps)
 }
 
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        let data = await findAll(qry)
-
-        // ----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
-        if (data.length > 0 && qry && qry.cols) {
-            data = data.map(a => a.toJSON())
-
-            const estadosMap = cSistema.arrayMap('estados')
-            const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
-
-            for (const a of data) {
-                if (qry.cols.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
-                if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry.cols.includes('igv_afectacion')) a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-                if (qry.cols.includes('is_ecommerce')) a.is_ecommerce1 = estadosMap[a.is_ecommerce]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
 
 const findById = async (req, res) => {
     try {
