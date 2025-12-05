@@ -13,9 +13,9 @@ import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClie
 const attributes = ['id', 'nombre', 'unidad']
 
 const stock1 = [Sequelize.literal(`(
-    SELECT COALESCE(SUM(t.stock), 0)
-    FROM transaccion_items AS t
-    WHERE t.articulo = receta_insumos.articulo AND t.is_lote_padre = TRUE
+    SELECT COALESCE(SUM(k.stock), 0)
+    FROM kardexes AS k
+    WHERE k.articulo = receta_insumos.articulo AND k.is_lote_padre = TRUE
 )`), 'stock']
 
 const includes = {
