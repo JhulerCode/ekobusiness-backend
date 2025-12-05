@@ -46,6 +46,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     anulado_motivo: { type: DataTypes.STRING },
     empresa_datos: { type: DataTypes.JSON },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

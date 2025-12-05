@@ -14,19 +14,20 @@ async function verifyToken(req, res, next) {
     try {
         const user = jat.decrypt(token, config.tokenMyApi)
         // console.log('user', user)
-        const sesion = obtenerSesion(user.colaborador || user.id)
-        // console.log('sesion', sesion)
+        // const sesion = obtenerSesion(user.colaborador || user.id)
+        const session = obtenerSesion(user.id)
+        // console.log('session', session)
 
-        if (!sesion || sesion.token !== token) {
+        if (!session || session.token !== token) {
             return res.status(401).json({ msg: 'Sesión no válida' })
         }
-        
+
         req.user = {
-            colaborador: user.colaborador, // este es el id del jwt
-            id: user.id,
-            ...sesion
+            // colaborador: user.colaborador, // este es el id del jwt
+            colaborador: session.id,
+            ...session
         }
-        
+
         next()
     }
     catch (error) {

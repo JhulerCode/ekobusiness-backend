@@ -38,6 +38,7 @@ export const Articulo = sequelize.define('articulos', {
     ingredientes: { type: DataTypes.JSON, defaultValue: [] },
     beneficios: { type: DataTypes.JSON, defaultValue: [] },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

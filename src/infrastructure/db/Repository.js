@@ -8,6 +8,7 @@ import { Articulo } from "#db/models/Articulo.js"
 import { jdFindAll } from '#db/helpers.js'
 import { applyFilters } from '#db/helpers.js'
 import { Op } from 'sequelize'
+import { Empresa } from "#db/models/Empresa.js"
 
 const include1 = {
     lote_padre1: {
@@ -56,6 +57,7 @@ const include1 = {
 }
 
 export const models = {
+    Empresa,
     ArticuloCategoria,
     Transaccion,
     Socio,
@@ -70,7 +72,7 @@ export class Repository {
         this.model = models[modelId]
     }
 
-    async find(qry, tojson) {
+    async find(qry, tojson = false) {
         const columns = Object.keys(this.model.getAttributes());
 
         const findProps = {

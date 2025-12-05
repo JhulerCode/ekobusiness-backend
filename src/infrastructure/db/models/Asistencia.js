@@ -10,6 +10,7 @@ export const Asistencia = sequelize.define('asistencias', {
     hora_entrada: { type: DataTypes.STRING }, //required
     hora_salida: { type: DataTypes.STRING }, //required
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

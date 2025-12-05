@@ -10,6 +10,7 @@ export const CajaApertura = sequelize.define('cajas_aperturas', {
     monto_cierre: { type: DataTypes.DOUBLE }, //required
     estado: { type: DataTypes.STRING }, //required
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

@@ -12,6 +12,7 @@ export const CajaMovimiento = sequelize.define('caja_movimientos', {
 
     caja_apertura: { type: DataTypes.STRING }, //required linked
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

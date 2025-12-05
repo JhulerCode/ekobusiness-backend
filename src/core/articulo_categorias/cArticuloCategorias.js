@@ -1,15 +1,15 @@
 import { Repository } from '#db/Repository.js'
-import { jdFindAll } from '#db/helpers.js'
-import { existe } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
 
-const modelId = 'ArticuloCategoria'
 const repository = new Repository('ArticuloCategoria')
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
         const data = await repository.find(qry, true)
 
@@ -44,15 +44,16 @@ const findById = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { tipo, nombre, descripcion, activo } = req.body
 
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await repository.existe({ nombre }, res) == true) return
+        //--- VERIFY SI EXISTE NOMBRE ---//
+        if (await repository.existe({ nombre, empresa }, res) == true) return
 
-        // ----- CREAR ----- //
+        //--- CREAR ---//
         const nuevo = await repository.create({
             tipo, nombre, descripcion, activo,
+            empresa,
             createdBy: colaborador,
         })
 
@@ -67,14 +68,14 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { id } = req.params
         const { tipo, nombre, descripcion, activo } = req.body
 
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await repository.existe({ nombre, id }, res) == true) return
+        //--- VERIFY SI EXISTE NOMBRE ---//
+        if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
-        // ----- ACTUALIZAR ----- //
+        //--- ACTUALIZAR ---//
         const updated = await repository.update(id, {
             tipo, nombre, descripcion, activo,
             updatedBy: colaborador
@@ -95,7 +96,6 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        // ----- ELIMINAR ----- //
         if (await repository.delete(id) == false) return
 
         res.json({ code: 0 })
@@ -116,16 +116,15 @@ const updateFotos = async (req, res) => {
         }
 
         const { vigentes, eliminados } = req.body
-        const archivos = req.files // multer los guarda en memoria o en req.files[]
+        const archivos = req.files
 
         const new_fotos = []
 
+        //--- SUBIR ARCHIVOS NUEVOS A MINIO ---//
         for (const a of vigentes) {
-            // Buscar si hay un nuevo archivo con ese nombre
             const arch = archivos.find(b => b.originalname === a.name)
 
             if (arch) {
-                // --- SUBIR ARCHIVO NUEVO A MINIO ---
                 const timestamp = Date.now()
                 const uniqueName = `${timestamp}-${arch.originalname}`
 
@@ -140,25 +139,24 @@ const updateFotos = async (req, res) => {
                 const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
 
                 new_fotos.push({
-                    id: uniqueName, // ID interno = nombre único del archivo
+                    id: uniqueName,
                     name: arch.originalname,
                     url: publicUrl
                 })
             } else {
-                // --- ARCHIVO EXISTENTE ---
                 new_fotos.push(a)
             }
         }
 
-        // --- ACTUALIZAR EN BASE DE DATOS ---
+        //--- ACTUALIZAR EN BASE DE DATOS ---//
         const updated = await repository.update(id, {
             fotos: new_fotos,
             updatedBy: colaborador
         })
 
         if (updated == false) return
-        
-        // --- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---
+
+        //--- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---//
         for (const a of eliminados) {
             try {
                 await minioClient.removeObject(minioBucket, a.id)
@@ -198,5 +196,6 @@ export default {
     create,
     delet,
     update,
+
     updateFotos,
 }

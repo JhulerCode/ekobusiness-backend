@@ -10,6 +10,7 @@ export const RecetaInsumo = sequelize.define('receta_insumos', {
     cantidad: { type: DataTypes.DOUBLE }, //required
     orden: { type: DataTypes.INTEGER }, //required
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 })

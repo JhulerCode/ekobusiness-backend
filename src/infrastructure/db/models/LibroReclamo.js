@@ -25,4 +25,6 @@ export const LibroReclamo = sequelize.define('libro_reclamos', {
     tipo: { type: DataTypes.STRING },
     resumen: { type: DataTypes.TEXT },
     detalle: { type: DataTypes.TEXT },
+
+    empresa: { type: DataTypes.STRING },
 })

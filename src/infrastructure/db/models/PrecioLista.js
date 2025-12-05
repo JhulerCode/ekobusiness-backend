@@ -10,6 +10,7 @@ export const PrecioLista = sequelize.define('precio_listas', {
     moneda: { type: DataTypes.STRING }, //required //linked
     activo: { type: DataTypes.BOOLEAN }, //required
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

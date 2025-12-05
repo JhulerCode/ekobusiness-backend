@@ -14,6 +14,7 @@ export const Maquina = sequelize.define('maquinas', {
     velocidad: { type: DataTypes.DOUBLE },
     limpieza_tiempo: { type: DataTypes.DOUBLE },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

@@ -9,6 +9,8 @@ export const ActivityLog = sequelize.define('activity_logs', {
     baseUrl: { type: DataTypes.STRING }, //required
     detail: { type: DataTypes.JSON }, //required
     ip: { type: DataTypes.STRING }, //required
+
+    empresa: { type: DataTypes.STRING },
 })
 
 Colaborador.hasMany(ActivityLog, {foreignKey:'colaborador', onDelete:'RESTRICT'})

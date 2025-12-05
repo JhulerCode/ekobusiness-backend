@@ -35,6 +35,7 @@ export const Socio = sequelize.define('socios', {
     contrasena_updated_at: { type: DataTypes.DATE },
     codigo_verificacion: { type: DataTypes.STRING },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 

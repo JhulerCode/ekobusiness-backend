@@ -33,6 +33,7 @@ export const Transaccion = sequelize.define('transacciones', {
 
     calidad_revisado_despacho: { type: DataTypes.STRING },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

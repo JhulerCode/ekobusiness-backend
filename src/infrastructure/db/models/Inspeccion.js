@@ -12,6 +12,7 @@ export const Inspeccion = sequelize.define('inspecciones', {
     correcciones: { type: DataTypes.JSON }, //required
     documento: { type: DataTypes.STRING },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

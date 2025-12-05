@@ -10,6 +10,7 @@ export const PrecioListaItem = sequelize.define('precio_lista_items', {
     articulo: { type: DataTypes.STRING }, //required //linked
     precio: { type: DataTypes.DOUBLE }, //required
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

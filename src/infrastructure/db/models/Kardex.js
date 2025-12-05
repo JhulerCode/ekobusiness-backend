@@ -35,6 +35,7 @@ export const Kardex = sequelize.define('kardexes', {
     produccion_orden: { type: DataTypes.STRING }, //linked
     maquina: { type: DataTypes.STRING }, // linked
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 

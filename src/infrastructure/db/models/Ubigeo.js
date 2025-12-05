@@ -9,6 +9,7 @@ export const Ubigeo = sequelize.define('ubigeos', {
     provincia: { type: DataTypes.STRING },
     distrito: { type: DataTypes.STRING },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 

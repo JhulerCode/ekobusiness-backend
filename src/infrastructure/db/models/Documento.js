@@ -19,6 +19,7 @@ export const Documento = sequelize.define('documentos', {
 
     file_name: { type: DataTypes.STRING },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 

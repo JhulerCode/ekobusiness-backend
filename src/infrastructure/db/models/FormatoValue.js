@@ -18,6 +18,7 @@ export const FormatoValue = sequelize.define('formato_values', {
     colaborador: { type: DataTypes.STRING }, //linked
     cuarentena_producto: { type: DataTypes.STRING }, //linked
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

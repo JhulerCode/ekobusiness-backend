@@ -11,6 +11,7 @@ export const TipoCambio = sequelize.define('tipo_cambios', {
 
     moneda: { type: DataTypes.STRING }, //required //linked
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING }
 })

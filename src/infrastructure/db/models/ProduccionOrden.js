@@ -25,6 +25,7 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
 
     observacion: { type: DataTypes.TEXT },
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 

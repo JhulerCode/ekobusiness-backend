@@ -25,4 +25,6 @@ export const DerechoArco = sequelize.define('derecho_arcos', {
     tipo: { type: DataTypes.STRING },
     detalle: { type: DataTypes.TEXT },
     extras_doc: { type: DataTypes.JSON, defaultValue: {} },
+
+    empresa: { type: DataTypes.STRING },
 })
