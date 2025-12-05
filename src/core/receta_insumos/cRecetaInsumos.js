@@ -107,7 +107,7 @@ const calcularNecesidad = async (req, res) => {
 
                 a.receta = receta.map(b => ({
                     ...b,
-                    cantidad_necesitada: b.cantidad * a.cantidad,
+                    cantidad_necesitada: b.cantidad * (a.cantidad || 0),
                 }));
             }
         }
