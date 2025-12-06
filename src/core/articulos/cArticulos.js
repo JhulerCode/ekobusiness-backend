@@ -1,48 +1,8 @@
 import { Repository } from '#db/Repository.js'
-import { Op, Sequelize } from 'sequelize'
-import sequelize from '#db/sequelize.js'
-
-import { Articulo } from '#db/models/Articulo.js'
-import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
-import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
-import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
-import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
 
 const repository = new Repository('Articulo')
-
-// ----- PARA INCLUDES EN SELECT ----- //
-const attributes = ['id', 'nombre', 'unidad']
-
-const stock1 = [Sequelize.literal(`(
-    SELECT COALESCE(SUM(k.stock), 0)
-    FROM kardexes AS k
-    WHERE k.articulo = receta_insumos.articulo AND k.is_lote_padre = TRUE
-)`), 'stock']
-
-const includes = {
-    produccion_tipo1: {
-        model: ArticuloLinea,
-        as: 'produccion_tipo1',
-        attributes: ['id', 'nombre']
-    },
-    categoria1: {
-        model: ArticuloCategoria,
-        as: 'categoria1',
-        attributes: ['id', 'nombre']
-    },
-    receta_insumos: {
-        model: RecetaInsumo,
-        as: 'receta_insumos',
-        attributes: ['articulo', 'cantidad', 'orden'],
-        include: {
-            model: Articulo,
-            as: 'articulo1',
-            attributes: ['nombre', stock1]
-        }
-    },
-}
 
 // const sqlStock = [Sequelize.literal(`(
 //     SELECT COALESCE(SUM(t.stock), 0)
@@ -58,11 +18,13 @@ const includes = {
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
         let data = await repository.find(qry, true)
 
-        // ----- AGREAGAR LOS REF QUE NO ESTÁN EN LA BD ----- //
         if (data.length > 0) {
             const estadosMap = cSistema.arrayMap('estados')
             const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
@@ -82,9 +44,22 @@ const find = async (req, res) => {
     }
 }
 
+const findById = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const data = await repository.find({ id })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
@@ -95,17 +70,17 @@ const create = async (req, res) => {
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(Articulo, { nombre, codigo_barra }, res) == true) return
-
+        if (await repository.existe({ nombre, empresa }, res) == true) return
 
         // ----- CREAR ----- //
-        const nuevo = await Articulo.create({
+        const nuevo = await repository.create({
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
             tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
+            empresa,
             createdBy: colaborador
         })
 
@@ -120,7 +95,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { id } = req.params
         const {
             codigo, codigo_barra, nombre, unidad, marca,
@@ -132,98 +107,22 @@ const update = async (req, res) => {
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(Articulo, { nombre, codigo_barra, id }, res) == true) return
+        if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await Articulo.update(
-            {
-                codigo, codigo_barra, nombre, unidad, marca,
-                vende, has_fv, activo,
-                igv_afectacion,
-                tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
-                is_combo, combo_articulos,
-                is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            codigo, codigo_barra, nombre, unidad, marca,
+            vende, has_fv, activo,
+            igv_afectacion,
+            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
+            is_combo, combo_articulos,
+            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
+            updatedBy: colaborador
+        })
 
-        if (affectedRows > 0) {
-            const data = await loadOne(id)
+        if (updated == false) return
 
-            res.json({ code: 0, data })
-        }
-        else {
-            await transaction.rollback()
-
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await Articulo.findByPk(id, {
-        include: [includes.categoria1, includes.produccion_tipo1]
-    })
-
-    if (data) {
-        data = data.toJSON()
-
-        const estadosMap = cSistema.arrayMap('estados')
-        const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
-
-        data.has_fv1 = estadosMap[data.has_fv]
-        data.activo1 = estadosMap[data.activo]
-        data.igv_afectacion1 = igv_afectacionesMap[data.igv_afectacion]
-        data.is_ecommerce1 = estadosMap[data.is_ecommerce]
-    }
-
-    return data
-}
-
-async function findAll({ incl, cols, fltr }) {
-    const findProps = {
-        include: [],
-        attributes,
-        where: {},
-        order: [['tipo', 'ASC'], ['nombre', 'ASC']],
-    }
-
-    if (incl) {
-        for (const a of incl) {
-            if (incl.includes(a)) findProps.include.push(includes[a])
-        }
-    }
-
-    if (cols) {
-        const columns = Object.keys(Articulo.getAttributes());
-        const cols1 = cols.filter(a => columns.includes(a))
-        findProps.attributes = findProps.attributes.concat(cols1)
-
-        if (cols.includes('stock')) findProps.attributes.push(sqlStock)
-        if (cols.includes('valor')) findProps.attributes.push(sqlValor)
-
-        // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
-        if (cols.includes('categoria')) findProps.include.push(includes.categoria1)
-    }
-
-    if (fltr) {
-        Object.assign(findProps.where, applyFilters(fltr))
-    }
-
-    return await Articulo.findAll(findProps)
-}
-
-
-
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const data = await Articulo.findByPk(id)
+        const data = await loadOne(id)
 
         res.json({ code: 0, data })
     }
@@ -236,21 +135,83 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        // ----- ELIMINAR ----- //
-        const deletedCount = await Articulo.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
-const createBulk = async (req, res) => {
-    const transaction = await sequelize.transaction()
+const updateFotos = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
 
+        if (req.body.datos) {
+            const datos = JSON.parse(req.body.datos)
+            req.body = { ...datos }
+        }
+
+        const { vigentes, eliminados } = req.body
+        const archivos = req.files
+
+        const new_fotos = []
+
+        //--- SUBIR ARCHIVOS NUEVOS A MINIO ---//
+        for (const a of vigentes) {
+            const arch = archivos.find(b => b.originalname === a.name)
+
+            if (arch) {
+                const timestamp = Date.now()
+                const uniqueName = `${timestamp}-${arch.originalname}`
+
+                await minioClient.putObject(
+                    minioBucket,
+                    uniqueName,
+                    arch.buffer,
+                    arch.size,
+                    { "Content-Type": arch.mimetype }
+                )
+
+                const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
+
+                new_fotos.push({
+                    id: uniqueName,
+                    name: arch.originalname,
+                    url: publicUrl
+                })
+            } else {
+                new_fotos.push(a)
+            }
+        }
+
+        //--- ACTUALIZAR EN BASE DE DATOS ---//
+        const updated = await repository.update(id, {
+            fotos: new_fotos,
+            updatedBy: colaborador
+        })
+
+        if (updated == false) return
+
+        //--- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---//
+        for (const a of eliminados) {
+            try {
+                await minioClient.removeObject(minioBucket, a.id)
+            } catch (err) {
+                console.error(`Error al eliminar ${a.id}:`, err.message)
+            }
+        }
+
+        res.json({ code: 0, data: new_fotos })
+    } catch (error) {
+        console.error('Error en updateFotos:', error)
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const createBulk = async (req, res) => {
     try {
         const { tipo, articulos } = req.body
         const { colaborador } = req.user
@@ -276,152 +237,66 @@ const createBulk = async (req, res) => {
             createdBy: colaborador
         }))
 
-        await Articulo.bulkCreate(send, { transaction })
-        await transaction.commit()
+        await repository.createBulk(send)
 
         res.json({ code: 0 })
     }
     catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const deleteBulk = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
         const { ids } = req.body
 
-        // ----- ELIMINAR ----- //
-        const deletedCount = await Articulo.destroy({
-            where: {
-                id: {
-                    [Op.in]: ids
-                }
-            },
-            transaction
-        })
+        if (await repository.delete(ids) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        await transaction.commit()
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const updateBulk = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
+        const { colaborador } = req.user
         const { ids, prop, val } = req.body
 
-        const edit = { [prop]: val }
+        //--- ACTUALIZAR ---//
+        const updated = await repository.update(ids, {
+            [prop]: val,
+            updatedBy: colaborador
+        })
 
-        // ----- MODIFICAR ----- //
-        await Articulo.update(
-            edit,
-            {
-                where: {
-                    id: {
-                        [Op.in]: ids
-                    }
-                },
-                transaction
-            }
-        )
-
-        await transaction.commit()
+        if (updated == false) return
 
         res.json({ code: 0 })
     }
     catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
-const updateFotos = async (req, res) => {
-    try {
-        const { colaborador } = req.user
-        const { id } = req.params
 
-        // Si los datos llegan como string JSON, conviértelos
-        if (req.body.datos) {
-            const datos = JSON.parse(req.body.datos)
-            req.body = { ...datos }
-        }
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await repository.find({ id, incl: ['categoria1', 'produccion_tipo1'] })
 
-        const { vigentes, eliminados } = req.body
-        const archivos = req.files // multer los guarda en memoria o en req.files[]
+    if (data) {
+        data = data.toJSON()
 
-        const new_fotos = []
+        const estadosMap = cSistema.arrayMap('estados')
+        const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
 
-        for (const a of vigentes) {
-            // Buscar si hay un nuevo archivo con ese nombre
-            const arch = archivos.find(b => b.originalname === a.name)
-
-            if (arch) {
-                // --- SUBIR ARCHIVO NUEVO A MINIO ---
-                const timestamp = Date.now()
-                const uniqueName = `${timestamp}-${arch.originalname}`
-
-                await minioClient.putObject(
-                    minioBucket,
-                    uniqueName,
-                    arch.buffer,
-                    arch.size,
-                    { "Content-Type": arch.mimetype }
-                )
-
-                const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
-
-                new_fotos.push({
-                    id: uniqueName, // ID interno = nombre único del archivo
-                    name: arch.originalname,
-                    url: publicUrl
-                })
-            } else {
-                // --- FOTO EXISTENTE ---
-                new_fotos.push(a)
-            }
-        }
-
-        // --- ACTUALIZAR EN BASE DE DATOS ---
-        const [affectedRows] = await Articulo.update(
-            {
-                fotos: new_fotos,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
-
-        if (affectedRows > 0) {
-            // --- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---
-            for (const a of eliminados) {
-                try {
-                    await minioClient.removeObject(minioBucket, a.id)
-                } catch (err) {
-                    console.error(`Error al eliminar ${a.id}:`, err.message)
-                }
-            }
-
-            res.json({ code: 0, data: new_fotos })
-        } else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    } catch (error) {
-        console.error('Error en updateFotos:', error)
-        res.status(500).json({ code: -1, msg: error.message, error })
+        data.has_fv1 = estadosMap[data.has_fv]
+        data.activo1 = estadosMap[data.activo]
+        data.igv_afectacion1 = igv_afectacionesMap[data.igv_afectacion]
+        data.is_ecommerce1 = estadosMap[data.is_ecommerce]
     }
+
+    return data
 }
 
 export default {
@@ -431,10 +306,8 @@ export default {
     delet,
     update,
 
+    updateFotos,
     createBulk,
     deleteBulk,
     updateBulk,
-
-    updateFotos,
-    findAll,
 }

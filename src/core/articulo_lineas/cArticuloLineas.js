@@ -33,7 +33,7 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        let data = await repository.find({ id })
+        const data = await repository.find({ id })
 
         res.json({ code: 0, data })
     }

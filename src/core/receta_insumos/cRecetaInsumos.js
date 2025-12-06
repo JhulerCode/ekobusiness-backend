@@ -1,7 +1,7 @@
 import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
 import { Articulo } from '#db/models/Articulo.js'
 import { applyFilters } from '#shared/mine.js'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import controllerArticulos from "../articulos/cArticulos.js"
 
 const find = async (req, res) => {
@@ -90,14 +90,30 @@ const calcularNecesidad = async (req, res) => {
     try {
         const { articulos } = req.body
 
-        const qry = {
-            fltr: {
-                id: { op: 'Es', val: articulos.map(a => a.articulo) }
+        const sqlStock = [Sequelize.literal(`(
+            SELECT COALESCE(SUM(k.stock), 0)
+            FROM kardexes AS k
+            WHERE k.articulo = receta_insumos.articulo AND k.is_lote_padre = TRUE
+        )`), 'stock']
+
+        const findProps = {
+            attributes: ['id'],
+            where: {
+                id: articulos.map(a => a.articulo)
             },
-            incl: ['receta_insumos']
+            include: {
+                model: RecetaInsumo,
+                as: 'receta_insumos',
+                attributes: ['articulo', 'cantidad', 'orden'],
+                include: {
+                    model: Articulo,
+                    as: 'articulo1',
+                    attributes: ['nombre', sqlStock]
+                }
+            }
         }
 
-        let data = await controllerArticulos.findAll(qry)
+        let data = await Articulo.findAll(findProps)
 
         if (data.length > 0) {
             data = data.map(a => a.toJSON())

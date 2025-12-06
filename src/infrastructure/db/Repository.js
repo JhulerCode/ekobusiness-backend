@@ -191,4 +191,8 @@ export class Repository {
             return true
         }
     }
+
+    async createBulk(data) {
+        await this.model.bulkCreate(data)
+    }
 }
