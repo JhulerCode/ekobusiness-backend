@@ -1,35 +1,43 @@
-import { ArticuloCategoria } from "#db/models/ArticuloCategoria.js"
-import { Transaccion } from "#db/models/Transaccion.js"
-import { Socio } from "#db/models/Socio.js"
-import { Maquina } from "#db/models/Maquina.js"
-import { ProduccionOrden } from "#db/models/ProduccionOrden.js"
-import { ArticuloLinea } from "#db/models/ArticuloLinea.js"
-import { Articulo } from "#db/models/Articulo.js"
-import { jdFindAll } from '#db/helpers.js'
-import { applyFilters } from '#db/helpers.js'
 import { Op } from 'sequelize'
 import { Empresa } from "#db/models/Empresa.js"
+import { ArticuloLinea } from "#db/models/ArticuloLinea.js"
+import { ArticuloCategoria } from "#db/models/ArticuloCategoria.js"
+import { Articulo } from "#db/models/Articulo.js"
+import { Asistencia } from '#db/models/Asistencia.js'
+import { Colaborador } from '#db/models/Colaborador.js'
 import { Kardex } from "#db/models/Kardex.js"
+import { Maquina } from "#db/models/Maquina.js"
+import { ProduccionOrden } from "#db/models/ProduccionOrden.js"
+import { Socio } from "#db/models/Socio.js"
+import { Transaccion } from "#db/models/Transaccion.js"
+import { applyFilters } from '#db/helpers.js'
 
 const include1 = {
+    produccion_tipo1: {
+        model: ArticuloLinea,
+        as: 'produccion_tipo1',
+        attributes: ['id', 'nombre']
+    },
+    categoria1: {
+        model: ArticuloCategoria,
+        as: 'categoria1',
+        attributes: ['id', 'nombre']
+    },
+    articulo1: {
+        model: Articulo,
+        as: 'articulo1',
+        attributes: ['nombre', 'unidad'],
+    },
+    colaborador1: {
+        model: Colaborador,
+        as: 'colaborador1',
+        attributes: ['nombres', 'apellidos', 'nombres_apellidos']
+    },
     lote_padre1: {
         model: Kardex,
         as: 'lote_padre1',
         attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock'],
         required: false
-    },
-    transaccion1: {
-        model: Transaccion,
-        as: 'transaccion1',
-        attributes: ['id', 'socio', 'guia', 'factura'],
-        required: false,
-        include: [
-            {
-                model: Socio,
-                as: 'socio1',
-                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-            }
-        ],
     },
     maquina1: {
         model: Maquina,
@@ -50,32 +58,32 @@ const include1 = {
         ],
         required: false,
     },
-    articulo1: {
-        model: Articulo,
-        as: 'articulo1',
-        attributes: ['nombre', 'unidad'],
-    },
-    categoria1: {
-        model: ArticuloCategoria,
-        as: 'categoria1',
-        attributes: ['id', 'nombre']
-    },
-    produccion_tipo1: {
-        model: ArticuloLinea,
-        as: 'produccion_tipo1',
-        attributes: ['id', 'nombre']
+    transaccion1: {
+        model: Transaccion,
+        as: 'transaccion1',
+        attributes: ['id', 'socio', 'guia', 'factura'],
+        required: false,
+        include: [
+            {
+                model: Socio,
+                as: 'socio1',
+                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+            }
+        ],
     },
 }
 
 export const models = {
     Empresa,
+    ArticuloLinea,
     ArticuloCategoria,
-    Transaccion,
-    Socio,
+    Articulo,
+    Asistencia,
+    Colaborador,
     Maquina,
     ProduccionOrden,
-    ArticuloLinea,
-    Articulo,
+    Socio,
+    Transaccion,
 }
 
 export class Repository {

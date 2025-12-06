@@ -1,76 +1,15 @@
-import { Asistencia } from '#db/models/Asistencia.js'
-import { Colaborador } from '#db/models/Colaborador.js'
-import { applyFilters } from '#shared/mine.js'
+import { Repository } from '#db/Repository.js'
 
-const include1 = {
-    colaborador1: {
-        model: Colaborador,
-        as: 'colaborador1',
-        attributes: ['nombres', 'apellidos', 'nombres_apellidos']
-    }
-}
-
-const create = async (req, res) => {
-    try {
-        const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
-
-        // ----- CREAR ----- //
-        const nuevo = await Asistencia.create({
-            colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
-            createdBy: req.user.colaborador
-        })
-
-        const data = await loadOne(nuevo.id)
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await Asistencia.findByPk(id, { include: [include1.colaborador1] })
-
-    // if (data) {
-    //     data = data.toJSON()
-
-    //     const estadosMap = cSistema.arrayMap('caja_apertura_estados')
-
-    //     data.estado1 = estadosMap[data.estado]
-    // }
-
-    return data
-}
+const repository = new Repository('Asistencia')
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            include: [],
-            attributes: ['id'],
-            where: {},
-            order: [['createdAt', 'DESC']],
-        }
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        if (qry) {
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
-                }
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-            }
-
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-        }
-
-        const data = await Asistencia.findAll(findProps)
+        const data = await repository.find(qry)
 
         res.json({ code: 0, data })
     }
@@ -83,7 +22,28 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await Asistencia.findByPk(id)
+        const data = await repository.find({ id })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const create = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
+
+        // ----- CREAR ----- //
+        const nuevo = await repository.create({
+            colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
+            empresa,
+            createdBy: req.user.colaborador
+        })
+
+        const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
     }
@@ -95,29 +55,19 @@ const findById = async (req, res) => {
 const update = async (req, res) => {
     try {
         const { id } = req.params
-        const {
-            colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida
-        } = req.body
+        const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
 
         // ----- ACTUALIZAR -----//
-        const [affectedRows] = await Asistencia.update(
-            {
-                colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
-                updatedBy: req.user.colaborador
-            },
-            {
-                where: { id },
-            }
-        )
+        const updated = await repository.update(id, {
+            colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
+            updatedBy: req.user.colaborador
+        })
 
-        if (affectedRows > 0) {
-            // ----- DEVOLVER ----- //
-            const data = await loadOne(id)
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
+        if (updated == false) return
+
+        const data = await loadOne(id)
+
+        res.json({ code: 0, data })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -128,16 +78,24 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        const deletedCount = await Asistencia.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await repository.find({ id, incl: ['colaborador1'] })
+
+    return data
+}
+
+
 
 export default {
     find,
