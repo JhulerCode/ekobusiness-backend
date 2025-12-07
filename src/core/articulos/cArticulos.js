@@ -282,11 +282,9 @@ const updateBulk = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    let data = await repository.find({ id, incl: ['categoria1', 'produccion_tipo1'] })
+    let data = await repository.find({ id, incl: ['categoria1', 'produccion_tipo1'] }, true)
 
     if (data) {
-        data = data.toJSON()
-
         const estadosMap = cSistema.arrayMap('estados')
         const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
 

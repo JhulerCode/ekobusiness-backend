@@ -1,17 +1,60 @@
+import { Repository } from '#db/Repository.js'
 import { CajaApertura } from '#db/models/CajaApertura.js'
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
 import { Colaborador } from '#db/models/Colaborador.js'
 import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
+import dayjs from '#shared/dayjs.js'
+
+const repository = new Repository('CajaApertura')
+
+const find = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
+
+        const data = await repository.find(qry, true)
+
+        if (data.length > 0) {
+            const estadosMap = cSistema.arrayMap('caja_apertura_estados')
+
+            for (const a of data) {
+                if (qry?.cols?.includes('estado')) a.estado1 = estadosMap[a.estado]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const findById = async (req, res) => {
+    try {
+        const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        const data = await repository.find({ id, ...qry })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
 
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { fecha_apertura, fecha_cierre, monto_apertura, monto_cierre, estado } = req.body
 
         // ----- CREAR ----- //
-        const nuevo = await CajaApertura.create({
+        const nuevo = await repository.create({
             fecha_apertura, monto_apertura, estado,
+            empresa,
             createdBy: colaborador
         })
 
@@ -28,111 +71,16 @@ const cerrar = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { fecha_apertura, fecha_cierre, monto_apertura, monto_cierre, estado } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await CajaApertura.update(
-            {
-                fecha_cierre, monto_cierre, estado: 2,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            fecha_cierre: dayjs(), estado: 2,
+            updatedBy: colaborador
+        })
 
-        if (affectedRows > 0) {
-            const data = await loadOne(id)
+        if (updated == false) return
 
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await CajaApertura.findByPk(id)
-
-    if (data) {
-        data = data.toJSON()
-
-        const estadosMap = cSistema.arrayMap('caja_apertura_estados')
-
-        data.estado1 = estadosMap[data.estado]
-    }
-
-    return data
-}
-
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id'],
-            order: [['createdAt', 'DESC']],
-            where: {},
-            include: [],
-        }
-
-        const include1 = {
-            createdBy1: {
-                model: Colaborador,
-                as: 'createdBy1',
-                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
-            }
-        }
-
-        if (qry) {
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(include1[a])
-                }
-            }
-
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-            }
-        }
-
-        let data = await CajaApertura.findAll(findProps)
-
-        if (data.length > 0 && qry.cols) {
-            data = data.map(a => a.toJSON())
-
-            const estadosMap = cSistema.arrayMap('caja_apertura_estados')
-
-            for (const a of data) {
-                if (qry.cols.includes('estado')) a.estado1 = estadosMap[a.estado]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const findProps = {
-            include: {
-                model: CajaMovimiento,
-                as: 'caja_movimientos',
-            }
-        }
-
-        const data = await CajaApertura.findByPk(id, findProps)
+        const data = await loadOne(id)
 
         res.json({ code: 0, data })
     }
@@ -145,15 +93,27 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        const deletedCount = await CajaApertura.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await repository.find({ id }, true)
+
+    if (data) {
+        const estadosMap = cSistema.arrayMap('caja_apertura_estados')
+
+        data.estado1 = estadosMap[data.estado]
+    }
+
+    return data
 }
 
 export default {

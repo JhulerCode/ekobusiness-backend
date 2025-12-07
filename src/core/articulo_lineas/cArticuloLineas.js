@@ -178,11 +178,9 @@ const updateFotos = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    let data = await repository.find({ id })
+    let data = await repository.find({ id }, true)
 
     if (data) {
-        data = data.toJSON()
-
         const estadosMap = cSistema.arrayMap('estados')
 
         data.activo1 = estadosMap[data.activo]

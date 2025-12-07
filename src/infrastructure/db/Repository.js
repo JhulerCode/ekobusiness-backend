@@ -4,6 +4,8 @@ import { ArticuloLinea } from "#db/models/ArticuloLinea.js"
 import { ArticuloCategoria } from "#db/models/ArticuloCategoria.js"
 import { Articulo } from "#db/models/Articulo.js"
 import { Asistencia } from '#db/models/Asistencia.js'
+import { CajaApertura } from '#db/models/CajaApertura.js'
+import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
 import { Colaborador } from '#db/models/Colaborador.js'
 import { Kardex } from "#db/models/Kardex.js"
 import { Maquina } from "#db/models/Maquina.js"
@@ -32,6 +34,15 @@ const include1 = {
         model: Colaborador,
         as: 'colaborador1',
         attributes: ['nombres', 'apellidos', 'nombres_apellidos']
+    },
+    createdBy1: {
+        model: Colaborador,
+        as: 'createdBy1',
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
+    },
+    caja_movimientos: {
+        model: CajaMovimiento,
+        as: 'caja_movimientos',
     },
     lote_padre1: {
         model: Kardex,
@@ -79,6 +90,8 @@ export const models = {
     ArticuloCategoria,
     Articulo,
     Asistencia,
+    CajaApertura,
+    CajaMovimiento,
     Colaborador,
     Maquina,
     ProduccionOrden,
