@@ -136,8 +136,9 @@ const sistemaData = {
         { id: 'yape', nombre: 'Yape' },
     ],
     comprobante_tipos: [
-        { id: '03', nombre: 'Boleta', codigo: 'BOLETA' },
-        { id: '01', nombre: 'Factura', codigo: 'FACTURA' },
+        { id: '03', nombre: 'BOLETA', codigo: 'BOLETA' },
+        { id: '01', nombre: 'FACTURA', codigo: 'FACTURA' },
+        { id: 'NV', nombre: 'NOTA DE VENTA', codigo: 'NOTA DE VENTA' },
     ],
 
     mp_tipos: [

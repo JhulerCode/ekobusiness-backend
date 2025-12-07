@@ -20,22 +20,20 @@ router.get(
     '/uno/:id',
     verifyPermiso([
         'vCajaAperturas:ver',
-        'vCajaAperturas:cerrarCaja',
-        'vCajaMovimientos:listar',
     ]),
     controller.findById
-)
-
-router.patch(
-    '/:id',
-    verifyPermiso(['vCajaAperturas:cerrarCaja']),
-    controller.cerrar
 )
 
 router.delete(
     '/:id',
     verifyPermiso(['vCajaAperturas:eliminar']),
     controller.delet
+)
+
+router.patch(
+    '/cerrar/:id',
+    verifyPermiso(['vCajaAperturas:cerrarCaja']),
+    controller.cerrar
 )
 
 export default router

@@ -7,6 +7,8 @@ export const CajaMovimiento = sequelize.define('caja_movimientos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha: { type: DataTypes.DATEONLY }, //required
     tipo: { type: DataTypes.STRING }, //required
+    comprobante_tipo: { type: DataTypes.STRING },
+    comprobante_numero: { type: DataTypes.STRING },
     detalle: { type: DataTypes.STRING }, //required
     monto: { type: DataTypes.DOUBLE }, //required
 

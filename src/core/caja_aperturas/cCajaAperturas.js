@@ -67,6 +67,19 @@ const create = async (req, res) => {
     }
 }
 
+const delet = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        if (await repository.delete(id) == false) return
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const cerrar = async (req, res) => {
     try {
         const { colaborador } = req.user
@@ -88,20 +101,6 @@ const cerrar = async (req, res) => {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
-const delet = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        if (await repository.delete(id) == false) return
-
-        res.json({ code: 0 })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
 
 //--- Helpers ---//
 async function loadOne(id) {

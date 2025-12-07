@@ -1,27 +1,24 @@
-import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
-import { applyFilters } from '#shared/mine.js'
+import { Repository } from '#db/Repository.js'
+import cSistema from "../_sistema/cSistema.js"
+
+const repository = new Repository('CajaMovimiento')
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            attributes: ['id'],
-            order: [['fecha', 'DESC']],
-            where: {},
-        }
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
+        const data = await repository.find(qry, true)
 
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
+        if (data.length > 0) {
+            const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
+
+            for (const a of data) {
+                if (qry?.cols?.includes('comprobante_tipo')) a.comprobante_tipo1 = comprobante_tiposMap[a.comprobante_tipo]
             }
         }
-
-        let data = await CajaMovimiento.findAll(findProps)
 
         res.json({ code: 0, data })
     }
@@ -32,16 +29,17 @@ const find = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
-        const { fecha, tipo, detalle, monto, caja_apertura } = req.body
+        const { colaborador, empresa } = req.user
+        const { fecha, tipo, comprobante_tipo, comprobante_numero, detalle, monto, caja_apertura } = req.body
 
         // ----- CREAR ----- //
-        const nuevo = await CajaMovimiento.create({
-            fecha, tipo, detalle, monto, caja_apertura,
+        const nuevo = await repository.create({
+            fecha, tipo, comprobante_tipo, comprobante_numero, detalle, monto, caja_apertura,
+            empresa,
             createdBy: colaborador
         })
 
-        const data = await CajaMovimiento.findByPk(nuevo.id)
+        const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
     }
@@ -54,25 +52,19 @@ const update = async (req, res) => {
     try {
         const { id } = req.params
         const { colaborador } = req.user
-        const { fecha, detalle, monto } = req.body
+        const { fecha, comprobante_tipo, comprobante_numero, detalle, monto } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await CajaMovimiento.update(
-            {
-                fecha, detalle, monto,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            fecha, comprobante_tipo, comprobante_numero, detalle, monto,
+            updatedBy: colaborador
+        })
 
-        if (affectedRows > 0) {
-            const data = await CajaMovimiento.findByPk(id)
+        if (updated == false) return
 
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningú registro' })
-        }
+        const data = await loadOne(id)
+
+        res.json({ code: 0, data })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -83,15 +75,27 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        const deletedCount = await CajaMovimiento.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await repository.find({ id }, true)
+
+    if (data) {
+        const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
+
+        data.comprobante_tipo1 = comprobante_tiposMap[data.comprobante_tipo]
+    }
+
+    return data
 }
 
 export default {
