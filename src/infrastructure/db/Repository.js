@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import { Empresa } from '#db/models/Empresa.js'
 import { ActivityLog } from '#db/models/ActivityLog.js'
 import { Articulo } from '#db/models/Articulo.js'
@@ -27,6 +27,8 @@ import { Transaccion } from '#db/models/Transaccion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
 
 import { applyFilters } from '#db/helpers.js'
+import sequelize from '#db/sequelize.js'
+import cSistema from "#core/_sistema/cSistema.js"
 
 const include1 = {
     produccion_tipo1: {
@@ -57,6 +59,12 @@ const include1 = {
     caja_movimientos: {
         model: CajaMovimiento,
         as: 'caja_movimientos',
+    },
+    kardexes: {
+        model: Kardex,
+        as: 'kardexes',
+        attributes: [],
+        required: false,
     },
     lote_padre1: {
         model: Kardex,
@@ -101,6 +109,31 @@ const include1 = {
             }
         ],
     },
+}
+
+const sqls1 = {
+    lote_padre_movimientos_cantidad: [
+        Sequelize.literal(`(
+            SELECT SUM(
+                CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+                ELSE 0 END
+            )
+            FROM kardexes AS lote_padre_items
+            WHERE lote_padre_items.lote_padre = kardexes.id
+        )`),
+        'movimientos'
+    ],
+    articulo_movimientos_cantidad: [
+        Sequelize.fn('COALESCE',
+            Sequelize.fn('SUM',
+                Sequelize.literal(`
+                    CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN kardexes.tipo = ${t.id} THEN kardexes.cantidad * ${t.operacion}`).join(' ')}
+                    ELSE 0 END
+                `)
+            ), 0
+        ),
+        'cantidad'
+    ],
 }
 
 export const models = {
@@ -178,6 +211,10 @@ export class Repository {
                 )
         }
 
+        if (qry?.grop) {
+            findProps.group = qry.grop
+        }
+
         if (qry?.ordr) {
             findProps.order = qry.ordr
         }
@@ -218,12 +255,12 @@ export class Repository {
         }
     }
 
-    async create(data) {
-        return await this.model.create(data)
+    async create(data, transaction) {
+        return await this.model.create(data, { transaction })
     }
 
-    async update(id, data) {
-        const [affectedRows] = await this.model.update(data, { where: { id } })
+    async update(id, data, transaction) {
+        const [affectedRows] = await this.model.update(data, { where: { id }, transaction })
 
         if (affectedRows == 0) {
             res.json({ code: 1, msg: 'No se actualizó ningún registro' })
@@ -234,8 +271,8 @@ export class Repository {
         }
     }
 
-    async delete(id) {
-        const deletedCount = await this.model.destroy({ where: { id } })
+    async delete(id, transaction) {
+        const deletedCount = await this.model.destroy({ where: { id }, transaction })
         // console.log('ELIMINADOS', deletedCount)
         if (deletedCount == 0) {
             res.json({ code: 1, msg: 'No se eliminó ningún registro' })
