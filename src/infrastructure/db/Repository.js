@@ -42,12 +42,12 @@ const include1 = {
     articulo1: {
         model: Articulo,
         as: 'articulo1',
-        attributes: ['nombre', 'unidad'],
+        attributes: ['id', 'nombre', 'unidad'],
     },
     colaborador1: {
         model: Colaborador,
         as: 'colaborador1',
-        attributes: ['nombres', 'apellidos', 'nombres_apellidos']
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
     },
     createdBy1: {
         model: Colaborador,
@@ -61,7 +61,7 @@ const include1 = {
     lote_padre1: {
         model: Kardex,
         as: 'lote_padre1',
-        attributes: ['moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock'],
+        attributes: ['id', 'moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock'],
         required: false
     },
     maquina1: {
@@ -82,6 +82,11 @@ const include1 = {
             }
         ],
         required: false,
+    },
+    socio1: {
+        model: Socio,
+        as: 'socio1',
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
     },
     transaccion1: {
         model: Transaccion,

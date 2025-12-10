@@ -10,7 +10,7 @@ export const Inspeccion = sequelize.define('inspecciones', {
     puntuacion: { type: DataTypes.STRING },
     puntuacion_maxima: { type: DataTypes.STRING },
     correcciones: { type: DataTypes.JSON }, //required
-    documento: { type: DataTypes.STRING },
+    // documento: { type: DataTypes.STRING },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },

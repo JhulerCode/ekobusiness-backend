@@ -1,14 +1,45 @@
-import { Inspeccion } from '#db/models/Inspeccion.js'
-import { applyFilters } from '#shared/mine.js'
+import { Repository } from '#db/Repository.js'
 import { Socio } from '#db/models/Socio.js'
+
+const repository = new Repository('Inspeccion')
+
+const find = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
+
+        const data = await repository.find(qry)
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const findById = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const data = await repository.find({ id, incl: ['socio1'] })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
 
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
-        const { fecha, socio, puntuacion, puntuacion_maxima, correcciones, documento } = req.body
+        const { colaborador, empresa } = req.user
+        const { fecha, socio, puntuacion, puntuacion_maxima, correcciones } = req.body
 
-        const nuevo = await Inspeccion.create({
+        const nuevo = await repository.create({
             fecha, socio, puntuacion, puntuacion_maxima, correcciones,
+            empresa,
             createdBy: colaborador
         })
 
@@ -25,90 +56,17 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { fecha, socio, puntuacion, puntuacion_maxima, correcciones, documento } = req.body
+        const { fecha, socio, puntuacion, puntuacion_maxima, correcciones } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await Inspeccion.update(
-            {
-                fecha, socio, puntuacion, puntuacion_maxima, correcciones,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
-
-        if (affectedRows > 0) {
-            const data = await loadOne(id)
-
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await Inspeccion.findByPk(id, {
-        include: [
-            {
-                model: Socio,
-                as: 'socio1',
-                attributes: ['nombres']
-            },
-        ]
-    })
-
-    return data
-}
-
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id', 'fecha', 'socio', 'puntuacion', 'puntuacion_maxima', 'correcciones', 'documento'],
-            order: [['fecha', 'DESC']],
-            where: {},
-            include: [
-                {
-                    model: Socio,
-                    as: 'socio1',
-                    attributes: ['nombres']
-                },
-            ]
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-        }
-
-        let data = await Inspeccion.findAll(findProps)
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const data = await Inspeccion.findByPk(id, {
-            include: [
-                {
-                    model: Socio,
-                    as: 'socio1',
-                    attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-                },
-            ]
+        const updated = await repository.update(id, {
+            fecha, socio, puntuacion, puntuacion_maxima, correcciones,
+            updatedBy: colaborador
         })
+
+        if (updated == false) return
+
+        const data = await loadOne(id)
 
         res.json({ code: 0, data })
     }
@@ -121,15 +79,21 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        const deletedCount = await Inspeccion.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    const data = await repository.find({ id, incl: ['socio1'] })
+
+    return data
 }
 
 export default {
