@@ -1,122 +1,23 @@
-import { Documento } from '#db/models/Documento.js'
-import { applyFilters } from '#shared/mine.js'
+import { Repository } from '#db/Repository.js'
 import cSistema from "../_sistema/cSistema.js"
-// import { deleteFile, getFile, getFilePath } from '#http/middlewares/uploadFiles.js'
+import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
 
-const create = async (req, res) => {
-    try {
-        const { colaborador } = req.user
-        const {
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
-        } = req.body
-
-        // ----- CREAR ----- //
-        const nuevo = await Documento.create({
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
-            file_name: req.file ? req.file.filename : undefined,
-            createdBy: colaborador
-        })
-
-        const data = await loadOne(nuevo.id)
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const update = async (req, res) => {
-    try {
-        const { colaborador } = req.user
-        const { id } = req.params
-        const {
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias, file_name, previous_file_name
-        } = req.body
-
-        // ----- ACTUALIZAR ----- //
-        const send = {
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
-            updatedBy: colaborador
-        }
-
-        if (req.file) send.file_name = req.file.filename
-        if (file_name == null) send.file_name = null
-
-        const [affectedRows] = await Documento.update(
-            send,
-            { where: { id } }
-        )
-
-        if (affectedRows > 0) {
-            if (req.file || file_name == null) {
-                // deleteFile(previous_file_name)
-            }
-
-            const data = await loadOne(id)
-
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await Documento.findByPk(id)
-
-    if (data) {
-        data = data.toJSON()
-
-        const estadosMap = cSistema.arrayMap('documentos_estados')
-
-        data.estado1 = estadosMap[data.estado]
-    }
-
-    return data
-}
+const repository = new Repository('Documento')
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            attributes: ['id', 'file_name'],
-            order: [['nombre', 'ASC']],
-            where: {},
-        }
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
+        const data = await repository.find(qry, true)
 
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-            }
-        }
-
-        let data = await Documento.findAll(findProps)
-
-        if (data.length > 0 && qry.cols) {
-            data = data.map(a => a.toJSON())
-
+        if (data.length > 0) {
             const estadosMap = cSistema.arrayMap('documentos_estados')
 
             for (const a of data) {
-                a.estado1 = estadosMap[a.estado]
+                if (qry?.cols?.includes('estado')) a.estado1 = estadosMap[a.estado]
             }
         }
 
@@ -131,12 +32,108 @@ const findById = async (req, res) => {
     try {
         const { id } = req.params
 
-        let data = await Documento.findByPk(id)
+        const data = await repository.find({ id }, true)
 
         if (data) {
-            data = data.toJSON()
-            data.previous_file_name = data.file_name
+            data.previous_file = data.file
+            data.file_name = data.file.name
         }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const create = async (req, res) => {
+    try {
+        const { colaborador, empresa } = req.user
+        if (req.body.datos) req.body = { ...JSON.parse(req.body.datos) }
+        const {
+            tipo, nombre, descripcion,
+            denominacion_legal, denominacion_comercial, registro_sanitario,
+            fecha_emision, fecha_vencimiento, recordar_dias,
+        } = req.body
+
+        //--- VERIFY SI EXISTE NOMBRE ---//
+        if (nombre) {
+            if (await repository.existe({ tipo, nombre, empresa }, res) == true) return
+        }
+
+        //--- Upload file ---//
+        let file
+        if (req.file) {
+            file = await minioPutObject(req.file)
+
+            if (file == false) {
+                res.status(500).json({ code: 1, msg: 'Error al subir el archivo' })
+                return
+            }
+        }
+
+        // ----- CREAR ----- //
+        const nuevo = await repository.create({
+            tipo, nombre, descripcion,
+            denominacion_legal, denominacion_comercial, registro_sanitario,
+            fecha_emision, fecha_vencimiento, recordar_dias,
+            file,
+            empresa,
+            createdBy: colaborador
+        })
+
+        const data = await loadOne(nuevo.id)
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const update = async (req, res) => {
+    try {
+        const { colaborador, empresa } = req.user
+        const { id } = req.params
+        if (req.body.datos) req.body = { ...JSON.parse(req.body.datos) }
+        const {
+            tipo, nombre, descripcion,
+            denominacion_legal, denominacion_comercial, registro_sanitario,
+            fecha_emision, fecha_vencimiento, recordar_dias,
+            file,
+        } = req.body
+
+        //--- VERIFY SI EXISTE NOMBRE ---//
+        if (nombre) {
+            if (await repository.existe({ tipo, nombre, empresa, id }, res) == true) return
+        }
+
+        //--- Subir archivo ---//
+        let newFile
+        if (req.file) {
+            newFile = await minioPutObject(req.file)
+
+            if (newFile == false) {
+                res.status(500).json({ code: 1, msg: 'Error al subir el archivo' })
+                return
+            }
+        }
+
+        // ----- ACTUALIZAR ----- //
+        const updated = await repository.update(id, {
+            tipo, nombre, descripcion,
+            denominacion_legal, denominacion_comercial, registro_sanitario,
+            fecha_emision, fecha_vencimiento, recordar_dias,
+            file: newFile,
+            createdBy: colaborador
+        })
+
+        if (updated == false) return
+
+        //--- Eliminar archivo de minio ---//
+        if (req.file) await minioRemoveObject(file.id)
+
+        const data = await loadOne(id)
 
         res.json({ code: 0, data })
     }
@@ -148,28 +145,32 @@ const findById = async (req, res) => {
 const delet = async (req, res) => {
     try {
         const { id } = req.params
+        const { file } = req.body
 
-        const deletedCount = await Documento.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
+        if (file) await minioRemoveObject(file.id)
 
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
-const verfile = async (req, res) => {
-    const { id } = req.params
-    const file = getFile(id)
-    const rutaArchivo = getFilePath(id)
 
-    if (file) {
-        res.sendFile(rutaArchivo)
-    } else {
-        res.status(404).json({ msg: 'Archivo no encontrado' })
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await repository.find({ id }, true)
+
+    if (data) {
+        const estadosMap = cSistema.arrayMap('documentos_estados')
+
+        data.estado1 = estadosMap[data.estado]
+        data.file_name = data.file.name
     }
+
+    return data
 }
 
 export default {
@@ -178,5 +179,4 @@ export default {
     find,
     findById,
     delet,
-    verfile,
 }

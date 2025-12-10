@@ -52,9 +52,4 @@ router.delete(
     controller.delet
 )
 
-router.get(
-    '/uploads/:id',
-    controller.verfile
-)
-
 export default router

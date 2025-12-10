@@ -86,6 +86,7 @@ const create = async (req, res) => {
 
             is_lote_padre: tipo == 1 ? true : false,
             stock: tipo == 1 ? a.cantidad : tipo == 5 ? a.stock : null,
+            lote_padre: a.lote_padre,
 
             observacion: a.observacion,
 

@@ -1,17 +1,31 @@
 import { Op } from 'sequelize'
-import { Empresa } from "#db/models/Empresa.js"
-import { ArticuloLinea } from "#db/models/ArticuloLinea.js"
-import { ArticuloCategoria } from "#db/models/ArticuloCategoria.js"
-import { Articulo } from "#db/models/Articulo.js"
+import { Empresa } from '#db/models/Empresa.js'
+import { ActivityLog } from '#db/models/ActivityLog.js'
+import { Articulo } from '#db/models/Articulo.js'
+import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
+import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
 import { Asistencia } from '#db/models/Asistencia.js'
 import { CajaApertura } from '#db/models/CajaApertura.js'
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
 import { Colaborador } from '#db/models/Colaborador.js'
-import { Kardex } from "#db/models/Kardex.js"
-import { Maquina } from "#db/models/Maquina.js"
-import { ProduccionOrden } from "#db/models/ProduccionOrden.js"
-import { Socio } from "#db/models/Socio.js"
-import { Transaccion } from "#db/models/Transaccion.js"
+import { DerechoArco } from '#db/models/DerechoArco.js'
+import { Documento } from '#db/models/Documento.js'
+import { FormatoValue } from '#db/models/FormatoValue.js'
+import { Inspeccion } from '#db/models/Inspeccion.js'
+import { Kardex } from '#db/models/Kardex.js'
+import { LibroReclamo } from '#db/models/LibroReclamo.js'
+import { Maquina } from '#db/models/Maquina.js'
+import { Moneda } from '#db/models/Moneda.js'
+import { PrecioLista } from '#db/models/PrecioLista.js'
+import { PrecioListaItem } from '#db/models/PrecioListaItem.js'
+import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
+import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
+import { Socio } from '#db/models/Socio.js'
+import { SocioPedido } from '#db/models/SocioPedido.js'
+import { TipoCambio } from '#db/models/TipoCambio.js'
+import { Transaccion } from '#db/models/Transaccion.js'
+import { Ubigeo } from '#db/models/Ubigeo.js'
+
 import { applyFilters } from '#db/helpers.js'
 
 const include1 = {
@@ -86,17 +100,31 @@ const include1 = {
 
 export const models = {
     Empresa,
-    ArticuloLinea,
-    ArticuloCategoria,
+    ActivityLog,
     Articulo,
+    ArticuloCategoria,
+    ArticuloLinea,
     Asistencia,
     CajaApertura,
     CajaMovimiento,
     Colaborador,
+    DerechoArco,
+    Documento,
+    FormatoValue,
+    Inspeccion,
+    Kardex,
+    LibroReclamo,
     Maquina,
+    Moneda,
+    PrecioLista,
+    PrecioListaItem,
     ProduccionOrden,
+    RecetaInsumo,
     Socio,
+    SocioPedido,
+    TipoCambio,
     Transaccion,
+    Ubigeo,
 }
 
 export class Repository {

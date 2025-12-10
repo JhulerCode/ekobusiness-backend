@@ -13,23 +13,29 @@ export const minioDomain = config.MINIO_DOMAIN;
 export const minioBucket = config.MINIO_BUCKET;
 
 export async function minioPutObject(file) {
-    const timestamp = Date.now()
-    const uniqueName = `${timestamp}-${file.originalname}`
+    try {
+        const timestamp = Date.now()
+        const uniqueName = `${timestamp}-${file.originalname.replace(/\s+/g, '_')}`
 
-    await minioClient.putObject(
-        minioBucket,
-        uniqueName,
-        file.buffer,
-        file.size,
-        { "Content-Type": file.mimetype }
-    )
+        await minioClient.putObject(
+            minioBucket,
+            uniqueName,
+            file.buffer,
+            file.size,
+            { "Content-Type": file.mimetype }
+        )
 
-    const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
+        const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
 
-    return {
-        id: uniqueName,
-        name: file.originalname,
-        url: publicUrl,
+        return {
+            id: uniqueName,
+            name: file.originalname,
+            url: publicUrl,
+        }
+    }
+    catch (error) {
+        console.error('Error al subir archivo a MinIO:', error.message)
+        return false
     }
 }
 

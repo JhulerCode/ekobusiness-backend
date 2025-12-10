@@ -17,7 +17,7 @@ export const Documento = sequelize.define('documentos', {
     fecha_vencimiento: { type: DataTypes.DATEONLY }, //required
     recordar_dias: { type: DataTypes.INTEGER }, //required
 
-    file_name: { type: DataTypes.STRING },
+    file: { type: DataTypes.JSON, defaultValue: {} },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
