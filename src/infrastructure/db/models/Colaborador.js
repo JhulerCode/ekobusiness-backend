@@ -25,11 +25,12 @@ export const Colaborador = sequelize.define('colaboradores', {
     has_signin: { type: DataTypes.BOOLEAN }, //required
     usuario: { type: DataTypes.STRING }, //required
     contrasena: { type: DataTypes.STRING }, //required
-    lastSignin: { type: DataTypes.DATE },
-    lastUpdatePassword: { type: DataTypes.DATE },
     permisos: { type: DataTypes.JSON }, //required
     vista_inicial: { type: DataTypes.STRING },
-
+    
+    lastSignin: { type: DataTypes.DATE },
+    lastUpdatePassword: { type: DataTypes.DATE },
+    
     theme: { type: DataTypes.STRING, defaultValue: '1' },
     color: { type: DataTypes.STRING, defaultValue: '#2492c2' },
     format_date: { type: DataTypes.STRING, defaultValue: 'DD-MM-YYYY' },
