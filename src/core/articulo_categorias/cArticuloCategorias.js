@@ -1,6 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import cSistema from "../_sistema/cSistema.js"
-import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
+import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
 
 const repository = new Repository('ArticuloCategoria')
 
@@ -95,8 +95,11 @@ const update = async (req, res) => {
 const delet = async (req, res) => {
     try {
         const { id } = req.params
+        const { fotos } = req.body
 
         if (await repository.delete(id) == false) return
+
+        for (const a of fotos) await minioRemoveObject(a.id)
 
         res.json({ code: 0 })
     }
@@ -118,54 +121,29 @@ const updateFotos = async (req, res) => {
         const { vigentes, eliminados } = req.body
         const archivos = req.files
 
-        const new_fotos = []
+        const files = []
 
         //--- SUBIR ARCHIVOS NUEVOS A MINIO ---//
         for (const a of vigentes) {
-            const arch = archivos.find(b => b.originalname === a.name)
+            const file = archivos.find(b => b.originalname === a.name)
 
-            if (arch) {
-                const timestamp = Date.now()
-                const uniqueName = `${timestamp}-${arch.originalname}`
+            const entry = file ? await minioPutObject(file) : a
 
-                await minioClient.putObject(
-                    minioBucket,
-                    uniqueName,
-                    arch.buffer,
-                    arch.size,
-                    { "Content-Type": arch.mimetype }
-                )
-
-                const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
-
-                new_fotos.push({
-                    id: uniqueName,
-                    name: arch.originalname,
-                    url: publicUrl
-                })
-            } else {
-                new_fotos.push(a)
-            }
+            files.push(entry)
         }
 
         //--- ACTUALIZAR EN BASE DE DATOS ---//
         const updated = await repository.update(id, {
-            fotos: new_fotos,
+            fotos: files,
             updatedBy: colaborador
         })
 
         if (updated == false) return
 
         //--- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---//
-        for (const a of eliminados) {
-            try {
-                await minioClient.removeObject(minioBucket, a.id)
-            } catch (err) {
-                console.error(`Error al eliminar ${a.id}:`, err.message)
-            }
-        }
+        for (const a of eliminados) await minioRemoveObject(a.id)
 
-        res.json({ code: 0, data: new_fotos })
+        res.json({ code: 0, data: files })
     }
     catch (error) {
         console.error('Error en updateFotos:', error)

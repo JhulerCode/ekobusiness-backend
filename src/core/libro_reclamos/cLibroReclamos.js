@@ -1,11 +1,12 @@
-import { LibroReclamo } from '#db/models/LibroReclamo.js'
+import { Repository } from '#db/Repository.js'
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
 import { companyName, htmlLibroReclamos } from '#mail/templates.js'
 
+const repository = new Repository('LibroReclamos')
+
 const create = async (req, res) => {
     try {
-
         if (req.body.datos) {
             const datos = JSON.parse(req.body.datos)
             req.body = { ...datos }
@@ -21,8 +22,8 @@ const create = async (req, res) => {
         const codigo = `LR-${new Date().getFullYear()}-${Date.now()}`
         const html = htmlLibroReclamos(nombres, apellidos, codigo, fecha_recepcion, tipo, resumen, detalle)
 
-        // ----- GUARDAR ARCO ----- //
-        await LibroReclamo.create({
+        // ----- GUARDAR ----- //
+        await repository.create({
             codigo, estado: 1, fecha_recepcion,
             nombres, apellidos, doc_tipo, doc_numero, correo, direccion, menor_edad,
             pedido_codigo, monto, producto_descripcion,
@@ -37,7 +38,7 @@ const create = async (req, res) => {
             subject: `Confirmación de registro Libro de reclamaciones - Código ${codigo}`,
             html
         })
-        console.log(result)
+        
         if (result.error) {
             return res.json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
         }

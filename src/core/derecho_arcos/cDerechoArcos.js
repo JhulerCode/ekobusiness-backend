@@ -1,13 +1,14 @@
-import { DerechoArco } from '#db/models/DerechoArco.js'
+import { Repository } from '#db/Repository.js'
 import config from '../../config.js'
-import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClient.js"
+import { minioPutObject } from "#infrastructure/minioClient.js"
 import { nodeMailer } from "#mail/nodeMailer.js"
-import { Resend } from 'resend'
+// import { Resend } from 'resend'
 import { companyName, htmlArco } from '#mail/templates.js'
+
+const repository = new Repository('DerechoArco')
 
 const create = async (req, res) => {
     try {
-
         if (req.body.datos) {
             const datos = JSON.parse(req.body.datos)
             req.body = { ...datos }
@@ -44,8 +45,8 @@ const create = async (req, res) => {
             const codigo = `ARCO-${new Date().getFullYear()}-${Date.now()}`
             const html = htmlArco(nombres, apellidos, codigo, fecha_recepcion, tipo, email)
 
-            // ----- GUARDAR ARCO ----- //
-            await DerechoArco.create({
+            // ----- GUARDAR ----- //
+            await repository.create({
                 codigo, estado: 1, fecha_recepcion,
                 nombres, apellidos, doc_tipo, doc_numero, email, domicilio,
                 rep_nombres, rep_apellidos, rep_doc_tipo, rep_doc_numero,
@@ -71,7 +72,7 @@ const create = async (req, res) => {
             // })
 
             if (result.error) {
-                return res.status(500).json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
+                return res.json({ code: 2, msg: "No se pudo enviar el correo", error: result.error });
             }
             else {
                 res.json({ code: 0 })
@@ -85,26 +86,26 @@ const create = async (req, res) => {
     }
 }
 
-async function minioPutObject(file) {
-    const timestamp = Date.now()
-    const uniqueName = `${timestamp}-${file.originalname}`
+// async function minioPutObject(file) {
+//     const timestamp = Date.now()
+//     const uniqueName = `${timestamp}-${file.originalname}`
 
-    await minioClient.putObject(
-        minioBucket,
-        uniqueName,
-        file.buffer,
-        file.size,
-        { "Content-Type": file.mimetype }
-    )
+//     await minioClient.putObject(
+//         minioBucket,
+//         uniqueName,
+//         file.buffer,
+//         file.size,
+//         { "Content-Type": file.mimetype }
+//     )
 
-    const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
+//     const publicUrl = `https://${minioDomain}/${minioBucket}/${uniqueName}`
 
-    return {
-        id: uniqueName,
-        name: file.originalname,
-        url: publicUrl,
-    }
-}
+//     return {
+//         id: uniqueName,
+//         name: file.originalname,
+//         url: publicUrl,
+//     }
+// }
 
 export default {
     create,
