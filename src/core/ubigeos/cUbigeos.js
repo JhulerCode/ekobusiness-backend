@@ -1,29 +1,15 @@
-import { Ubigeo } from '#db/models/Ubigeo.js'
-import { Sequelize, Op } from 'sequelize'
-import { applyFilters, existe } from '#shared/mine.js'
+import { Repository } from '#db/Repository.js'
+
+const repository = new Repository('Ubigeo')
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const findProps = {
-            attributes: ['id'],
-            order: [[Sequelize.literal(`TRIM(CONCAT(COALESCE(departamento, ''), ' ', COALESCE(provincia, ''), ' ', COALESCE(distrito, '')))`), 'ASC']],
-            where: {},
-            include: []
-        }
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-            }
-        }
-
-        let data = await Ubigeo.findAll(findProps)
+        const data = await repository.find(qry)
 
         res.json({ code: 0, data })
     }

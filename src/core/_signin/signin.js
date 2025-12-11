@@ -24,12 +24,9 @@ const signin = async (req, res) => {
             guardarEmpresa(xEmpresa, empresa)
         }
 
-        // -- VERIFICAR COLABORADOR --- //
+        //--- VERIFICAR COLABORADOR --- //
         const colaborador = await Colaborador.findOne({
-            where: {
-                usuario,
-                empresa: empresa.id,
-            },
+            where: { usuario, empresa: empresa.id },
             raw: true
         })
 
@@ -38,24 +35,10 @@ const signin = async (req, res) => {
         const correct = await bcrypt.compare(contrasena, colaborador.contrasena)
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
-        // -- GUARDAR SESSION --- //
-        // const token = jat.encrypt({ colaborador: colaborador.id }, config.tokenMyApi)
+        //--- GUARDAR SESSION ---//
         const token = jat.encrypt({ id: colaborador.id }, config.tokenMyApi)
 
-        guardarSesion(colaborador.id, {
-            token,
-            ...colaborador
-            // nombres: colaborador.nombres,
-            // apellidos: colaborador.apellidos,
-            // cargo: colaborador.cargo,
-            // vista_inicial: colaborador.vista_inicial,
-            // theme: colaborador.theme,
-            // color: colaborador.color,
-            // format_date: colaborador.format_date,
-            // menu_visible: colaborador.menu_visible,
-            // permisos: colaborador.permisos,
-            // empresa: empresa,
-        })
+        guardarSesion(colaborador.id, { token, ...colaborador })
 
         res.json({ code: 0, token })
     }

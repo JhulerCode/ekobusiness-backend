@@ -4,9 +4,9 @@ import controller from "../socios/cSocios.js"
 const router = Router()
 
 router.post('/register', controller.createUser)
-router.post('/login', controller.loginUser)
+router.post('/login', controller.signin)
 
-router.get('/verify', controller.verifyLogin)
+router.get('/verify', controller.login)
 router.patch('/:id', controller.update)
 
 router.patch('/:id', controller.update)

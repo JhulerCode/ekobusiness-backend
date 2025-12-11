@@ -4,12 +4,6 @@ import { minioClient, minioDomain, minioBucket } from "#infrastructure/minioClie
 
 const repository = new Repository('Articulo')
 
-// const sqlStock = [Sequelize.literal(`(
-//     SELECT COALESCE(SUM(t.stock), 0)
-//     FROM transaccion_items AS t
-//     WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
-// )`), 'stock']
-
 // const sqlValor = [Sequelize.literal(`(
 //     SELECT COALESCE(SUM(t.stock * t.pu), 0)
 //     FROM transaccion_items AS t
@@ -260,7 +254,7 @@ const updateBulk = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    let data = await repository.find({ id, incl: ['categoria1', 'produccion_tipo1'] }, true)
+    const data = await repository.find({ id, incl: ['categoria1', 'produccion_tipo1'] }, true)
 
     if (data) {
         const estadosMap = cSistema.arrayMap('estados')

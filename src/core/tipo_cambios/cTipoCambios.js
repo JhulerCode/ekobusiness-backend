@@ -1,15 +1,11 @@
 import { Repository } from '#db/Repository.js'
-import { Op } from 'sequelize'
 import sequelize from '#db/sequelize.js'
-import { TipoCambio } from '#db/models/TipoCambio.js'
 import { Transaccion } from '#db/models/Transaccion.js'
 import { Kardex } from '#db/models/Kardex.js'
-import { applyFilters, existe } from '#shared/mine.js'
-
-const TransaccionRepo = new Repository('Transaccion')
-const KardexRepo = new Repository('Kardex')
 
 const repository = new Repository('TipoCambio')
+// const TransaccionRepo = new Repository('Transaccion')
+// const KardexRepo = new Repository('Kardex')
 
 const find = async (req, res) => {
     try {

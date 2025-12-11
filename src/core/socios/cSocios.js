@@ -1,29 +1,61 @@
+import { Repository } from '#db/Repository.js'
 import { Socio } from '#db/models/Socio.js'
-import { Sequelize, Op } from 'sequelize'
-import { applyFilters, existe, generarCodigo6 } from '#shared/mine.js'
-import { PrecioLista } from '#db/models/PrecioLista.js'
+import { generarCodigo6 } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import sequelize from '#db/sequelize.js'
 import bcrypt from 'bcrypt'
 import config from "../../config.js"
 import jat from '#shared/jat.js'
-import { guardarSesion, actualizarSesion, borrarSesion, sessionStore } from '../_signin/sessions.js'
+import { guardarSesion, actualizarSesion, borrarSesion } from '../_signin/sessions.js'
 import dayjs from '#shared/dayjs.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
 import { companyName, htmlCodigoVerificacion } from '#mail/templates.js'
 import { customerWalletGet } from "#infrastructure/izipay.js"
 
-const includes = {
-    precio_lista1: {
-        model: PrecioLista,
-        as: 'precio_lista1',
-        attributes: ['id', 'nombre', 'moneda']
+const repository = new Repository('Socio')
+
+const find = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
+
+        const data = await repository.find(qry, true)
+
+        if (data.length > 0) {
+            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
+            const estadosMap = cSistema.arrayMap('estados')
+
+            for (const a of data) {
+                if (qry?.cols?.includes('doc_tipo')) a.doc_tipo1 = documentos_identidadMap[a.doc_tipo]
+                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const findById = async (req, res) => {
+    try {
+        const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        const data = await repository.find({ id, ...qry })
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const {
             tipo, doc_tipo, doc_numero, nombres, apellidos,
             telefono1, telefono2, correo, web, activo,
@@ -35,21 +67,22 @@ const create = async (req, res) => {
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (doc_numero) {
-            if (await existe(Socio, { tipo, doc_numero }, res, `El Nro de documento ya existe, ingresa otro.`) == true) return
+            if (await repository.existe({ tipo, doc_numero, empresa }, res, `El Nro de documento ya existe, ingresa otro.`) == true) return
         }
 
         if (correo) {
-            if (await existe(Socio, { tipo, correo, id }, res, `El correo ya existe, ingresa otro.`) == true) return
+            if (await repository.existe({ tipo, correo, empresa }, res, `El correo ya existe, ingresa otro.`) == true) return
         }
 
         // ----- CREAR ----- //
-        const nuevo = await Socio.create({
+        const nuevo = await repository.create({
             tipo, doc_tipo, doc_numero, nombres, apellidos,
             telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
             precio_lista, pago_condicion, bancos,
             documentos,
+            empresa,
             createdBy: colaborador
         })
 
@@ -64,7 +97,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { id } = req.params
         const {
             tipo, doc_tipo, doc_numero, nombres, apellidos,
@@ -78,123 +111,28 @@ const update = async (req, res) => {
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
         if (doc_numero) {
-            if (await existe(Socio, { tipo, doc_numero, id }, res, `El Nro de documento ya existe, ingresa otro.`) == true) return
+            if (await repository.existe({ tipo, doc_numero, id, empresa }, res, `El Nro de documento ya existe, ingresa otro.`) == true) return
         }
 
         if (correo) {
-            if (await existe(Socio, { tipo, correo, id }, res, `El correo ya existe, ingresa otro.`) == true) return
+            if (await repository.existe({ tipo, correo, id, empresa }, res, `El correo ya existe, ingresa otro.`) == true) return
         }
 
-        // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await Socio.update(
-            {
-                tipo, doc_tipo, doc_numero, nombres, apellidos,
-                telefono1, telefono2, correo, web, activo,
-                direcciones,
-                contactos,
-                precio_lista, pago_condicion, bancos, pago_metodos,
-                documentos,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
-
-        if (affectedRows > 0) {
-            if (comes_from == 'ecommerce') {
-                actualizarSesion(id, { nombres, apellidos, doc_tipo, doc_numero, telefono1, direcciones, pago_metodos })
-            }
-
-            const data = await loadOne(id)
-
-            res.json({ code: 0, data })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await Socio.findByPk(id, {
-        include: [includes.precio_lista1],
-        attributes: { exclude: ['contrasena'] }
-    })
-
-    if (data) {
-        data = data.toJSON()
-
-        const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
-        const estadosMap = cSistema.arrayMap('estados')
-
-        data.doc_tipo1 = documentos_identidadMap[data.doc_tipo]
-        data.activo1 = estadosMap[data.activo]
-    }
-
-    return data
-}
-
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id'],
-            order: [[Sequelize.literal(`TRIM(CONCAT(COALESCE(nombres, ''), ' ', COALESCE(apellidos, '')))`), 'ASC']],
-            where: {},
-            include: []
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-
-                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
-                if (qry.cols.includes('precio_lista')) findProps.include.push(includes.precio_lista1)
-            }
-
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(includes[a])
-                }
-            }
-        }
-
-        let data = await Socio.findAll(findProps)
-
-        if (data.length > 0 && qry.cols) {
-            data = data.map(a => a.toJSON())
-
-            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
-            const estadosMap = cSistema.arrayMap('estados')
-
-            for (const a of data) {
-                if (qry.cols.includes('doc_tipo')) a.doc_tipo1 = documentos_identidadMap[a.doc_tipo]
-                if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        const data = await Socio.findByPk(id, {
-            include: [includes.precio_lista1]
+        //--- ACTUALIZAR ---//
+        const updated = await repository.update(id, {
+            tipo, doc_tipo, doc_numero, nombres, apellidos,
+            telefono1, telefono2, correo, web, activo,
+            direcciones,
+            contactos,
+            precio_lista, pago_condicion, bancos, pago_metodos,
+            documentos,
+            updatedBy: colaborador
         })
 
+        if (updated == false) return
+
+        const data = await loadOne(id)
+        if (comes_from == 'ecommerce') actualizarSesion(id, data)
         res.json({ code: 0, data })
     }
     catch (error) {
@@ -206,12 +144,9 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        // ----- ELIMINAR ----- //
-        const deletedCount = await Socio.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -219,76 +154,66 @@ const delet = async (req, res) => {
 }
 
 const deleteBulk = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
         const { ids } = req.body
 
-        // ----- ELIMINAR ----- //
-        const deletedCount = await Socio.destroy({
-            where: {
-                id: {
-                    [Op.in]: ids
-                }
-            },
-            transaction
-        })
+        if (await repository.delete(ids) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        await transaction.commit()
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const updateBulk = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
+        const { colaborador } = req.user
         const { ids, prop, val } = req.body
-        const edit = { [prop]: val }
 
-        // ----- MODIFICAR ----- //
-        await Socio.update(
-            edit,
-            {
-                where: {
-                    id: {
-                        [Op.in]: ids
-                    }
-                },
-                transaction
-            }
-        )
+        //--- ACTUALIZAR ---//
+        const updated = await repository.update(ids, {
+            [prop]: val,
+            updatedBy: colaborador
+        })
 
-        await transaction.commit()
+        if (updated == false) return
 
         res.json({ code: 0 })
     }
     catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    const data = await repository.find({ id }, true)
+
+    if (data) {
+        const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
+        const estadosMap = cSistema.arrayMap('estados')
+
+        data.doc_tipo1 = documentos_identidadMap[data.doc_tipo]
+        data.activo1 = estadosMap[data.activo]
+    }
+
+    return data
 }
 
 
 //--- E-COMMERCE ---//
 const createToNewsletter = async (req, res) => {
     try {
+        const empresa = req.headers["x-empresa"]
         const { correo } = req.body
 
         // ----- VERIFY SI EXISTE CORREO ----- //
-        if (await existe(Socio, { correo, only_newsletter: true }, res, 'El correo ya fue registrado anteriormente.') == true) return
+        if (await repository.existe({ correo, only_newsletter: true, empresa }, res, `El correo ya fue registrado anteriormente.`) == true) return
 
         // ----- CREAR ----- //
-        await Socio.create({ correo, only_newsletter: true })
+        await repository.create({ correo, only_newsletter: true })
 
         res.json({ code: 0 })
     }
@@ -299,33 +224,29 @@ const createToNewsletter = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
+        const empresa = req.headers["x-empresa"]
         let { correo, contrasena } = req.body
 
         // ----- VERIFY SI EXISTE CORREO ----- //
-        if (await existe(Socio, { correo, tipo: 2 }, res, 'El correo ya fue registrado anteriormente.') == true) return
+        if (await repository.existe({ correo, tipo: 2, empresa }, res, `El correo ya fue registrado anteriormente.`) == true) return
 
         // ----- CREAR ----- //
         contrasena = await bcrypt.hash(contrasena, 10)
         const contrasena_updated_at = dayjs()
-        
-        const data = await Socio.create({
+
+        const nuevo = await repository.create({
             tipo: 2,
             correo,
             contrasena,
-            contrasena_updated_at
-        })
-
-        const token = jat.encrypt({
-            id: data.id,
-        }, config.tokenMyApi)
-
-        guardarSesion(data.id, {
-            token,
-            correo,
-            direcciones: [],
-            pago_metodos: [],
             contrasena_updated_at,
+            empresa,
         })
+
+        const data = await repository.find({ id: nuevo.id }, true)
+
+        const token = jat.encrypt({ id: data.id }, config.tokenMyApi)
+
+        guardarSesion(data.id, { token, ...data })
 
         res.json({ code: 0, token })
     }
@@ -334,56 +255,35 @@ const createUser = async (req, res) => {
     }
 }
 
-const loginUser = async (req, res) => {
+const signin = async (req, res) => {
     try {
+        const empresa = req.headers["x-empresa"]
         let { correo, contrasena } = req.body
 
-        const data = await Socio.findOne({
-            where: { correo, tipo: 2 },
+        //--- VERIFICAR CLIENTE --- //
+        const cliente = await Socio.findOne({
+            where: { correo, tipo: 2, empresa: empresa.id },
+            raw: true
         })
 
-        if (data == null) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+        if (cliente == null) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
-        const correct = await bcrypt.compare(contrasena, data.contrasena)
+        const correct = await bcrypt.compare(contrasena, cliente.contrasena)
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
-        const token = jat.encrypt({
-            id: data.id,
-        }, config.tokenMyApi)
+        //--- GUARDAR SESSION ---//
+        const token = jat.encrypt({ id: cliente.id }, config.tokenMyApi)
 
-        const toSave = {
-            token,
+        guardarSesion(cliente.id, { token, ...cliente })
 
-            doc_tipo: data.doc_tipo,
-            doc_numero: data.doc_numero,
-            nombres: data.nombres,
-            apellidos: data.apellidos,
-
-            correo: data.correo,
-            telefono1: data.telefono1,
-            telefono2: data.telefono2,
-            web: data.web,
-            activo: data.activo,
-
-            direcciones: data.direcciones,
-
-            pago_metodos: data.pago_metodos,
-
-            nombres_apellidos: data.nombres_apellidos,
-
-            contrasena_updated_at: data.contrasena_updated_at,
-        }
-
-        guardarSesion(data.id, toSave)
-
-        res.json({ code: 0, token, data: toSave })
+        res.json({ code: 0, token, data: cliente })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
-const verifyLogin = async (req, res) => {
+const login = async (req, res) => {
     try {
         res.json({ code: 0, data: { ...req.user } })
     }
@@ -394,10 +294,10 @@ const verifyLogin = async (req, res) => {
 
 const sendCodigo = async (req, res) => {
     try {
-        const { correo } = req.body
+        const { id, correo } = req.body
         const codigo_verificacion = generarCodigo6()
 
-        await Socio.update({ codigo_verificacion }, { where: { correo } })
+        await repository.update(id, { codigo_verificacion })
 
         const nodemailer = nodeMailer()
         const result = await nodemailer.sendMail({
@@ -407,7 +307,12 @@ const sendCodigo = async (req, res) => {
             html: htmlCodigoVerificacion(codigo_verificacion)
         })
 
-        res.status(200).json({ code: 0 })
+        if (result.error) {
+            return res.json({ code: 1, msg: "No se pudo enviar el código", error: result.error });
+        }
+        else {
+            res.json({ code: 0 })
+        }
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -416,15 +321,21 @@ const sendCodigo = async (req, res) => {
 
 const verifyCodigo = async (req, res) => {
     try {
-        const { correo, codigo_verificacion } = req.body
+        const { id, correo, codigo_verificacion } = req.body
 
-        const data = await Socio.findOne({ where: { correo, codigo_verificacion } })
+        const qry = {
+            fltr: {
+                correo: { op: 'Es', val: correo },
+                codigo_verificacion: { op: 'Es', val: codigo_verificacion },
+            }
+        }
+        const data = await repository.find(qry, true)
 
-        if (data == null) return res.status(200).json({ code: 1, msg: 'Código ingresado incorrecto' })
+        if (data.length == 0) return res.json({ code: 1, msg: 'Código ingresado incorrecto' })
 
-        await Socio.update({ codigo_verificacion: null }, { where: { correo } })
+        await repository.update(id, { codigo_verificacion: null })
 
-        res.status(200).json({ code: 0 })
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -439,13 +350,10 @@ const updatePassword = async (req, res) => {
 
         const contrasena_updated_at = dayjs()
 
-        await Socio.update(
-            {
-                contrasena,
-                contrasena_updated_at,
-            },
-            { where: { id } }
-        )
+        await repository.update(id, {
+            contrasena,
+            contrasena_updated_at,
+        })
 
         actualizarSesion(id, { contrasena_updated_at })
 
@@ -460,12 +368,9 @@ const deleteUser = async (req, res) => {
     try {
         let { id } = req.body
 
-        await Socio.update(
-            {
-                activo: 0,
-            },
-            { where: { id } }
-        )
+        await repository.update(id, {
+            activo: 0,
+        })
 
         borrarSesion(id)
 
@@ -511,8 +416,8 @@ export default {
 
     createToNewsletter,
     createUser,
-    loginUser,
-    verifyLogin,
+    signin,
+    login,
     sendCodigo,
     verifyCodigo,
     updatePassword,
