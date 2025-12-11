@@ -1,17 +1,12 @@
 import { Repository } from '#db/Repository.js'
 import cSistema from "../_sistema/cSistema.js"
-
-import { applyFilters, cleanFloat } from '#shared/mine.js'
-import { Op, Sequelize } from 'sequelize'
 import sequelize from '#db/sequelize.js'
-import { Kardex } from '#db/models/Kardex.js'
-import { Articulo } from '#db/models/Articulo.js'
-import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
-import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
+import { cleanFloat } from '#shared/mine.js'
 
 const repository = new Repository('Kardex')
 const ProduccionOrdenRep = new Repository('ProduccionOrden')
 const ArticuloRep = new Repository('Articulo')
+const RecetaInsumoRep = new Repository('RecetaInsumo')
 
 const find = async (req, res) => {
     try {
@@ -242,13 +237,17 @@ const ingresarProduccionProductos = async (req, res) => {
 const recalcularStock = async (req, res) => {
     try {
         const qry = {
+            incl: ['lote_padre_items'],
+            cols: ['id', 'cantidad'],
+            sqls: ['lote_padre_movimientos_cantidad'],
             fltr: {
                 is_lote_padre: { op: 'Es', val: true },
                 // fecha: { op: 'Está dentro de', val: '2025-11-15', val1: '2025-11-30' },
                 articulo: { op: 'Es', val: '4a172ce3-ad39-4746-96ee-ed877bd58494' },
             },
-            cols: ['id', 'cantidad'],
-            sqls: ['lote_padre_movimientos_cantidad']
+            grop: ['id'],
+            ordr: [['fecha', 'ASC']],
+            // sqls: ['lote_padre_movimientos_cantidad']
         }
 
         const lotes_padre = await repository.find(qry, true)
@@ -258,8 +257,8 @@ const recalcularStock = async (req, res) => {
             let i = 1
 
             for (let a of lotes_padre) {
-                const stock = Number(a.cantidad) + Number(a.movimientos)
-                console.log('Actualizando ', i, `Cantidad: ${a.cantidad}`, `Movimientos: ${a.movimientos}`, `Stock: ${stock}`)
+                const stock = Number(a.cantidad) + Number(a.movimientos_cantidad)
+                console.log('Actualizando ', i, `Cantidad: ${a.cantidad}`, `Movimientos: ${a.movimientos_cantidad}`, `Stock: ${stock}`)
 
                 await repository.update(a.id, { stock })
 
@@ -302,6 +301,7 @@ const findReporteProduccion = async (req, res) => {
             insumos_categorias: [],
         }
 
+        //--- Lo que se ha producido ---//
         const qry = {
             incl: ['categoria1', 'kardexes'],
             cols: ['nombre'],
@@ -314,33 +314,24 @@ const findReporteProduccion = async (req, res) => {
             grop: ['id'],
             ordr: [['nombre', 'ASC']],
         }
-        // const ti_where = {
-        //     fecha: { [Op.between]: [f1, f2] },
-        //     tipo: 4
-        // }
-        // data.produccion_mes = await findMovimientosCantidad(qry, ti_where, true)
-        data.produccion_mes = await ArticuloRep.find(qry)
 
-        data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + Number(a.cantidad), 0);
+        data.produccion_mes = await ArticuloRep.find(qry, true)
+
+        data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + Number(a.cantidad), 0)
 
         //--- Lo que debería haberse consumido ---//
-        const produccion_mes_insumos = await RecetaInsumo.findAll({
-            attributes: ['articulo_principal', 'articulo', 'cantidad'],
-            where: {
-                articulo_principal: { [Op.in]: data.produccion_mes.map(a => a.id) },
-            },
-            include: {
-                model: Articulo,
-                as: 'articulo1',
-                attributes: ['nombre'],
-            },
-            raw: true,
-        });
+        const qry1 = {
+            incl: ['articulo1'],
+            cols: ['articulo_principal', 'articulo', 'cantidad'],
+            fltr: { articulo_principal: { op: 'Es', val: data.produccion_mes.map(a => a.id) } },
+        }
 
-        const recetaMap = {};
+        const produccion_mes_insumos = await RecetaInsumoRep.find(qry1, true)
+
+        const recetaMap = {}
         for (const r of produccion_mes_insumos) {
-            if (!recetaMap[r.articulo_principal]) recetaMap[r.articulo_principal] = [];
-            recetaMap[r.articulo_principal].push(r);
+            if (!recetaMap[r.articulo_principal]) recetaMap[r.articulo_principal] = []
+            recetaMap[r.articulo_principal].push(r)
         }
 
         const insumos_esperados_obj = {};
@@ -364,19 +355,19 @@ const findReporteProduccion = async (req, res) => {
         }
 
         //--- Lo que se consumió realmente ---//
-        const qry1 = {
-            incl: ['categoria1'],
+        const qry2 = {
+            incl: ['categoria1', 'kardexes'],
             cols: ['nombre'],
             sqls: ['articulo_movimientos_cantidad'],
-            fltr: { id: { op: 'Es', val: produccion_mes_insumos.map(a => a.articulo) } },
+            fltr: {
+                id: { op: 'Es', val: produccion_mes_insumos.map(a => a.articulo) },
+                'kardexes.fecha': { op: 'Está dentro de', val: f1, val1: f2 },
+                'kardexes.tipo': { op: 'Es', val: [2, 3] },
+            },
             grop: ['id'],
             ordr: [['nombre', 'ASC']],
         }
-        const ti_where1 = {
-            fecha: { [Op.between]: [f1, f2] },
-            tipo: { [Op.in]: [2, 3] }
-        }
-        const insumos_mes_consumos = await findMovimientosCantidad(qry1, ti_where1, true)
+        const insumos_mes_consumos = await ArticuloRep.find(qry2, true)
 
         const insumos_utilizados_obj = {}
         for (const a of insumos_mes_consumos) {
@@ -398,7 +389,8 @@ const findReporteProduccion = async (req, res) => {
         //--- Agrupar por categoria ---//
         const insumos_categorias_obj = {};
         for (const a of data.insumos) {
-            const cat = a['categoria1.nombre'] || 'SIN CATEGORÍA';
+            const cat = a.categoria1.nombre || 'SIN CATEGORÍA';
+            console.log(cat)
 
             if (!insumos_categorias_obj[cat]) {
                 insumos_categorias_obj[cat] = {
@@ -415,70 +407,10 @@ const findReporteProduccion = async (req, res) => {
         }
         data.insumos_categorias = Object.values(insumos_categorias_obj);
 
-        res.json({ code: 0, data })
+        res.json({ code: 0, data, produccion_mes_insumos })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
-}
-
-
-//--- Helpers ---//
-async function findMovimientosCantidad(qry, ti_where, tojson = false) {
-    const findProps = {
-        include: [],
-        attributes: ['id'],
-        where: {},
-        order: [['nombre', 'ASC']],
-        group: ['articulos.id'],
-        raw: tojson,
-    }
-    console.log('ASD1')
-    const include1 = {
-        categoria1: {
-            model: ArticuloCategoria,
-            as: 'categoria1',
-            attributes: ['id', 'nombre']
-        }
-    }
-
-    const columns = Object.keys(Articulo.getAttributes());
-
-    if (qry) {
-        if (qry.incl) {
-            for (const a of qry.incl) {
-                if (qry.incl.includes(a)) findProps.include.push(include1[a])
-            }
-        }
-
-        if (qry.cols) {
-            const cols1 = qry.cols.filter(a => columns.includes(a))
-            findProps.attributes = findProps.attributes.concat(cols1)
-        }
-
-        if (qry.fltr) {
-            const fltr1 = Object.fromEntries(
-                Object.entries(qry.fltr).filter(([key]) => columns.includes(key))
-            )
-            Object.assign(findProps.where, applyFilters(fltr1))
-        }
-    }
-
-    findProps.include.push({
-        model: Kardex,
-        as: 'kardexes',
-        attributes: [],
-        required: false,
-        where: ti_where
-    })
-
-    const caseExpression = `
-        CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN kardexes.tipo = ${t.id} THEN kardexes.cantidad * ${t.operacion}`).join(' ')}
-        ELSE 0 END
-    `;
-
-    findProps.attributes.push([Sequelize.fn('COALESCE', Sequelize.fn('SUM', Sequelize.literal(caseExpression)), 0), 'cantidad'])
-    console.log(findProps)
-    return await Articulo.findAll(findProps)
 }
 
 export default {

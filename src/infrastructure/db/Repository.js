@@ -66,6 +66,12 @@ const include1 = {
         attributes: [],
         required: false,
     },
+    lote_padre_items: {
+        model: Kardex,
+        as: 'lote_padre_items',
+        attributes: [],
+        required: false,
+    },
     lote_padre1: {
         model: Kardex,
         as: 'lote_padre1',
@@ -112,7 +118,7 @@ const include1 = {
 }
 
 const sqls1 = {
-    lote_padre_movimientos_cantidad: [
+    lote_padre_movimientos_cantidad1: [
         Sequelize.literal(`(
             SELECT SUM(
                 CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
@@ -122,6 +128,17 @@ const sqls1 = {
             WHERE lote_padre_items.lote_padre = kardexes.id
         )`),
         'movimientos'
+    ],
+    lote_padre_movimientos_cantidad: [
+        Sequelize.fn('COALESCE',
+            Sequelize.fn('SUM',
+                Sequelize.literal(`
+                    CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+                    ELSE 0 END
+                `)
+            ), 0
+        ),
+        'movimientos_cantidad'
     ],
     articulo_movimientos_cantidad: [
         Sequelize.fn('COALESCE',
