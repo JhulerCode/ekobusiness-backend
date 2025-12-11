@@ -1,18 +1,6 @@
 import { Repository } from '#db/Repository.js'
-import { Maquina } from '#db/models/Maquina.js'
-import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
-import { applyFilters, existe } from '#shared/mine.js'
-import cSistema from "../_sistema/cSistema.js"
 
 const repository = new Repository('Maquina')
-
-const include1 = {
-    produccion_tipo1: {
-        model: ArticuloLinea,
-        as: 'produccion_tipo1',
-        attributes: ['id', 'nombre']
-    }
-}
 
 const find = async (req, res) => {
     try {
