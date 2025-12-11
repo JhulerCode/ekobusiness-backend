@@ -148,6 +148,11 @@ const include1 = {
             as: 'precio_lista1',
             attributes: ['id', 'moneda']
         }
+    },
+    precio_lista1: {
+        model: PrecioLista,
+        as: 'precio_lista1',
+        attributes: ['id', 'nombre']
     }
 }
 
