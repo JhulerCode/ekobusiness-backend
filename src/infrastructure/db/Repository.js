@@ -83,6 +83,11 @@ const include1 = {
         attributes: ['id', 'nombre'],
         required: false,
     },
+    moneda1: {
+        model: Moneda,
+        as: 'moneda1',
+        attributes: ['id', 'nombre']
+    },
     produccion_orden1: {
         model: ProduccionOrden,
         as: 'produccion_orden1',
