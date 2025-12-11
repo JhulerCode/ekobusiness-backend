@@ -1,5 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { Socio } from '#db/models/Socio.js'
 
 const repository = new Repository('Inspeccion')
 

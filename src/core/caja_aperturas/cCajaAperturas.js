@@ -1,8 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { CajaApertura } from '#db/models/CajaApertura.js'
-import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
-import { Colaborador } from '#db/models/Colaborador.js'
-import { existe, applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import dayjs from '#shared/dayjs.js'
 

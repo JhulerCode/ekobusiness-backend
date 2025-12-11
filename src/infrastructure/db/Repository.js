@@ -27,7 +27,6 @@ import { Transaccion } from '#db/models/Transaccion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
 
 import { applyFilters } from '#db/helpers.js'
-import sequelize from '#db/sequelize.js'
 import cSistema from "#core/_sistema/cSistema.js"
 
 const include1 = {
