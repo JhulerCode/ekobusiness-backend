@@ -30,7 +30,7 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const {
             tipo, fecha,
             has_pedido, socio_pedido, socio, guia, factura,
@@ -45,6 +45,7 @@ const create = async (req, res) => {
             has_pedido, socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
+            empresa,
             createdBy: colaborador
         }, { transaction })
 
@@ -179,7 +180,10 @@ async function loadOne(id) {
 
 const find = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
         const findProps = {
             attributes: ['id', 'estado', 'calidad_revisado_despacho'],

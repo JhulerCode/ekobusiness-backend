@@ -1,3 +1,4 @@
+import { Repository } from '#db/Repository.js'
 import { Op, Sequelize } from 'sequelize'
 import sequelize from '#db/sequelize.js'
 import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
@@ -14,6 +15,8 @@ import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
 import dayjs from '#shared/dayjs.js'
+
+const repository = new Repository('SocioPedido')
 
 const includes = {
     socio1: {
@@ -39,6 +42,79 @@ const includes = {
         model: Colaborador,
         as: 'createdBy1',
         attributes: ['nombres', 'apellidos', 'nombres_apellidos']
+    }
+}
+
+const find = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
+
+        const data = await repository.find(qry, true)
+
+        if (data.length > 0) {
+            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
+            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+            const estadoMap = cSistema.arrayMap('estados')
+            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
+
+            for (const a of data) {
+                if (qry?.cols?.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
+                if (qry?.cols?.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
+
+                if (qry?.cols?.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
+                if (qry?.cols?.includes('listo')) a.listo1 = estadoMap[a.listo]
+                if (qry?.cols?.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
+
+                if (qry?.cols?.includes('pago_metodo')) a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
+                if (qry?.cols?.includes('entrega_tipo')) a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const findById = async (req, res) => {
+    try {
+        const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        const data = await repository.find({ id, ...qry }, true)
+
+        if (data) {
+            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
+            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+            const estadoMap = cSistema.arrayMap('estados')
+            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
+            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+            const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
+            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
+
+            data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
+
+            data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
+            data.pagado1 = estadoMap[data.pagado]
+            data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
+            data.comprobante_tipo1 = comprobante_tiposMap[data.comprobante_tipo]
+
+            data.estado1 = pedido_estadosMap[data.estado]
+
+            if (data.socio_datos.doc_tipo) {
+                data.socio_datos.doc_tipo1 = documentos_identidadMap[data.socio_datos.doc_tipo]
+            }
+        }
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
@@ -235,157 +311,6 @@ const update = async (req, res) => {
     catch (error) {
         await transaction.rollback()
 
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-async function loadOne(id) {
-    let data = await SocioPedido.findByPk(id, {
-        include: [includes.socio1, includes.moneda1]
-    })
-
-    if (data) {
-        data = data.toJSON()
-
-        const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-        const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
-        const estadoMap = cSistema.arrayMap('estados')
-
-        data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
-        data.estado1 = pedido_estadosMap[data.estado]
-        data.pagado1 = estadoMap[data.pagado]
-    }
-
-    return data
-}
-
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id'],
-            order: [['fecha', 'DESC']],
-            where: {},
-            include: []
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-
-                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
-                if (qry.cols.includes('socio')) findProps.include.push(includes.socio1)
-                if (qry.cols.includes('moneda')) findProps.include.push(includes.moneda1)
-                if (qry.cols.includes('createdBy')) findProps.include.push(includes.createdBy1)
-            }
-
-            if (qry.incl) {
-                for (const a of qry.incl) {
-                    if (qry.incl.includes(a)) findProps.include.push(includes[a])
-                }
-            }
-        }
-
-        let data = await SocioPedido.findAll(findProps)
-
-        if (data.length > 0 && qry.cols) {
-            data = data.map(a => a.toJSON())
-
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
-            const estadoMap = cSistema.arrayMap('estados')
-            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
-            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
-
-            for (const a of data) {
-                if (qry.cols.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
-                if (qry.cols.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
-
-                if (qry.cols.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
-                if (qry.cols.includes('listo')) a.listo1 = estadoMap[a.listo]
-                if (qry.cols.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
-
-                if (qry.cols.includes('pago_metodo')) a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
-                if (qry.cols.includes('entrega_tipo')) a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const findById = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        let data = await SocioPedido.findByPk(id, {
-            include: [
-                {
-                    model: SocioPedidoItem,
-                    as: 'socio_pedido_items',
-                    include: {
-                        model: Articulo,
-                        as: 'articulo1',
-                        attributes: ['nombre', 'unidad', 'has_fv', 'fotos']
-                    }
-                },
-                {
-                    model: Socio,
-                    as: 'socio1',
-                    attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'doc_numero', 'contactos', 'direcciones', 'precio_lista'],
-                    include: {
-                        model: PrecioLista,
-                        as: 'precio_lista1',
-                        attributes: ['id', 'moneda']
-                    }
-                },
-                {
-                    model: Moneda,
-                    as: 'moneda1',
-                    attributes: ['id', 'nombre', 'simbolo']
-                },
-                {
-                    model: Colaborador,
-                    as: 'createdBy1',
-                    attributes: ['nombres', 'apellidos', 'nombres_apellidos', 'telefono', 'cargo']
-                }
-            ]
-        })
-
-        if (data) {
-            data = data.toJSON()
-
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
-            const estadoMap = cSistema.arrayMap('estados')
-            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
-            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
-            const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
-            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
-
-            data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
-            data.estado1 = pedido_estadosMap[data.estado]
-            data.pagado1 = estadoMap[data.pagado]
-            data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
-            data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
-            data.comprobante_tipo1 = comprobante_tiposMap[data.comprobante_tipo]
-
-            if (data.socio_datos.doc_tipo) {
-                data.socio_datos.doc_tipo1 = documentos_identidadMap[data.socio_datos.doc_tipo]
-            }
-        }
-
-        res.json({ code: 0, data })
-    }
-    catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -689,6 +614,28 @@ const findDetail = async (req, res) => {
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    let data = await SocioPedido.findByPk(id, {
+        include: [includes.socio1, includes.moneda1]
+    })
+
+    if (data) {
+        data = data.toJSON()
+
+        const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
+        const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
+        const estadoMap = cSistema.arrayMap('estados')
+
+        data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
+        data.estado1 = pedido_estadosMap[data.estado]
+        data.pagado1 = estadoMap[data.pagado]
+    }
+
+    return data
 }
 
 export default {

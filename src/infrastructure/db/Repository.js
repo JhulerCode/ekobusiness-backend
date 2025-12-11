@@ -21,7 +21,7 @@ import { PrecioListaItem } from '#db/models/PrecioListaItem.js'
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
 import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
 import { Socio } from '#db/models/Socio.js'
-import { SocioPedido } from '#db/models/SocioPedido.js'
+import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
 import { TipoCambio } from '#db/models/TipoCambio.js'
 import { Transaccion } from '#db/models/Transaccion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
@@ -97,13 +97,11 @@ const include1 = {
         model: ProduccionOrden,
         as: 'produccion_orden1',
         attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
-        include: [
-            {
-                model: ArticuloLinea,
-                as: 'tipo1',
-                attributes: ['id', 'nombre'],
-            }
-        ],
+        include: {
+            model: ArticuloLinea,
+            as: 'tipo1',
+            attributes: ['id', 'nombre'],
+        },
         required: false,
     },
     receta_insumos: {
@@ -121,19 +119,36 @@ const include1 = {
         as: 'socio1',
         attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
     },
+    socio_pedido_items: {
+        model: SocioPedidoItem,
+        as: 'socio_pedido_items',
+        include: {
+            model: Articulo,
+            as: 'articulo1',
+            attributes: ['nombre', 'unidad', 'has_fv', 'fotos']
+        }
+    },
     transaccion1: {
         model: Transaccion,
         as: 'transaccion1',
         attributes: ['id', 'socio', 'guia', 'factura'],
         required: false,
-        include: [
-            {
-                model: Socio,
-                as: 'socio1',
-                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-            }
-        ],
+        include: {
+            model: Socio,
+            as: 'socio1',
+            attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+        }
     },
+    socio2: {
+        model: Socio,
+        as: 'socio1',
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'doc_numero', 'contactos', 'direcciones', 'precio_lista'],
+        include: {
+            model: PrecioLista,
+            as: 'precio_lista1',
+            attributes: ['id', 'moneda']
+        }
+    }
 }
 
 const sqls1 = {
