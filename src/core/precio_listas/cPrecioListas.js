@@ -16,7 +16,7 @@ const find = async (req, res) => {
             const estadosMap = cSistema.arrayMap('estados')
 
             for (const a of data) {
-                if (qry.cols.includes('activo')) a.activo1 = estadosMap[a.activo]
+                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
             }
         }
 

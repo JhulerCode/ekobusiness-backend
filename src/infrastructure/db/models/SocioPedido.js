@@ -38,7 +38,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
 
     observacion: { type: DataTypes.STRING },
     estado: { type: DataTypes.STRING, defaultValue: '1' }, //required
-    etapas: { type: DataTypes.JSON },
+    etapas: { type: DataTypes.JSON, defaultValue: [] },
     pagado: { type: DataTypes.BOOLEAN, defaultValue: false },
     listo: { type: DataTypes.BOOLEAN, defaultValue: false },
     entregado: { type: DataTypes.BOOLEAN, defaultValue: false },

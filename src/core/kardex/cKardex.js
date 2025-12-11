@@ -50,13 +50,13 @@ const find = async (req, res) => {
                 }
 
                 //--- Datos para productos terminados ---//
-                if (qry.cols.includes('producto_estado')) {
+                if (qry?.cols?.includes('producto_estado')) {
                     a.producto_estado = a.is_lote_padre ? 2 : 1
                     a.producto_estado1 = cuarentena_productos_estadosMap[a.producto_estado]
                 }
 
                 //--- Datos para compra items ---//
-                if (qry.cols.includes('calidad_revisado')) {
+                if (qry?.cols?.includes('calidad_revisado')) {
                     a.calidad_revisado1 = estadosMap[a.calidad_revisado]
                 }
             }

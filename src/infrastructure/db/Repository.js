@@ -35,6 +35,11 @@ const include1 = {
         as: 'produccion_tipo1',
         attributes: ['id', 'nombre']
     },
+    tipo1: {
+        model: ArticuloLinea,
+        as: 'tipo1',
+        attributes: ['id', 'nombre'],
+    },
     categoria1: {
         model: ArticuloCategoria,
         as: 'categoria1',
@@ -154,6 +159,14 @@ const sqls1 = {
             ), 0
         ),
         'cantidad'
+    ],
+    productos_terminados: [
+        Sequelize.literal(`(
+            SELECT COALESCE(SUM(k.cantidad), 0)
+            FROM kardexes AS k
+            WHERE k.produccion_orden = produccion_ordenes.id AND k.tipo = 4
+        )`),
+        'productos_terminados'
     ],
 }
 
