@@ -106,6 +106,16 @@ const include1 = {
         ],
         required: false,
     },
+    receta_insumos: {
+        model: RecetaInsumo,
+        as: 'receta_insumos',
+        attributes: ['id', 'articulo', 'cantidad', 'orden'],
+        include: {
+            model: Articulo,
+            as: 'articulo1',
+            attributes: ['nombre']
+        },
+    },
     socio1: {
         model: Socio,
         as: 'socio1',
@@ -127,38 +137,45 @@ const include1 = {
 }
 
 const sqls1 = {
-    lote_padre_movimientos_cantidad1: [
-        Sequelize.literal(`(
-            SELECT SUM(
-                CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
-                ELSE 0 END
-            )
-            FROM kardexes AS lote_padre_items
-            WHERE lote_padre_items.lote_padre = kardexes.id
-        )`),
-        'movimientos'
-    ],
-    lote_padre_movimientos_cantidad: [
-        Sequelize.fn('COALESCE',
-            Sequelize.fn('SUM',
-                Sequelize.literal(`
-                    CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
-                    ELSE 0 END
-                `)
-            ), 0
-        ),
-        'movimientos_cantidad'
-    ],
+    // lote_padre_movimientos_cantidad1: [
+    //     Sequelize.literal(`(
+    //         SELECT SUM(
+    //             CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+    //             ELSE 0 END
+    //         )
+    //         FROM kardexes AS lote_padre_items
+    //         WHERE lote_padre_items.lote_padre = kardexes.id
+    //     )`),
+    //     'movimientos'
+    // ],
     articulo_movimientos_cantidad: [
         Sequelize.fn('COALESCE',
             Sequelize.fn('SUM',
                 Sequelize.literal(`
                     CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN kardexes.tipo = ${t.id} THEN kardexes.cantidad * ${t.operacion}`).join(' ')}
                     ELSE 0 END
-                `)
+                    `)
             ), 0
         ),
         'cantidad'
+    ],
+    lote_padre_movimientos_cantidad: [
+        Sequelize.fn('COALESCE',
+            Sequelize.fn('SUM',
+                Sequelize.literal(`
+                        CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+                        ELSE 0 END
+                    `)
+            ), 0
+        ),
+        'movimientos_cantidad'
+    ],
+    articulo_stock: [Sequelize.literal(`(
+            SELECT COALESCE(SUM(k.stock), 0)
+            FROM kardexes AS k
+            WHERE k.articulo = articulos.id AND k.is_lote_padre = TRUE
+        )`),
+        'stock'
     ],
     productos_terminados: [
         Sequelize.literal(`(
