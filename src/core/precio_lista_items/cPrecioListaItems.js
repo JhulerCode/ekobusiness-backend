@@ -1,32 +1,39 @@
-import { PrecioListaItem } from '#db/models/PrecioListaItem.js'
-import { existe, applyFilters } from '#shared/mine.js'
-import { Articulo } from '#db/models/Articulo.js'
+import { Repository } from '#db/Repository.js'
 
-const includes = {
-    articulo1: {
-        model: Articulo,
-        as: 'articulo1',
-        attributes: ['nombre', 'unidad', 'has_fv', 'igv_afectacion']
+const repository = new Repository('PrecioListaItem')
+
+const find = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
+
+        const data = await repository.find(qry)
+
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
-
-// ----- ITEMS ----- //
 const create = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { precio_lista, articulo, precio } = req.body
 
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await existe(PrecioListaItem, { precio_lista, articulo }, res, 'El artículo ya fue agregado') == true) return
+        //--- VERIFY SI EXISTE ---//
+        if (await repository.existe({ precio_lista, articulo, empresa }, res) == true) return
 
-        // ----- CREAR ----- //
-        const nuevo = await PrecioListaItem.create({
+        //--- CREAR ---//
+        const nuevo = await repository.create({
             precio_lista, articulo, precio,
+            empresa,
             createdBy: colaborador
         })
 
-        const data = await loadOneItem(nuevo.id)
+        const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
     }
@@ -37,63 +44,21 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { id } = req.params
         const { precio_lista, articulo, precio } = req.body
 
-        // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await PrecioListaItem.update(
-            {
-                precio,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        //--- VERIFY SI EXISTE ---//
+        // if (await repository.existe({ precio_lista, articulo, id, empresa }, res) == true) return
 
-        if (affectedRows > 0) {
-            res.json({ code: 0 })
-        }
-        else {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-        }
-    }
-    catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
+        const updated = await repository.update(id, {
+            precio,
+            updatedBy: colaborador
+        })
 
-async function loadOneItem(id) {
-    let data = await PrecioListaItem.findByPk(id, {
-        include: [includes.articulo1]
-    })
+        if (updated == false) return
 
-    return data
-}
-
-const find = async (req, res) => {
-    try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        const findProps = {
-            attributes: ['id'],
-            where: {},
-            include: []
-        }
-
-        if (qry) {
-            if (qry.fltr) {
-                Object.assign(findProps.where, applyFilters(qry.fltr))
-            }
-
-            if (qry.cols) {
-                findProps.attributes = findProps.attributes.concat(qry.cols)
-
-                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
-                if (qry.cols.includes('articulo')) findProps.include.push(includes.articulo1)
-            }
-        }
-
-        let data = await PrecioListaItem.findAll(findProps)
+        const data = await loadOne(id)
 
         res.json({ code: 0, data })
     }
@@ -106,16 +71,21 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        // ----- ELIMINAR ----- //
-        const deletedCount = await PrecioListaItem.destroy({ where: { id } })
+        if (await repository.delete(id) == false) return
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
-
-        res.json(send)
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
+}
+
+
+//--- Helpers ---//
+async function loadOne(id) {
+    const data = await repository.find({ id, incl: ['articulo1'] }, true)
+
+    return data
 }
 
 export default {

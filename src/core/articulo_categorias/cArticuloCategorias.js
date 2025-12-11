@@ -154,7 +154,7 @@ const updateFotos = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    let data = await repository.find({ id }, true)
+    const data = await repository.find({ id }, true)
 
     if (data) {
         const estadosMap = cSistema.arrayMap('estados')
