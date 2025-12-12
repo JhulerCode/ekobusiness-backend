@@ -155,7 +155,7 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { fecha, moneda } = req.body
 
-        if (await repository.delete(id) == false) return
+        if (await repository.delete({ id }) == false) return
 
         //--- Actualizar en transacciones ---//
         await Transaccion.update(

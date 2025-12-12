@@ -150,6 +150,18 @@ const include1 = {
         as: 'socio1',
         attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
     },
+    socio_pedido1: {
+        model: SocioPedido,
+        as: 'socio_pedido1',
+        attributes: ['id', 'fecha', 'socio', 'codigo'],
+        include: [
+            {
+                model: Socio,
+                as: 'socio1',
+                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+            }
+        ],
+    },
     socio_pedido_items: {
         model: SocioPedidoItem,
         as: 'socio_pedido_items',
@@ -351,11 +363,14 @@ export class Repository {
         }
     }
 
-    async delete(id, transaction) {
-        const deletedCount = await this.model.destroy({ where: { id }, transaction })
-        // console.log('ELIMINADOS', deletedCount)
+    async delete(where, transaction) {
+        const deletedCount = await this.model.destroy({ where, transaction })
+        // console.log('Cantidad de eliminados', deletedCount)
         if (deletedCount == 0) {
+            if (transaction) await transaction.rollback()
+
             res.json({ code: 1, msg: 'No se eliminó ningún registro' })
+
             return false
         }
         else {

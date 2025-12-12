@@ -49,15 +49,6 @@ router.delete(
     controller.delet
 )
 
-// router.patch(
-//     '/anular/:id',
-//     verifyPermiso([
-//         'vCompraPedidos:anular',
-//         'vVentaPedidos:anular',
-//     ]),
-//     controller.anular
-// )
-
 router.patch(
     '/confirmar-pago/:id',
     verifyPermiso([
@@ -97,7 +88,7 @@ router.get(
         'vVentaPedidos:verProductosPedidos',
         'vPrograma:verProductosPedidos',
     ]),
-    controller.findDetail
+    controller.findPendientes
 )
 
 export default router

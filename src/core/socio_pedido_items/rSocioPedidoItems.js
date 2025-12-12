@@ -10,4 +10,14 @@ router.get(
     controller.find
 )
 
+router.post(
+    '/',
+    controller.create
+)
+
+router.patch(
+    '/:id',
+    controller.update
+)
+
 export default router

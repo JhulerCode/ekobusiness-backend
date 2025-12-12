@@ -178,7 +178,7 @@ const delet = async (req, res) => {
         const { tipo, lote_padre, cantidad } = req.body
 
         // ----- ELIMINAR ---
-        if (await repository.delete(id, transaction) == false) return
+        if (await repository.delete({ id }, transaction) == false) return
 
         // ----- ACTUALIZAR STOCK ---
         if (lote_padre) {

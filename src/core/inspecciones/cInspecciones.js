@@ -78,7 +78,7 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete(id) == false) return
+        if (await repository.delete({ id }) == false) return
 
         res.json({ code: 0 })
     }

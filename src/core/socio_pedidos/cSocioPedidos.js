@@ -1,50 +1,16 @@
 import { Repository } from '#db/Repository.js'
-import { Op, Sequelize } from 'sequelize'
 import sequelize from '#db/sequelize.js'
-import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
-import { Socio } from '#db/models/Socio.js'
-import { Moneda } from '#db/models/Moneda.js'
-import { Colaborador } from '#db/models/Colaborador.js'
-import { Articulo } from '#db/models/Articulo.js'
-import { Transaccion } from '#db/models/Transaccion.js'
-import { applyFilters } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
-import { PrecioLista } from '#db/models/PrecioLista.js'
-import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
+import { SocioPedidoItem } from '#db/models/SocioPedido.js'
 
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
+import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
 import dayjs from '#shared/dayjs.js'
 
 const repository = new Repository('SocioPedido')
 const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
-
-const includes = {
-    socio1: {
-        model: Socio,
-        as: 'socio1',
-        attributes: ['nombres']
-    },
-    moneda1: {
-        model: Moneda,
-        as: 'moneda1',
-        attributes: ['nombre', 'simbolo']
-    },
-    socio_pedido_items: {
-        model: SocioPedidoItem,
-        as: 'socio_pedido_items',
-        include: {
-            model: Articulo,
-            as: 'articulo1',
-            attributes: ['nombre', 'unidad', 'fotos']
-        }
-    },
-    createdBy1: {
-        model: Colaborador,
-        as: 'createdBy1',
-        attributes: ['nombres', 'apellidos', 'nombres_apellidos']
-    }
-}
+const ArticuloRepo = new Repository('Articulo')
 
 const find = async (req, res) => {
     try {
@@ -318,16 +284,9 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        // ----- ELIMINAR ----- //
-        await SocioPedidoItem.destroy({
-            where: { socio_pedido: id },
-            transaction
-        })
+        await SocioPedidoItemRepo.delete({ socio_pedido: id }, transaction)
 
-        await SocioPedido.destroy({
-            where: { id },
-            transaction
-        })
+        await repository.delete({ id }, transaction)
 
         await transaction.commit()
 
@@ -340,59 +299,23 @@ const delet = async (req, res) => {
     }
 }
 
-// const anular = async (req, res) => {
-//     try {
-//         const { colaborador } = req.user
-//         const { id } = req.params
-//         const { anulado_motivo } = req.body
-
-//         // ----- VERIFY SI YA TIENE TRANSACCIONES ----- //
-//         const hasTransacciones = await Transaccion.findAll({
-//             where: { socio_pedido: id }
-//         })
-
-//         if (hasTransacciones.length > 0) {
-//             res.json({ code: 1, msg: 'Imposible anular, el pedido ya tiene transacciones' })
-//             return
-//         }
-
-//         // ----- ANULAR ----- //
-//         await SocioPedido.update(
-//             {
-//                 estado: 0,
-//                 anulado_motivo,
-//                 updatedBy: colaborador
-//             },
-//             { where: { id } }
-//         )
-
-//         res.json({ code: 0 })
-//     }
-//     catch (error) {
-//         res.status(500).json({ code: -1, msg: error.message, error })
-//     }
-// }
-
-
 
 const confirmarPago = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
 
-        const ped = await SocioPedido.findByPk(id)
-        const etapas = JSON.parse(JSON.stringify(ped.etapas))
+        const ped = await repository.find({ id }, true)
+        const etapas = ped.etapas
         etapas.push({ id: 2, fecha: dayjs() })
 
-        // ----- ANULAR ----- //
-        await SocioPedido.update(
-            {
-                pagado: true,
-                etapas,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            pagado: true,
+            etapas,
+            updatedBy: colaborador
+        })
+
+        if (updated == false) return
 
         res.json({ code: 0 })
     }
@@ -406,18 +329,17 @@ const confirmarListo = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        const ped = await SocioPedido.findByPk(id)
-        const etapas = JSON.parse(JSON.stringify(ped.etapas))
+        const ped = await repository.find({ id }, true)
+        const etapas = ped.etapas
         etapas.push({ id: 3, fecha: dayjs() })
 
-        await SocioPedido.update(
-            {
-                listo: true,
-                etapas,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            listo: true,
+            etapas,
+            updatedBy: colaborador
+        })
+
+        if (updated == false) return
 
         res.json({ code: 0 })
     }
@@ -431,19 +353,18 @@ const confirmarEntrega = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        const ped = await SocioPedido.findByPk(id)
-        const etapas = JSON.parse(JSON.stringify(ped.etapas))
+        const ped = await repository.find({ id }, true)
+        const etapas = ped.etapas
         etapas.push({ id: 4, fecha: dayjs() })
 
-        await SocioPedido.update(
-            {
-                entregado: true,
-                etapas,
-                estado: 2,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            entregado: true,
+            etapas,
+            estado: 2,
+            updatedBy: colaborador
+        })
+
+        if (updated == false) return
 
         res.json({ code: 0 })
     }
@@ -457,14 +378,12 @@ const terminar = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        // ----- ANULAR ----- //
-        await SocioPedido.update(
-            {
-                estado: 2,
-                updatedBy: colaborador
-            },
-            { where: { id } }
-        )
+        const updated = await repository.update(id, {
+            estado: 2,
+            updatedBy: colaborador
+        })
+
+        if (updated == false) return
 
         res.json({ code: 0 })
     }
@@ -473,140 +392,74 @@ const terminar = async (req, res) => {
     }
 }
 
-const findDetail = async (req, res) => {
+const findPendientes = async (req, res) => {
     try {
-        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+        const { empresa } = req.user
 
-        const findProps = {
-            attributes: ['articulo', 'cantidad', 'entregado'],
-            where: {
-                entregado: {
-                    [Op.lt]: sequelize.col('cantidad')
-                }
+        const qry = {
+            fltr: {
+                'socio_pedido1.tipo': { op: 'Es', val: 2 },
+                'socio_pedido1.estado': { op: 'Es', val: 1 },
+                'socio_pedido1.empresa': { op: 'Es', val: empresa },
             },
-            include: [
-                {
-                    model: SocioPedido,
-                    as: 'socio_pedido1',
-                    attributes: ['id'],
-                    where: {
-                        tipo: 2,
-                        estado: 1
-                    }
-                },
-                {
-                    model: Articulo,
-                    as: 'articulo1',
-                    attributes: ['combo_articulos'],
-                    where: {},
-                },
-            ]
+            cols: ['articulo', 'cantidad', 'entregado'],
+            incl: ['socio_pedido1']
         }
+        const pedidos = await SocioPedidoItemRepo.find(qry, true)
 
-        if (qry) {
-            if (qry.socio) {
-                findProps.include[0].where.socio = qry.socio
+        const productosMap = {}
+
+        if (pedidos.length > 0) {
+            const qry1 = {
+                fltr: {
+                    id: { op: 'Es', val: pedidos.map(a => a.articulo) },
+                },
+                cols: ['id', 'nombre', 'combo_articulos'],
+                sqls: ['articulo_stock'],
             }
-        }
+            const productosStock = await ArticuloRepo.find(qry1, true)
+            const productosStockMap = productosStock.reduce((obj, a) => (obj[a.id] = a, obj), {})
 
-        let socioPedidoItems = await SocioPedidoItem.findAll(findProps)
+            for (const a of pedidos) {
+                const producto = productosStockMap[a.articulo]
 
-        if (socioPedidoItems.length == 0) {
-            res.json({ code: 0, data: [] })
-        }
-        else {
-            const groupedItems = socioPedidoItems.reduce((acc, orderItem) => {
-                const articulo1Instance = orderItem.articulo1
-                const comboArticulos = articulo1Instance ? articulo1Instance.combo_articulos : null
-
-                if (articulo1Instance && comboArticulos && comboArticulos.length > 0) {
-                    comboArticulos.forEach(comboComponent => {
-                        const componentId = comboComponent.articulo
-                        const neededQuantityForComponent = orderItem.cantidad * comboComponent.cantidad
-                        const deliveredQuantityForComponent = orderItem.entregado * comboComponent.cantidad
-
-                        let existingComponent = acc.find(item => item.articulo === componentId)
-
-                        if (existingComponent) {
-                            existingComponent.cantidad += neededQuantityForComponent
-                            existingComponent.entregado += deliveredQuantityForComponent
+                if (producto && producto.combo_articulos && producto.combo_articulos.length > 0) {
+                    for (const b of producto.combo_articulos) {
+                        if (!productosMap[b.articulo]) {
+                            productosMap[b.articulo] = {
+                                articulo: b.articulo,
+                                nombre: productosStockMap[b.articulo].nombre,
+                                stock: productosStockMap[b.articulo].stock,
+                                cantidad: 0,
+                                entregado: 0,
+                                pendiente: 0,
+                            }
                         }
-                        else {
-                            acc.push({
-                                articulo: componentId,
-                                cantidad: neededQuantityForComponent,
-                                entregado: deliveredQuantityForComponent,
-                            })
-                        }
-                    })
+
+                        productosMap[b.articulo].cantidad += (a.cantidad * b.cantidad)
+                        productosMap[b.articulo].entregado += (a.entregado * b.cantidad)
+                        productosMap[b.articulo].pendiente += ((a.cantidad - a.entregado) * b.cantidad)
+                    }
                 } else {
-                    const existingArticle = acc.find(a => a.articulo === orderItem.articulo)
-
-                    if (existingArticle) {
-                        existingArticle.cantidad += orderItem.cantidad;
-                        existingArticle.entregado += orderItem.entregado;
-                    } else {
-                        acc.push({
-                            articulo: orderItem.articulo,
-                            cantidad: orderItem.cantidad,
-                            entregado: orderItem.entregado,
-                        });
+                    if (!productosMap[a.articulo]) {
+                        productosMap[a.articulo] = {
+                            articulo: a.articulo,
+                            nombre: productosStockMap[a.articulo].nombre,
+                            stock: productosStockMap[a.articulo].stock,
+                            cantidad: 0,
+                            entregado: 0,
+                            pendiente: 0,
+                        }
                     }
-                }
-                return acc
-            }, [])
 
-            if (groupedItems.length === 0) {
-                res.json({ code: 0, data: [], msg: 'Ningún agrupado' });
-                return;
-            }
-
-            const sqlStock = [Sequelize.literal(`(
-                SELECT COALESCE(SUM(t.stock), 0)
-                FROM transaccion_items AS t
-                WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
-            )`), 'stock']
-
-            const findProps1 = {
-                where: {
-                    id: {
-                        [Op.in]: groupedItems.map(a => a.articulo)
-                    },
-                },
-                attributes: ['id', 'nombre', 'produccion_tipo', sqlStock]
-            }
-
-            if (qry) {
-                if (qry.produccion_tipo) {
-                    findProps1.where.produccion_tipo = qry.produccion_tipo
+                    productosMap[a.articulo].cantidad += a.cantidad
+                    productosMap[a.articulo].entregado += a.entregado
+                    productosMap[a.articulo].pendiente += (a.cantidad - a.entregado)
                 }
             }
-
-            const articulosConStock = await Articulo.findAll(findProps1)
-
-            const groupedItemsMap = groupedItems.reduce((map, item) => {
-                map[item.articulo] = { cantidad: item.cantidad, entregado: item.entregado }
-                return map
-            }, {})
-
-            const finalResult = articulosConStock.map(articuloInfo => {
-                const orderData = groupedItemsMap[articuloInfo.id]
-
-                const cantidad = orderData ? orderData.cantidad : 0;
-                const entregado = orderData ? orderData.entregado : 0;
-
-                return {
-                    articulo: articuloInfo.id,
-                    nombre: articuloInfo.nombre,
-                    produccion_tipo: articuloInfo.produccion_tipo,
-                    stock: articuloInfo.get('stock'),
-                    cantidad: cantidad,
-                    entregado: entregado
-                };
-            });
-
-            res.json({ code: 0, data: finalResult })
         }
+
+        res.json({ code: 0, data: Object.values(productosMap).sort((a, b) => a.nombre.localeCompare(b.nombre)) })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -616,13 +469,9 @@ const findDetail = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    let data = await SocioPedido.findByPk(id, {
-        include: [includes.socio1, includes.moneda1]
-    })
+    const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'createdBy1'] }, true)
 
     if (data) {
-        data = data.toJSON()
-
         const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
         const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
         const estadoMap = cSistema.arrayMap('estados')
@@ -641,11 +490,11 @@ export default {
     create,
     update,
     delet,
-    // anular,
+
     confirmarPago,
     confirmarListo,
     confirmarEntrega,
     terminar,
 
-    findDetail,
+    findPendientes,
 }

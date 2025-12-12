@@ -147,7 +147,7 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { file } = req.body
 
-        if (await repository.delete(id) == false) return
+        if (await repository.delete({ id }) == false) return
 
         if (file) await minioRemoveObject(file.id)
 
