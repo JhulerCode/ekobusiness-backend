@@ -259,6 +259,13 @@ export class Repository {
             }
         }
 
+        if (qry?.iccl) {
+            for (const [key, val] of Object.entries(qry.iccl)) {
+                const item = findProps.include.find(b => b.as === key);
+                if (item) item.attributes.push(...val.cols)
+            }
+        }
+
         if (qry?.cols) {
             const cols1 = qry.cols.filter(a => columns.includes(a))
             findProps.attributes = findProps.attributes.concat(cols1)
