@@ -77,6 +77,10 @@ export const SocioPedidoItem = sequelize.define('socio_pedido_items', {
     nota: { type: DataTypes.STRING },
 
     socio_pedido: { type: DataTypes.STRING }, //required //linked
+
+    empresa: { type: DataTypes.STRING },
+    createdBy: { type: DataTypes.STRING },
+    updatedBy: { type: DataTypes.STRING }
 })
 
 Articulo.hasMany(SocioPedidoItem, { foreignKey: 'articulo', as: 'socio_pedido_items', onDelete: 'RESTRICT' })

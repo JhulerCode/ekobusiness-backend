@@ -23,11 +23,42 @@ import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
 import { Socio } from '#db/models/Socio.js'
 import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
 import { TipoCambio } from '#db/models/TipoCambio.js'
-import { Transaccion } from '#db/models/Transaccion.js'
+import { Transaccion, TransaccionItem } from '#db/models/Transaccion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
 
 import { applyFilters } from '#db/helpers.js'
 import cSistema from "#core/_sistema/cSistema.js"
+
+export const models = {
+    Empresa,
+    ActivityLog,
+    Articulo,
+    ArticuloCategoria,
+    ArticuloLinea,
+    Asistencia,
+    CajaApertura,
+    CajaMovimiento,
+    Colaborador,
+    DerechoArco,
+    Documento,
+    FormatoValue,
+    Inspeccion,
+    Kardex,
+    LibroReclamo,
+    Maquina,
+    Moneda,
+    PrecioLista,
+    PrecioListaItem,
+    ProduccionOrden,
+    RecetaInsumo,
+    Socio,
+    SocioPedido,
+    SocioPedidoItem,
+    TipoCambio,
+    Transaccion,
+    TransaccionItem,
+    Ubigeo,
+}
 
 const include1 = {
     produccion_tipo1: {
@@ -152,7 +183,7 @@ const include1 = {
     precio_lista1: {
         model: PrecioLista,
         as: 'precio_lista1',
-        attributes: ['id', 'nombre']
+        attributes: ['id', 'nombre', 'moneda']
     }
 }
 
@@ -205,35 +236,6 @@ const sqls1 = {
         )`),
         'productos_terminados'
     ],
-}
-
-export const models = {
-    Empresa,
-    ActivityLog,
-    Articulo,
-    ArticuloCategoria,
-    ArticuloLinea,
-    Asistencia,
-    CajaApertura,
-    CajaMovimiento,
-    Colaborador,
-    DerechoArco,
-    Documento,
-    FormatoValue,
-    Inspeccion,
-    Kardex,
-    LibroReclamo,
-    Maquina,
-    Moneda,
-    PrecioLista,
-    PrecioListaItem,
-    ProduccionOrden,
-    RecetaInsumo,
-    Socio,
-    SocioPedido,
-    TipoCambio,
-    Transaccion,
-    Ubigeo,
 }
 
 export class Repository {
@@ -354,7 +356,7 @@ export class Repository {
         }
     }
 
-    async createBulk(data) {
-        await this.model.bulkCreate(data)
+    async createBulk(data, transaction) {
+        await this.model.bulkCreate(data, { transaction })
     }
 }

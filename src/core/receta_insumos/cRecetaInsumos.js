@@ -1,7 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { RecetaInsumo } from '#db/models/RecetaInsumo.js'
-import { Articulo } from '#db/models/Articulo.js'
-import { Sequelize } from 'sequelize'
 
 const repository = new Repository('RecetaInsumo')
 const ArticuloRepo = new Repository('Articulo')

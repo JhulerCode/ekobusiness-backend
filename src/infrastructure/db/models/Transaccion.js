@@ -74,6 +74,7 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
 
     transaccion: { type: DataTypes.STRING }, ////linked
 
+    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 

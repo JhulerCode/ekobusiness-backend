@@ -17,6 +17,7 @@ import { nodeMailer } from "#mail/nodeMailer.js"
 import dayjs from '#shared/dayjs.js'
 
 const repository = new Repository('SocioPedido')
+const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
 
 const includes = {
     socio1: {
@@ -125,41 +126,38 @@ const create = async (req, res) => {
         const {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, moneda, tipo_cambio, monto,
+            moneda, tipo_cambio, monto,
+            pago_condicion, pago_metodo, pago_id,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            pago_metodo, pago_id,
-            observacion, estado, pagado,
+            observacion, estado,
             empresa_datos,
             socio_pedido_items,
         } = req.body
 
-        if (origin != 'ecommerce') {
-            var { colaborador } = req.user
+        if (req.user) {
+            var { colaborador, empresa } = req.user
         }
-        else {
-            var etapas = [
-                { id: 1, fecha: dayjs() },
-            ]
-        }
+        // const colaborador = origin != 'ecommerce' ? req.user.colaborador : undefined
+        const etapas = [{ id: 1, fecha: dayjs() }]
 
         // ----- GUARDAR ----- //
-        const nuevo = await SocioPedido.create({
+        const nuevo = await repository.create({
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, moneda, tipo_cambio, monto,
+            moneda, tipo_cambio, monto,
+            pago_condicion, pago_metodo, pago_id,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            pago_metodo, pago_id,
-            observacion, estado, pagado, etapas,
+            observacion, estado, etapas,
             empresa_datos,
+            empresa,
             createdBy: colaborador
-        }, { transaction })
+        }, transaction)
 
         // ----- GUARDAR ITEMS ----- //
         const items = socio_pedido_items.map(a => ({ ...a, socio_pedido: nuevo.id, }))
-
-        await SocioPedidoItem.bulkCreate(items, { transaction })
+        await SocioPedidoItemRepo.createBulk(items, transaction)
 
         await transaction.commit()
 
@@ -202,59 +200,81 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            tipo, fecha, fecha_entrega, codigo,
+            tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-            observacion, estado, pagado,
+            moneda, tipo_cambio, monto,
+            pago_condicion, pago_metodo, pago_id,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+            observacion, estado,
             empresa_datos,
             socio_pedido_items,
         } = req.body
 
-        // ----- ACTUALIZAR ----- //
-        const [affectedRows] = await SocioPedido.update({
-            tipo, fecha, fecha_entrega, codigo,
+        //--- ACTUALIZAR ---//
+        const updated = await repository.update(id, {
+            tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, monto, moneda, tipo_cambio, direccion_entrega,
-            observacion, estado, pagado,
+            moneda, tipo_cambio, monto,
+            pago_condicion, pago_metodo, pago_id,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+            observacion, estado,
             empresa_datos,
             updatedBy: colaborador
-        }, {
-            where: { id },
-            transaction
+        }, transaction)
+
+        if (updated == false) return
+
+        // ----- OBTENER ITEMS QUE ESTABAN ----- //
+        const socio_pedido_items_past = await SocioPedidoItem.findAll({
+            where: { socio_pedido: id }
         })
 
-        if (affectedRows > 0) {
-            // ----- OBTENER ITEMS QUE ESTABAN ----- //
-            const socio_pedido_items_past = await SocioPedidoItem.findAll({
-                where: { socio_pedido: id }
+        // ----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
+        const idsItemsNew = socio_pedido_items.map(a => a.articulo)
+
+        const idsItemsGone = socio_pedido_items_past
+            .filter(a => !idsItemsNew.includes(a.articulo))
+            .map(a => a.articulo)
+
+        if (idsItemsGone.length > 0) {
+            await SocioPedidoItem.destroy({
+                where: {
+                    socio_pedido: id,
+                    articulo: { [Op.in]: idsItemsGone },
+                },
+                transaction
             })
+        }
 
-            // ----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
-            const idsItemsNew = socio_pedido_items.map(a => a.articulo)
+        const agregarItems = []
 
-            const idsItemsGone = socio_pedido_items_past
-                .filter(a => !idsItemsNew.includes(a.articulo))
-                .map(a => a.articulo)
+        for (const a of socio_pedido_items) {
+            const i = socio_pedido_items_past.findIndex(b => b.articulo == a.articulo)
 
-            if (idsItemsGone.length > 0) {
-                await SocioPedidoItem.destroy({
-                    where: {
-                        socio_pedido: id,
-                        articulo: { [Op.in]: idsItemsGone },
-                    },
-                    transaction
+            if (i === -1) {
+                // ----- CREAR ARRAY DE ITEMS NUEVOS ----- //
+                agregarItems.push({
+                    articulo: a.articulo,
+                    nombre: a.nombre,
+                    unidad: a.unidad,
+                    has_fv: a.has_fv,
+
+                    cantidad: a.cantidad,
+
+                    pu: a.pu,
+                    igv_afectacion: a.igv_afectacion,
+                    igv_porcentaje: a.igv_porcentaje,
+
+                    nota: a.nota,
+                    socio_pedido: id,
                 })
             }
-
-            const agregarItems = []
-
-            for (const a of socio_pedido_items) {
-                const i = socio_pedido_items_past.findIndex(b => b.articulo == a.articulo)
-
-                if (i === -1) {
-                    // ----- CREAR ARRAY DE ITEMS NUEVOS ----- //
-                    agregarItems.push({
-                        articulo: a.articulo,
+            else {
+                // ----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
+                await SocioPedidoItem.update(
+                    {
                         nombre: a.nombre,
                         unidad: a.unidad,
                         has_fv: a.has_fv,
@@ -262,51 +282,28 @@ const update = async (req, res) => {
                         cantidad: a.cantidad,
 
                         pu: a.pu,
-                        igv_afectacion: a.igv_afectacion,
-                        igv_porcentaje: a.igv_porcentaje,
 
                         nota: a.nota,
-                        socio_pedido: id,
-                    })
-                }
-                else {
-                    // ----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
-                    await SocioPedidoItem.update(
-                        {
-                            nombre: a.nombre,
-                            unidad: a.unidad,
-                            has_fv: a.has_fv,
-
-                            cantidad: a.cantidad,
-
-                            pu: a.pu,
-
-                            nota: a.nota,
-                        },
-                        {
-                            where: { id: a.id },
-                            transaction
-                        }
-                    )
-                }
+                    },
+                    {
+                        where: { id: a.id },
+                        transaction
+                    }
+                )
             }
-
-            // ----- CREAR ITEMS NUEVOS ----- //
-            if (agregarItems.length > 0) {
-                await SocioPedidoItem.bulkCreate(agregarItems, { transaction })
-            }
-
-            await transaction.commit()
-
-            // ----- DEVOLVER ----- //
-            const data = await loadOne(id)
-            res.json({ code: 0, data })
         }
-        else {
-            await transaction.commit()
 
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+        // ----- CREAR ITEMS NUEVOS ----- //
+        if (agregarItems.length > 0) {
+            await SocioPedidoItem.bulkCreate(agregarItems, { transaction })
         }
+
+        await transaction.commit()
+
+        // ----- DEVOLVER ----- //
+        const data = await loadOne(id)
+        res.json({ code: 0, data })
+
     }
     catch (error) {
         await transaction.rollback()
