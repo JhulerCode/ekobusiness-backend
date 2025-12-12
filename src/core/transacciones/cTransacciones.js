@@ -64,6 +64,7 @@ const create = async (req, res) => {
             observacion: a.observacion,
 
             transaccion: nuevo.id,
+            empresa,
             createdBy: colaborador
         }))
 
@@ -92,6 +93,7 @@ const create = async (req, res) => {
             observacion: a.observacion,
 
             transaccion: nuevo.id,
+            empresa,
             createdBy: colaborador
         }))
 

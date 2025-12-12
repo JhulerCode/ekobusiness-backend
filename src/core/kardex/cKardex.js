@@ -243,7 +243,7 @@ const recalcularStock = async (req, res) => {
             fltr: {
                 is_lote_padre: { op: 'Es', val: true },
                 // fecha: { op: 'Está dentro de', val: '2025-11-15', val1: '2025-11-30' },
-                articulo: { op: 'Es', val: 'f75c391c-d798-414b-9fe5-f35599268c50' },
+                articulo: { op: 'Es', val: '8b40851b-e6c6-4607-936d-81be73a8f845' },
             },
             grop: ['id'],
             ordr: [['fecha', 'ASC']],
