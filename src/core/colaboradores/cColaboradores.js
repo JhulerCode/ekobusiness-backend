@@ -121,7 +121,7 @@ const update = async (req, res) => {
 
         if (has_signin) {
             if (await repository.existe({ usuario, id, empresa }, res, 'El usuario ya existe') == true) return
-            if (contrasena != '*****') contrasena = await bcrypt.hash(contrasena, 10)
+            contrasena = contrasena != '*****' ? await bcrypt.hash(contrasena, 10) : undefined
         }
         else {
             usuario = null

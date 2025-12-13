@@ -106,7 +106,7 @@ const create = async (req, res) => {
             const signo = tipoInfo.operacion == 1 ? '+' : '-'
             const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)
 
-            await repository.update(lote_padre, { stock }, transaction)
+            await repository.update({ id: lote_padre }, { stock }, transaction)
         }
 
         await transaction.commit()
@@ -187,7 +187,7 @@ const delet = async (req, res) => {
             const signo = tipoInfo.operacion == 1 ? '-' : '+'
             const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)
 
-            await repository.update(lote_padre, { stock }, transaction)
+            await repository.update({ id: lote_padre }, { stock }, transaction)
         }
 
         await transaction.commit()
@@ -217,7 +217,7 @@ const ingresarProduccionProductos = async (req, res) => {
                 stock: a.cantidad_real,
                 updatedBy: colaborador
             }
-            await repository.update(a.id, send, transaction)
+            await repository.update({ id: a.id }, send, transaction)
 
             produccion_ordenes_ids.push(a.produccion_orden1.id)
         }
@@ -260,7 +260,7 @@ const recalcularStock = async (req, res) => {
                 const stock = Number(a.cantidad) + Number(a.movimientos_cantidad)
                 console.log('Actualizando ', i, `Cantidad: ${a.cantidad}`, `Movimientos: ${a.movimientos_cantidad}`, `Stock: ${stock}`)
 
-                await repository.update(a.id, { stock })
+                await repository.update({ id: a.id }, { stock })
 
                 i++
             }

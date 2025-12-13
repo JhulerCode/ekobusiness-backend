@@ -171,7 +171,7 @@ const updateBulk = async (req, res) => {
         const { ids, prop, val } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(ids, {
+        const updated = await repository.update({ id: ids }, {
             [prop]: val,
             updatedBy: colaborador
         })
