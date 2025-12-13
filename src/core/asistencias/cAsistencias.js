@@ -58,7 +58,7 @@ const update = async (req, res) => {
         const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
 
         // ----- ACTUALIZAR -----//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
             updatedBy: req.user.colaborador
         })

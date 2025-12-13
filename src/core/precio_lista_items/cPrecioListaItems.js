@@ -51,7 +51,7 @@ const update = async (req, res) => {
         //--- VERIFY SI EXISTE ---//
         // if (await repository.existe({ precio_lista, articulo, id, empresa }, res) == true) return
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             precio,
             updatedBy: colaborador
         })

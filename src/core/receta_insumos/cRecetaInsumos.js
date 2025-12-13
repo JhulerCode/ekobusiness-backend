@@ -47,7 +47,7 @@ const update = async (req, res) => {
         const { articulo_principal, articulo, cantidad, orden } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             cantidad, orden,
             updatedBy: colaborador
         })

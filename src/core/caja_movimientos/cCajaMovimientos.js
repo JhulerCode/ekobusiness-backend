@@ -55,7 +55,7 @@ const update = async (req, res) => {
         const { fecha, comprobante_tipo, comprobante_numero, detalle, monto } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             fecha, comprobante_tipo, comprobante_numero, detalle, monto,
             updatedBy: colaborador
         })

@@ -148,7 +148,7 @@ const update = async (req, res) => {
             transaccion, transaccion_item, produccion_orden, maquina,
         } = req.body
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             tipo, fecha,
             articulo, cantidad,
             pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,

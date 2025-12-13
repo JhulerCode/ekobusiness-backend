@@ -76,7 +76,7 @@ const update = async (req, res) => {
         if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             nombre, descripcion, activo,
             updatedBy: colaborador
         })
@@ -136,7 +136,7 @@ const updateFotos = async (req, res) => {
         }
 
         //--- ACTUALIZAR EN BASE DE DATOS ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             fotos: files,
             updatedBy: colaborador
         })

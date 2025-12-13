@@ -65,7 +65,7 @@ const update = async (req, res) => {
         if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             nombre, codigo, simbolo, plural, estandar,
             updatedBy: colaborador
         })

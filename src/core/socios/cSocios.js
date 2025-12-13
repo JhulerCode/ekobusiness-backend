@@ -1,5 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { Socio } from '#db/models/Socio.js'
 import { generarCodigo6 } from '#shared/mine.js'
 import cSistema from "../_sistema/cSistema.js"
 import bcrypt from 'bcrypt'
@@ -119,7 +118,7 @@ const update = async (req, res) => {
         }
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             tipo, doc_tipo, doc_numero, nombres, apellidos,
             telefono1, telefono2, correo, web, activo,
             direcciones,
@@ -261,19 +260,25 @@ const signin = async (req, res) => {
         let { correo, contrasena } = req.body
 
         //--- VERIFICAR CLIENTE --- //
-        const cliente = await Socio.findOne({
-            where: { correo, tipo: 2, empresa: empresa.id },
-            raw: true
-        })
+        const qry = {
+            fltr: {
+                tipo: { op: 'Es', val: 2 },
+                correo: { op: 'Es', val: correo },
+                empresa: { op: 'Es', val: empresa },
+            },
+            cols: { exclude: [] }
+        }
+        const data = await repository.find(qry, true)
+        if (data.length > 0) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
-        if (cliente == null) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
-
+        const cliente = data[0]
         const correct = await bcrypt.compare(contrasena, cliente.contrasena)
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
         //--- GUARDAR SESSION ---//
         const token = jat.encrypt({ id: cliente.id }, config.tokenMyApi)
 
+        delete cliente.contrasena
         guardarSesion(cliente.id, { token, ...cliente })
 
         res.json({ code: 0, token, data: cliente })
@@ -297,7 +302,7 @@ const sendCodigo = async (req, res) => {
         const { id, correo } = req.body
         const codigo_verificacion = generarCodigo6()
 
-        await repository.update(id, { codigo_verificacion })
+        await repository.update({ id }, { codigo_verificacion })
 
         const nodemailer = nodeMailer()
         const result = await nodemailer.sendMail({
@@ -333,7 +338,7 @@ const verifyCodigo = async (req, res) => {
 
         if (data.length == 0) return res.json({ code: 1, msg: 'Código ingresado incorrecto' })
 
-        await repository.update(id, { codigo_verificacion: null })
+        await repository.update({ id }, { codigo_verificacion: null })
 
         res.json({ code: 0 })
     }
@@ -350,7 +355,7 @@ const updatePassword = async (req, res) => {
 
         const contrasena_updated_at = dayjs()
 
-        await repository.update(id, {
+        await repository.update({ id }, {
             contrasena,
             contrasena_updated_at,
         })
@@ -368,7 +373,7 @@ const deleteUser = async (req, res) => {
     try {
         let { id } = req.body
 
-        await repository.update(id, {
+        await repository.update({ id }, {
             activo: 0,
         })
 

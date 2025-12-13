@@ -4,10 +4,11 @@ import jat from '#shared/jat.js'
 import { guardarSesion, borrarSesion, obtenerEmpresa, guardarEmpresa, empresasStore, sessionStore } from './sessions.js'
 
 import { Router } from "express"
-import { Colaborador } from '#db/models/Colaborador.js'
-import { Empresa } from '#db/models/Empresa.js'
+import { Repository } from '#db/Repository.js'
 
 const router = Router()
+const EmpresaRepository = new Repository('Empresa')
+const ColaboradorRepository = new Repository('Colaborador')
 
 const signin = async (req, res) => {
     try {
@@ -18,19 +19,33 @@ const signin = async (req, res) => {
 
         let empresa = obtenerEmpresa(xEmpresa)
         if (!empresa) {
-            empresa = await Empresa.findOne({ where: { subdominio: xEmpresa }, raw: true })
-            if (!empresa) return res.json({ code: 1, msg: 'Empresa no encontrada' })
+            const qry = {
+                fltr: {
+                    subdominio: { op: 'Es', val: xEmpresa }
+                },
+                cols: { exclude: [] }
+            }
 
+            const empresas = await EmpresaRepository.find(qry, true)
+            if (empresas.length == 0) return res.json({ code: 1, msg: 'Empresa no encontrada' })
+
+            empresa = empresas[0]
             guardarEmpresa(xEmpresa, empresa)
         }
 
         //--- VERIFICAR COLABORADOR --- //
-        const colaborador = await Colaborador.findOne({
-            where: { usuario, empresa: empresa.id },
-            raw: true
-        })
+        const qry1 = {
+            fltr: {
+                usuario: { op: 'Es', val: usuario },
+                empresa: { op: 'Es', val: empresa.id }
+            },
+            cols: { exclude: [] }
+        }
 
-        if (colaborador == null) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+        const colaboradores = await ColaboradorRepository.find(qry1, true)
+        if (colaboradores.length == 0) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+
+        const colaborador = colaboradores[0]
 
         const correct = await bcrypt.compare(contrasena, colaborador.contrasena)
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
@@ -38,6 +53,7 @@ const signin = async (req, res) => {
         //--- GUARDAR SESSION ---//
         const token = jat.encrypt({ id: colaborador.id }, config.tokenMyApi)
 
+        delete colaborador.contrasena
         guardarSesion(colaborador.id, { token, ...colaborador })
 
         res.json({ code: 0, token })

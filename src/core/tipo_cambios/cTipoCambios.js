@@ -1,11 +1,9 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
-import { Transaccion } from '#db/models/Transaccion.js'
-import { Kardex } from '#db/models/Kardex.js'
 
 const repository = new Repository('TipoCambio')
-// const TransaccionRepo = new Repository('Transaccion')
-// const KardexRepo = new Repository('Kardex')
+const TransaccionRepo = new Repository('Transaccion')
+const KardexRepo = new Repository('Kardex')
 
 const find = async (req, res) => {
     try {
@@ -53,30 +51,9 @@ const create = async (req, res) => {
             createdBy: colaborador
         }, transaction)
 
-        //--- Actualizar en transacciones ---//
-        await Transaccion.update(
-            {
-                tipo_cambio: venta
-            },
-            {
-                where: { fecha, moneda },
-                transaction
-            }
-        )
-
-        //--- Actualizar en kardex ---//
-        await Kardex.update(
-            {
-                tipo_cambio: venta
-            },
-            {
-                where: {
-                    fecha, moneda,
-                    is_lote_padre: true,
-                },
-                transaction
-            }
-        )
+        //--- Actualizar en transacciones y kardex ---//
+        await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: venta }, transaction)
+        await KardexRepo.update({ fecha, moneda, is_lote_padre: true }, { tipo_cambio: venta }, transaction)
 
         await transaction.commit()
 
@@ -103,37 +80,16 @@ const update = async (req, res) => {
         if (await repository.existe({ fecha, moneda, id, empresa }, res, 'Ya existe') == true) return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             fecha, compra, venta, moneda,
             updatedBy: colaborador
         }, transaction)
 
         if (updated == false) return
 
-        //--- Actualizar en transacciones ---//
-        await Transaccion.update(
-            {
-                tipo_cambio: venta
-            },
-            {
-                where: { fecha, moneda },
-                transaction
-            }
-        )
-
-        //--- Actualizar en kardex ---//
-        await Kardex.update(
-            {
-                tipo_cambio: venta
-            },
-            {
-                where: {
-                    fecha, moneda,
-                    is_lote_padre: true,
-                },
-                transaction
-            }
-        )
+        //--- Actualizar en transacciones y kardex ---//
+        await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: venta }, transaction)
+        await KardexRepo.update({ fecha, moneda, is_lote_padre: true }, { tipo_cambio: venta }, transaction)
 
         await transaction.commit()
 
@@ -157,30 +113,9 @@ const delet = async (req, res) => {
 
         if (await repository.delete({ id }) == false) return
 
-        //--- Actualizar en transacciones ---//
-        await Transaccion.update(
-            {
-                tipo_cambio: null
-            },
-            {
-                where: { fecha, moneda },
-                transaction
-            }
-        )
-
-        //--- Actualizar en kardex ---//
-        await Kardex.update(
-            {
-                tipo_cambio: null
-            },
-            {
-                where: {
-                    fecha, moneda,
-                    is_lote_padre: true,
-                },
-                transaction
-            }
-        )
+        //--- Actualizar en transacciones y kardex ---//
+        await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: null }, transaction)
+        await KardexRepo.update({ fecha, moneda, is_lote_padre: true }, { tipo_cambio: null }, transaction)
 
         await transaction.commit()
 

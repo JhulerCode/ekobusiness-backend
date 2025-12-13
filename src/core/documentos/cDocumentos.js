@@ -120,7 +120,7 @@ const update = async (req, res) => {
         }
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             tipo, nombre, descripcion,
             denominacion_legal, denominacion_comercial, registro_sanitario,
             fecha_emision, fecha_vencimiento, recordar_dias,

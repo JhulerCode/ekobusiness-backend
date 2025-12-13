@@ -79,7 +79,7 @@ const update = async (req, res) => {
         } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             fecha, tipo, orden, maquina, maquina_info,
             articulo, articulo_info, cantidad, estado, observacion,
             updatedBy: colaborador
@@ -115,7 +115,7 @@ const terminar = async (req, res) => {
         const { id } = req.params
 
         //--- CERRAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             estado: 2,
             updatedBy: colaborador
         })
@@ -135,7 +135,7 @@ const abrir = async (req, res) => {
         const { id } = req.params
 
         // ----- ABRIR ----- //
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             estado: 1,
             updatedBy: colaborador
         })

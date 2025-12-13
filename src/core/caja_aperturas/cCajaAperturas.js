@@ -82,7 +82,7 @@ const cerrar = async (req, res) => {
         const { id } = req.params
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             fecha_cierre: dayjs(), estado: 2,
             updatedBy: colaborador
         })

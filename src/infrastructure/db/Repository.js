@@ -279,8 +279,13 @@ export class Repository {
         }
 
         if (qry?.cols) {
-            const cols1 = qry.cols.filter(a => columns.includes(a))
-            findProps.attributes = findProps.attributes.concat(cols1)
+            if (qry.cols.exclude) {
+                findProps.attributes = { exclude: qry.cols.exclude }
+            }
+            else {
+                const cols1 = qry.cols.filter(a => columns.includes(a))
+                findProps.attributes = findProps.attributes.concat(cols1)
+            }
         }
 
         if (qry?.sqls) {
@@ -351,11 +356,22 @@ export class Repository {
         return await this.model.create(data, { transaction })
     }
 
-    async update(id, data, transaction) {
-        const [affectedRows] = await this.model.update(data, { where: { id }, transaction })
+    // async update(id, data, transaction) {
+    //     const [affectedRows] = await this.model.update(data, { where: { id }, transaction })
+
+    //     if (affectedRows == 0) {
+    //         res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+    //         return false
+    //     }
+    //     else {
+    //         return true
+    //     }
+    // }
+    async update(where, data, transaction) {
+        const [affectedRows] = await this.model.update(data, { where, transaction })
 
         if (affectedRows == 0) {
-            res.json({ code: 1, msg: 'No se actualizó ningún registro' })
+            // if (res) res.json({ code: 1, msg: 'No se actualizó ningún registro' })
             return false
         }
         else {
@@ -367,10 +383,7 @@ export class Repository {
         const deletedCount = await this.model.destroy({ where, transaction })
         // console.log('Cantidad de eliminados', deletedCount)
         if (deletedCount == 0) {
-            if (transaction) await transaction.rollback()
-
-            res.json({ code: 1, msg: 'No se eliminó ningún registro' })
-
+            // res.json({ code: 1, msg: 'No se eliminó ningún registro' })
             return false
         }
         else {

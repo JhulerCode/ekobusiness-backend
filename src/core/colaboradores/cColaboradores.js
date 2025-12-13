@@ -131,7 +131,7 @@ const update = async (req, res) => {
         }
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             nombres, apellidos,
             doc_tipo, doc_numero,
             fecha_nacimiento, sexo,
@@ -172,7 +172,7 @@ const preferencias = async (req, res) => {
         const { id } = req.params
         const { theme, color, format_date, menu_visible } = req.body
 
-        const updated = await repository.update(id, { theme, color, format_date, menu_visible })
+        const updated = await repository.update({ id }, { theme, color, format_date, menu_visible })
 
         if (updated == false) return
 

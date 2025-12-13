@@ -68,7 +68,7 @@ const update = async (req, res) => {
         if (await repository.existe({ articulo, socio_pedido, id, empresa }, res, 'El artículo ya fue agregado') == true) return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             articulo, nombre, unidad, has_fv,
             cantidad, entregado,
             pu, igv_afectacion, igv_porcentaje,

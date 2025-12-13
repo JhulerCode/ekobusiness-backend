@@ -1,4 +1,6 @@
-import { ActivityLog } from "#db/models/ActivityLog.js"
+import { Repository } from '#db/Repository.js'
+
+const repository = new Repository('ActivityLog')
 
 function verifyPermiso(requiredPermissions = []) {
     return (req, res, next) => {
@@ -26,7 +28,7 @@ function verifyPermiso(requiredPermissions = []) {
 
         log.hasPermission = hasPermission
 
-        if (log.method != 'GET') ActivityLog.create(log)
+        if (log.method != 'GET') repository.create(log)
 
         if (!hasPermission) return res.status(403).json({ msg: 'Acceso denegado: permisos insuficientes' })
 

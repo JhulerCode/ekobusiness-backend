@@ -178,7 +178,7 @@ const update = async (req, res) => {
         } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             moneda, tipo_cambio, monto,
@@ -309,7 +309,7 @@ const confirmarPago = async (req, res) => {
         const etapas = ped.etapas
         etapas.push({ id: 2, fecha: dayjs() })
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             pagado: true,
             etapas,
             updatedBy: colaborador
@@ -333,7 +333,7 @@ const confirmarListo = async (req, res) => {
         const etapas = ped.etapas
         etapas.push({ id: 3, fecha: dayjs() })
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             listo: true,
             etapas,
             updatedBy: colaborador
@@ -357,7 +357,7 @@ const confirmarEntrega = async (req, res) => {
         const etapas = ped.etapas
         etapas.push({ id: 4, fecha: dayjs() })
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             entregado: true,
             etapas,
             estado: 2,
@@ -378,7 +378,7 @@ const terminar = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             estado: 2,
             updatedBy: colaborador
         })

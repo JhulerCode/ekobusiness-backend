@@ -58,7 +58,7 @@ const update = async (req, res) => {
         const { fecha, socio, puntuacion, puntuacion_maxima, correcciones } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             fecha, socio, puntuacion, puntuacion_maxima, correcciones,
             updatedBy: colaborador
         })
