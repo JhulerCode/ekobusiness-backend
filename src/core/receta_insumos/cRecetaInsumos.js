@@ -82,6 +82,11 @@ const calcularNecesidad = async (req, res) => {
         const qry = {
             fltr: { id: { op: 'Es', val: articulos.map(a => a.id) } },
             incl: ['receta_insumos'],
+            iccl: {
+                receta_insumos: {
+                    incl: ['articulo1']
+                }
+            }
         }
 
         const recetas = await ArticuloRepo.find(qry, true)

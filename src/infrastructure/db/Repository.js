@@ -79,7 +79,7 @@ const include1 = {
     articulo1: {
         model: Articulo,
         as: 'articulo1',
-        attributes: ['id', 'nombre', 'unidad'],
+        attributes: ['id', 'nombre', 'unidad', 'has_fv'],
     },
     colaborador1: {
         model: Colaborador,
@@ -124,26 +124,21 @@ const include1 = {
         as: 'moneda1',
         attributes: ['id', 'nombre']
     },
+    precio_lista1: {
+        model: PrecioLista,
+        as: 'precio_lista1',
+        attributes: ['id', 'nombre', 'moneda']
+    },
     produccion_orden1: {
         model: ProduccionOrden,
         as: 'produccion_orden1',
         attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
-        include: {
-            model: ArticuloLinea,
-            as: 'tipo1',
-            attributes: ['id', 'nombre'],
-        },
         required: false,
     },
     receta_insumos: {
         model: RecetaInsumo,
         as: 'receta_insumos',
         attributes: ['id', 'articulo', 'cantidad', 'orden'],
-        include: {
-            model: Articulo,
-            as: 'articulo1',
-            attributes: ['nombre']
-        },
     },
     socio1: {
         model: Socio,
@@ -154,49 +149,21 @@ const include1 = {
         model: SocioPedido,
         as: 'socio_pedido1',
         attributes: ['id', 'fecha', 'socio', 'codigo'],
-        include: [
-            {
-                model: Socio,
-                as: 'socio1',
-                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-            }
-        ],
     },
     socio_pedido_items: {
         model: SocioPedidoItem,
         as: 'socio_pedido_items',
-        include: {
-            model: Articulo,
-            as: 'articulo1',
-            attributes: ['nombre', 'unidad', 'has_fv', 'fotos']
-        }
     },
     transaccion1: {
         model: Transaccion,
         as: 'transaccion1',
         attributes: ['id', 'socio', 'guia', 'factura'],
         required: false,
-        include: {
-            model: Socio,
-            as: 'socio1',
-            attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-        }
     },
-    socio2: {
-        model: Socio,
-        as: 'socio1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'doc_numero', 'contactos', 'direcciones', 'precio_lista'],
-        include: {
-            model: PrecioLista,
-            as: 'precio_lista1',
-            attributes: ['id', 'moneda', 'moneda']
-        }
+    transaccion_items: {
+        model: TransaccionItem,
+        as: 'transaccion_items',
     },
-    precio_lista1: {
-        model: PrecioLista,
-        as: 'precio_lista1',
-        attributes: ['id', 'nombre', 'moneda']
-    }
 }
 
 const sqls1 = {
@@ -267,14 +234,28 @@ export class Repository {
 
         if (qry?.incl) {
             for (const a of qry.incl) {
-                if (qry.incl.includes(a)) findProps.include.push(include1[a])
+                findProps.include.push({
+                    ...include1[a],
+                    attributes: include1[a].attributes ? [...include1[a].attributes] : undefined,
+                    include: []
+                })
             }
         }
 
         if (qry?.iccl) {
             for (const [key, val] of Object.entries(qry.iccl)) {
                 const item = findProps.include.find(b => b.as === key);
-                if (item) item.attributes.push(...val.cols)
+                if (item) {
+                    if (val.incl) {
+                        for (const a of val.incl) {
+                            item.include.push({ ...include1[a] })
+                        }
+                    }
+
+                    if (val.cols) {
+                        item.attributes.push(...val.cols)
+                    }
+                }
             }
         }
 
@@ -284,13 +265,14 @@ export class Repository {
             }
             else {
                 const cols1 = qry.cols.filter(a => columns.includes(a))
-                findProps.attributes = findProps.attributes.concat(cols1)
+                findProps.attributes.push(...cols1)
+                // findProps.attributes = findProps.attributes.concat(cols1)
             }
         }
 
         if (qry?.sqls) {
             for (const a of qry.sqls) {
-                if (qry.sqls.includes(a)) findProps.attributes.push(sqls1[a])
+                findProps.attributes.push(sqls1[a])
             }
         }
 
@@ -356,17 +338,6 @@ export class Repository {
         return await this.model.create(data, { transaction })
     }
 
-    // async update(id, data, transaction) {
-    //     const [affectedRows] = await this.model.update(data, { where: { id }, transaction })
-
-    //     if (affectedRows == 0) {
-    //         res.json({ code: 1, msg: 'No se actualizó ningún registro' })
-    //         return false
-    //     }
-    //     else {
-    //         return true
-    //     }
-    // }
     async update(where, data, transaction) {
         const [affectedRows] = await this.model.update(data, { where, transaction })
 

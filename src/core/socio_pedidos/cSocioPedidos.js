@@ -22,22 +22,22 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
             const estadoMap = cSistema.arrayMap('estados')
-            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
             const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
+            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
+            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
 
             for (const a of data) {
-                if (qry?.cols?.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
                 if (qry?.cols?.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
-
                 if (qry?.cols?.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
                 if (qry?.cols?.includes('listo')) a.listo1 = estadoMap[a.listo]
                 if (qry?.cols?.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
 
-                if (qry?.cols?.includes('pago_metodo')) a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
                 if (qry?.cols?.includes('entrega_tipo')) a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
+
+                if (qry?.cols?.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
+                if (qry?.cols?.includes('pago_metodo')) a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
             }
         }
 
@@ -56,10 +56,10 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, ...qry }, true)
 
         if (data) {
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
             const estadoMap = cSistema.arrayMap('estados')
             const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
+            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
             const pago_metodosMap = cSistema.arrayMap('pago_metodos')
             const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
             const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
@@ -178,17 +178,21 @@ const update = async (req, res) => {
         } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id }, {
-            tipo, origin, fecha, codigo,
-            socio, socio_datos, contacto, contacto_datos,
-            moneda, tipo_cambio, monto,
-            pago_condicion, pago_metodo, pago_id,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
-            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            observacion, estado,
-            empresa_datos,
-            updatedBy: colaborador
-        }, transaction)
+        const updated = await repository.update(
+            { id },
+            {
+                tipo, origin, fecha, codigo,
+                socio, socio_datos, contacto, contacto_datos,
+                moneda, tipo_cambio, monto,
+                pago_condicion, pago_metodo, pago_id,
+                entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+                comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+                observacion, estado,
+                empresa_datos,
+                updatedBy: colaborador
+            },
+            transaction
+        )
 
         if (updated == false) return
 
@@ -491,21 +495,21 @@ async function loadOne(id) {
     const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'createdBy1'] }, true)
 
     if (data) {
-        const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
         const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
         const estadoMap = cSistema.arrayMap('estados')
-        const pago_metodosMap = cSistema.arrayMap('pago_metodos')
         const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
+        const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
+        const pago_metodosMap = cSistema.arrayMap('pago_metodos')
 
-        data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
         data.estado1 = pedido_estadosMap[data.estado]
-
         data.pagado1 = estadoMap[data.pagado]
         data.listo1 = estadoMap[data.listo]
         data.entregado1 = estadoMap[data.entregado]
 
-        data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
         data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
+
+        data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
+        data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
     }
 
     return data

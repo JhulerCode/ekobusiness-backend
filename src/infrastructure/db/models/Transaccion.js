@@ -24,14 +24,12 @@ export const Transaccion = sequelize.define('transacciones', {
     tipo_cambio: { type: DataTypes.STRING }, //required
     monto: { type: DataTypes.DOUBLE }, //required
 
-    produccion_orden: { type: DataTypes.STRING }, //required
-
     observacion: { type: DataTypes.STRING },
     estado: { type: DataTypes.STRING },
-
-    anulado_motivo: { type: DataTypes.STRING },
-
+    
     calidad_revisado_despacho: { type: DataTypes.STRING },
+    // produccion_orden: { type: DataTypes.STRING }, //required
+    // anulado_motivo: { type: DataTypes.STRING },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
