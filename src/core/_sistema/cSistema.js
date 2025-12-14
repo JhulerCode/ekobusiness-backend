@@ -18,7 +18,16 @@ const sistemaData = {
 
         igv_porcentaje: 18,
         direcciones: [
-            { id: 1, nombre: 'PLANTA SANTA ANITA', direccion: 'Cal.7 Mza. D Lote. 10 Urb. Los Productores', distrito: 'Santa Anita - Lima - Lima', principal: true },
+            {
+                id: 1,
+                nombre: 'PLANTA SANTA ANITA',
+                direccion: 'Cal.7 Mza. D Lote. 10 Urb. Los Productores',
+                ubigeo: 'Santa Anita - Lima - Lima',
+                principal: true,
+                datos_adicionales: {
+                    referencia: 'Altura cuadra 4',
+                }
+            },
             { id: 2, nombre: 'OFICINA', direccion: 'Av. Mariscal La Mar 638', distrito: 'Miraflores - Lima - Lima', principal: false },
         ],
         bancos: [
@@ -66,11 +75,7 @@ const sistemaData = {
         { id: '20', nombre: 'Exonerado - Operación Onerosa' },
         { id: '30', nombre: 'Inafecto - Operación Onerosa' }
     ],
-    pago_condiciones: [
-        { id: 1, nombre: 'CONTADO' },
-        { id: 2, nombre: 'CRÉDITO 30 DÍAS' },
-        { id: 3, nombre: 'CRÉDITO 60 DÍAS' }
-    ],
+
     produccion_orden_estados: [
         { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'ABIERTO' },
@@ -122,14 +127,13 @@ const sistemaData = {
     ],
 
     entrega_tipos: [
-        {
-            id: 'envio',
-            nombre: 'Envío a domicilio',
-        },
-        {
-            id: 'retiro',
-            nombre: 'Retira tu producto',
-        },
+        { id: 'envio', nombre: 'ENVÍO', nombre_tienda: 'Envío a domicilio', },
+        { id: 'retiro', nombre: 'RETIRO', nombre_tienda: 'Retira tu producto' },
+    ],
+    pago_condiciones: [
+        { id: 1, nombre: 'CONTADO' },
+        { id: 2, nombre: 'CRÉDITO 30 DÍAS' },
+        { id: 3, nombre: 'CRÉDITO 60 DÍAS' }
     ],
     pago_metodos: [
         { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },

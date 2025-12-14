@@ -395,6 +395,7 @@ const terminar = async (req, res) => {
 const findPendientes = async (req, res) => {
     try {
         const { empresa } = req.user
+        const { socio, produccion_tipo } = req.query
 
         const qry = {
             fltr: {
@@ -403,28 +404,46 @@ const findPendientes = async (req, res) => {
                 'socio_pedido1.empresa': { op: 'Es', val: empresa },
             },
             cols: ['articulo', 'cantidad', 'entregado'],
-            incl: ['socio_pedido1']
+            incl: ['socio_pedido1', 'articulo1'],
+            iccl: {
+                articulo1: {
+                    cols: ['combo_articulos']
+                },
+            }
         }
+
+        if (socio && socio !== 'null') qry.fltr['socio_pedido1.socio'] = { op: 'Es', val: socio }
+        if (produccion_tipo && produccion_tipo !== 'null') qry.fltr['articulo1.produccion_tipo'] = { op: 'Es', val: produccion_tipo }
+
         const pedidos = await SocioPedidoItemRepo.find(qry, true)
 
         const productosMap = {}
 
         if (pedidos.length > 0) {
+            const productos_pedidos_ids = []
+            for (const a of pedidos) {
+                if (a.articulo1.combo_articulos.length > 0) {
+                    for (const b of a.articulo1.combo_articulos) {
+                        productos_pedidos_ids.push(b.articulo)
+                    }
+                } else {
+                    productos_pedidos_ids.push(a.articulo)
+                }
+            }
+
             const qry1 = {
                 fltr: {
-                    id: { op: 'Es', val: pedidos.map(a => a.articulo) },
+                    id: { op: 'Es', val: [...new Set(productos_pedidos_ids)] },
                 },
-                cols: ['id', 'nombre', 'combo_articulos'],
+                cols: ['id', 'nombre'],
                 sqls: ['articulo_stock'],
             }
             const productosStock = await ArticuloRepo.find(qry1, true)
             const productosStockMap = productosStock.reduce((obj, a) => (obj[a.id] = a, obj), {})
 
             for (const a of pedidos) {
-                const producto = productosStockMap[a.articulo]
-
-                if (producto && producto.combo_articulos && producto.combo_articulos.length > 0) {
-                    for (const b of producto.combo_articulos) {
+                if (a.articulo1.combo_articulos.length > 0) {
+                    for (const b of a.articulo1.combo_articulos) {
                         if (!productosMap[b.articulo]) {
                             productosMap[b.articulo] = {
                                 articulo: b.articulo,
@@ -475,10 +494,18 @@ async function loadOne(id) {
         const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
         const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
         const estadoMap = cSistema.arrayMap('estados')
+        const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+        const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
 
         data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
         data.estado1 = pedido_estadosMap[data.estado]
+
         data.pagado1 = estadoMap[data.pagado]
+        data.listo1 = estadoMap[data.listo]
+        data.entregado1 = estadoMap[data.entregado]
+
+        data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
+        data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
     }
 
     return data

@@ -23,9 +23,9 @@ export const Articulo = sequelize.define('articulos', {
     produccion_tipo: { type: DataTypes.STRING },
     filtrantes: { type: DataTypes.INTEGER },
     contenido_neto: { type: DataTypes.DOUBLE },
-    
+
     is_combo: { type: DataTypes.BOOLEAN },
-    combo_articulos: { type: DataTypes.JSON },
+    combo_articulos: { type: DataTypes.JSON, defaultValue: [] },
 
     is_ecommerce: { type: DataTypes.BOOLEAN, defaultValue: false },
     descripcion: { type: DataTypes.TEXT },

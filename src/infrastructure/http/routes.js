@@ -5,6 +5,7 @@ import verifyToken from './middlewares/verifyToken.js'
 
 import signin from '#core/_signin/signin.js'
 import sistema from '#core/_sistema/rSistema.js'
+import empresas from '#core/empresas/rEmpresas.js'
 
 import activity_logs from '#core/activity_logs/rActivityLogs.js'
 import articulo_lineas from '#core/articulo_lineas/rArticuloLineas.js'
@@ -54,10 +55,13 @@ router.get('/', (req, res) => {
 router.use('/signin', verifyVersion, signin)
 router.use('/api', verifyVersion)
 router.use('/api', verifyToken)
-router.use('/api/activity_logs', activity_logs)
+
 router.use('/api/sistema', sistema)
-router.use('/api/articulo_categorias', articulo_categorias)
+router.use('/api/empresas', empresas)
+
+router.use('/api/activity_logs', activity_logs)
 router.use('/api/articulo_lineas', articulo_lineas)
+router.use('/api/articulo_categorias', articulo_categorias)
 router.use('/api/articulos', articulos)
 router.use('/api/asistencias', asistencias)
 router.use('/api/caja_aperturas', caja_aperturas)
@@ -80,6 +84,7 @@ router.use('/api/socio_pedidos', socio_pedidos)
 router.use('/api/socio_pedido_items', socio_pedido_items)
 router.use('/api/tipo_cambios', tipo_cambios)
 router.use('/api/transacciones', transacciones)
+router.use('/api/ubigeos', ubigeos)
 
 router.use('/store/sistema', sistema)
 router.use('/store/lineas', store_lineas)
