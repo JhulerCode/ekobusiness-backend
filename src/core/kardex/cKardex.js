@@ -222,7 +222,11 @@ const ingresarProduccionProductos = async (req, res) => {
             produccion_ordenes_ids.push(a.produccion_orden1.id)
         }
 
-        await ProduccionOrdenRep.update(produccion_ordenes_ids, { estado: 2 }, transaction)
+        await ProduccionOrdenRep.update(
+            { id: produccion_ordenes_ids },
+            { estado: 2 },
+            transaction
+        )
 
         await transaction.commit()
 
