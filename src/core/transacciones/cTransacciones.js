@@ -42,15 +42,17 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, ...qry }, true)
 
         if (data) {
-            for (const a of data.transaccion_items) {
-                if (a.lote_padre) {
-                    // a.lotes = [...a.]
-                    // a.lotes = [{
-                    //     id: a.lote_padre1.id,
-                    //     lote_fv_stock: a.lote_padre1.lote + (a.lote_padre1.fv ? ` | ${a.lote_padre1.fv}` : '') + (` | ${a.stock}`)
-                    // }]
-                }
-            }
+            if (data.transaccion_items) data.transaccion_items.sort((a, b) => a.orden - b.orden)
+
+            // for (const a of data.transaccion_items) {
+            //     if (a.lote_padre) {
+            //         // a.lotes = [...a.],
+            //         a.lotes = [{
+            //             id: a.lote_padre1.id,
+            //             lote_fv_stock: a.lote_padre1.lote + (a.lote_padre1.fv ? ` | ${a.lote_padre1.fv}` : '') + (` | ${a.stock}`)
+            //         }]
+            //     }
+            // }
         }
 
         res.json({ code: 0, data })
@@ -67,7 +69,7 @@ const create = async (req, res) => {
         const { colaborador, empresa } = req.user
         const {
             tipo, fecha,
-            has_pedido, socio_pedido, socio, guia, factura,
+            socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
             transaccion_items
@@ -76,7 +78,7 @@ const create = async (req, res) => {
         // ----- CREAR ----- //
         const nuevo = await repository.create({
             tipo, fecha,
-            has_pedido, socio_pedido, socio, guia, factura,
+            socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
             empresa,
@@ -84,7 +86,8 @@ const create = async (req, res) => {
         }, transaction)
 
         // ----- GUARDAR ITEMS ----- //
-        const items = transaccion_items.map(a => ({
+        const items = transaccion_items.map((a, i) => ({
+            orden: i,
             articulo: a.articulo,
             cantidad: a.cantidad,
 
@@ -175,14 +178,14 @@ const update = async (req, res) => {
         const { id } = req.params
         const {
             tipo, fecha,
-            has_pedido, socio_pedido, socio, guia, factura,
+            socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
         } = req.body
 
         const updated = await repository.update(id, {
             tipo, fecha,
-            has_pedido, socio_pedido, socio, guia, factura,
+            socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
             observacion, estado,
             updatedBy: colaborador
@@ -190,7 +193,8 @@ const update = async (req, res) => {
 
         if (updated == false) return
 
-        res.json({ code: 0 })
+        const data = await loadOne(id)
+        res.json({ code: 0, data })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })

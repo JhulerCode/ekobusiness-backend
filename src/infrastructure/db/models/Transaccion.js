@@ -13,7 +13,6 @@ export const Transaccion = sequelize.define('transacciones', {
     tipo: { type: DataTypes.SMALLINT }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
 
-    has_pedido: { type: DataTypes.BOOLEAN }, //required
     socio_pedido: { type: DataTypes.STRING }, //required //linked
     socio: { type: DataTypes.STRING }, //required //linked
     guia: { type: DataTypes.STRING }, //required
@@ -26,7 +25,7 @@ export const Transaccion = sequelize.define('transacciones', {
 
     observacion: { type: DataTypes.STRING },
     estado: { type: DataTypes.STRING },
-    
+
     calidad_revisado_despacho: { type: DataTypes.STRING },
     // produccion_orden: { type: DataTypes.STRING }, //required
     // anulado_motivo: { type: DataTypes.STRING },
@@ -57,6 +56,7 @@ Transaccion.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' }
 
 export const TransaccionItem = sequelize.define('transaccion_items', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    orden: { type: DataTypes.INTEGER }, //required
     articulo: { type: DataTypes.STRING }, //required //linked
     cantidad: { type: DataTypes.DOUBLE }, //required
 
@@ -76,22 +76,18 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
 
-    tipo: { type: DataTypes.SMALLINT }, //required //--- Eliminar ---//
-    fecha: { type: DataTypes.DATEONLY }, //required //--- Eliminar ---//
+    // tipo: { type: DataTypes.SMALLINT }, //required //--- Eliminar ---//
+    // fecha: { type: DataTypes.DATEONLY }, //required //--- Eliminar ---//
 
-    moneda: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
-    tipo_cambio: { type: DataTypes.DOUBLE }, //required //--- Eliminar ---//
+    // moneda: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
+    // tipo_cambio: { type: DataTypes.DOUBLE }, //required //--- Eliminar ---//
 
-    lote: { type: DataTypes.STRING }, //--- Eliminar ---//
-    fv: { type: DataTypes.DATEONLY }, //--- Eliminar ---//
+    // is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked //--- Eliminar ---//
+    // stock: { type: DataTypes.DOUBLE }, //--- Eliminar ---//
+    // lote_padre: { type: DataTypes.STRING }, //required //linked //--- Eliminar ---//
 
-    is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked //--- Eliminar ---//
-    stock: { type: DataTypes.DOUBLE }, //--- Eliminar ---//
-    lote_padre: { type: DataTypes.STRING }, //required //linked //--- Eliminar ---//
-
-    produccion_orden: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
-    maquina: { type: DataTypes.STRING }, //--- Eliminar ---//
-
+    // produccion_orden: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
+    // maquina: { type: DataTypes.STRING }, //--- Eliminar ---//
 })
 
 Articulo.hasMany(TransaccionItem, { foreignKey: 'articulo', as: 'transaccion_items', onDelete: 'RESTRICT' })
