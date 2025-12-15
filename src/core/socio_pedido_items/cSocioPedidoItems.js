@@ -22,7 +22,7 @@ const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const {
-            articulo, nombre, unidad, has_fv,
+            orden, articulo, nombre, unidad, has_fv,
             cantidad, entregado,
             pu, igv_afectacion, igv_porcentaje,
             blend_datos, nota,
@@ -34,7 +34,7 @@ const create = async (req, res) => {
 
         //--- CREAR ---//
         const nuevo = await repository.create({
-            articulo, nombre, unidad, has_fv,
+            orden, articulo, nombre, unidad, has_fv,
             cantidad, entregado,
             pu, igv_afectacion, igv_porcentaje,
             blend_datos, nota,
@@ -57,7 +57,7 @@ const update = async (req, res) => {
         const { colaborador, empresa } = req.user
         const { id } = req.params
         const {
-            articulo, nombre, unidad, has_fv,
+            orden, articulo, nombre, unidad, has_fv,
             cantidad, entregado,
             pu, igv_afectacion, igv_porcentaje,
             blend_datos, nota,
@@ -69,7 +69,7 @@ const update = async (req, res) => {
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update({ id }, {
-            articulo, nombre, unidad, has_fv,
+            orden, articulo, nombre, unidad, has_fv,
             cantidad, entregado,
             pu, igv_afectacion, igv_porcentaje,
             blend_datos, nota,

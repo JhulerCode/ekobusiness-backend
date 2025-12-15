@@ -61,6 +61,7 @@ SocioPedido.belongsTo(Moneda, { foreignKey: 'moneda', as: 'moneda1' })
 export const SocioPedidoItem = sequelize.define('socio_pedido_items', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
 
+    orden: { type: DataTypes.INTEGER }, //required
     articulo: { type: DataTypes.STRING }, //required //linked
     nombre: { type: DataTypes.STRING }, //required
     unidad: { type: DataTypes.STRING }, //required

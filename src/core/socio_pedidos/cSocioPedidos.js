@@ -1,7 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import cSistema from "../_sistema/cSistema.js"
-import { SocioPedidoItem } from '#db/models/SocioPedido.js'
 
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
@@ -76,6 +75,8 @@ const findById = async (req, res) => {
             if (data.socio_datos.doc_tipo) {
                 data.socio_datos.doc_tipo1 = documentos_identidadMap[data.socio_datos.doc_tipo]
             }
+
+            if (data.socio_pedido_items) data.socio_pedido_items.sort((a, b) => a.orden - b.orden)
         }
 
         res.json({ code: 0, data })
@@ -93,8 +94,8 @@ const create = async (req, res) => {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             moneda, tipo_cambio, monto,
-            pago_condicion, pago_metodo, pago_id,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+            pago_condicion, pago_metodo, pago_id,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             observacion, estado,
             empresa_datos,
@@ -112,8 +113,8 @@ const create = async (req, res) => {
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
             moneda, tipo_cambio, monto,
-            pago_condicion, pago_metodo, pago_id,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+            pago_condicion, pago_metodo, pago_id,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
             observacion, estado, etapas,
             empresa_datos,
@@ -122,7 +123,13 @@ const create = async (req, res) => {
         }, transaction)
 
         // ----- GUARDAR ITEMS ----- //
-        const items = socio_pedido_items.map(a => ({ ...a, socio_pedido: nuevo.id, }))
+        const items = socio_pedido_items.map((a, i) => ({
+            ...a,
+            orden: i,
+            socio_pedido: nuevo.id,
+            empresa,
+            createdBy: colaborador
+        }))
         await SocioPedidoItemRepo.createBulk(items, transaction)
 
         await transaction.commit()
@@ -160,8 +167,6 @@ const create = async (req, res) => {
 }
 
 const update = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
         const { colaborador } = req.user
         const { id } = req.params
@@ -178,97 +183,90 @@ const update = async (req, res) => {
         } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(
-            { id },
-            {
-                tipo, origin, fecha, codigo,
-                socio, socio_datos, contacto, contacto_datos,
-                moneda, tipo_cambio, monto,
-                pago_condicion, pago_metodo, pago_id,
-                entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
-                comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-                observacion, estado,
-                empresa_datos,
-                updatedBy: colaborador
-            },
-            transaction
-        )
-
-        if (updated == false) return
-
-        // ----- OBTENER ITEMS QUE ESTABAN ----- //
-        const socio_pedido_items_past = await SocioPedidoItem.findAll({
-            where: { socio_pedido: id }
+        const updated = await repository.update({ id }, {
+            tipo, origin, fecha, codigo,
+            socio, socio_datos, contacto, contacto_datos,
+            moneda, tipo_cambio, monto,
+            pago_condicion, pago_metodo, pago_id,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
+            observacion, estado,
+            empresa_datos,
+            updatedBy: colaborador
         })
 
-        // ----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
-        const idsItemsNew = socio_pedido_items.map(a => a.articulo)
 
-        const idsItemsGone = socio_pedido_items_past
-            .filter(a => !idsItemsNew.includes(a.articulo))
-            .map(a => a.articulo)
+        // // ----- OBTENER ITEMS QUE ESTABAN ----- //
+        // const socio_pedido_items_past = await SocioPedidoItem.findAll({
+        //     where: { socio_pedido: id }
+        // })
 
-        if (idsItemsGone.length > 0) {
-            await SocioPedidoItem.destroy({
-                where: {
-                    socio_pedido: id,
-                    articulo: { [Op.in]: idsItemsGone },
-                },
-                transaction
-            })
-        }
+        // // ----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
+        // const idsItemsNew = socio_pedido_items.map(a => a.articulo)
 
-        const agregarItems = []
+        // const idsItemsGone = socio_pedido_items_past
+        //     .filter(a => !idsItemsNew.includes(a.articulo))
+        //     .map(a => a.articulo)
 
-        for (const a of socio_pedido_items) {
-            const i = socio_pedido_items_past.findIndex(b => b.articulo == a.articulo)
+        // if (idsItemsGone.length > 0) {
+        //     await SocioPedidoItem.destroy({
+        //         where: {
+        //             socio_pedido: id,
+        //             articulo: { [Op.in]: idsItemsGone },
+        //         },
+        //         transaction
+        //     })
+        // }
 
-            if (i === -1) {
-                // ----- CREAR ARRAY DE ITEMS NUEVOS ----- //
-                agregarItems.push({
-                    articulo: a.articulo,
-                    nombre: a.nombre,
-                    unidad: a.unidad,
-                    has_fv: a.has_fv,
+        // const agregarItems = []
 
-                    cantidad: a.cantidad,
+        // for (const a of socio_pedido_items) {
+        //     const i = socio_pedido_items_past.findIndex(b => b.articulo == a.articulo)
 
-                    pu: a.pu,
-                    igv_afectacion: a.igv_afectacion,
-                    igv_porcentaje: a.igv_porcentaje,
+        //     if (i === -1) {
+        //         // ----- CREAR ARRAY DE ITEMS NUEVOS ----- //
+        //         agregarItems.push({
+        //             articulo: a.articulo,
+        //             nombre: a.nombre,
+        //             unidad: a.unidad,
+        //             has_fv: a.has_fv,
 
-                    nota: a.nota,
-                    socio_pedido: id,
-                })
-            }
-            else {
-                // ----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
-                await SocioPedidoItem.update(
-                    {
-                        nombre: a.nombre,
-                        unidad: a.unidad,
-                        has_fv: a.has_fv,
+        //             cantidad: a.cantidad,
 
-                        cantidad: a.cantidad,
+        //             pu: a.pu,
+        //             igv_afectacion: a.igv_afectacion,
+        //             igv_porcentaje: a.igv_porcentaje,
 
-                        pu: a.pu,
+        //             nota: a.nota,
+        //             socio_pedido: id,
+        //         })
+        //     }
+        //     else {
+        //         // ----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
+        //         await SocioPedidoItem.update(
+        //             {
+        //                 nombre: a.nombre,
+        //                 unidad: a.unidad,
+        //                 has_fv: a.has_fv,
 
-                        nota: a.nota,
-                    },
-                    {
-                        where: { id: a.id },
-                        transaction
-                    }
-                )
-            }
-        }
+        //                 cantidad: a.cantidad,
 
-        // ----- CREAR ITEMS NUEVOS ----- //
-        if (agregarItems.length > 0) {
-            await SocioPedidoItem.bulkCreate(agregarItems, { transaction })
-        }
+        //                 pu: a.pu,
 
-        await transaction.commit()
+        //                 nota: a.nota,
+        //             },
+        //             {
+        //                 where: { id: a.id },
+        //                 transaction
+        //             }
+        //         )
+        //     }
+        // }
+
+        // // ----- CREAR ITEMS NUEVOS ----- //
+        // if (agregarItems.length > 0) {
+        //     await SocioPedidoItem.bulkCreate(agregarItems, { transaction })
+        // }
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(id)
@@ -276,8 +274,6 @@ const update = async (req, res) => {
 
     }
     catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

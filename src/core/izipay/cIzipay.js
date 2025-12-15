@@ -1,14 +1,16 @@
+import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
-import { SocioPedido, SocioPedidoItem } from "#db/models/SocioPedido.js";
 import { checkHash, createFormToken, cancelPaymentMethodToken } from "#infrastructure/izipay.js"
 import { genId } from '#shared/mine.js'
+import cSistema from '../_sistema/cSistema.js'
 
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
-import { companyName, htmlConfirmacionCompra } from '#mail/templates.js'
-import cSistema from '../_sistema/cSistema.js'
-
+import { htmlConfirmacionCompra } from '#mail/templates.js'
 import dayjs from '#shared/dayjs.js'
+
+const repository = new Repository('SocioPedido')
+const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
 
 const createPayment = async (req, res) => {
     const { monto, correo, user_id, paymentMethodToken } = req.body;
@@ -66,11 +68,11 @@ const validatePayment = async (req, res) => {
     const {
         tipo, origin, fecha, codigo,
         socio, socio_datos, contacto, contacto_datos,
-        pago_condicion, moneda, tipo_cambio, monto,
-        entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
+        moneda, tipo_cambio, monto,
+        entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+        pago_condicion, pago_metodo, pago_id,
         comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-        pago_metodo, pago_id,
-        observacion, estado, pagado,
+        observacion, estado,
         empresa_datos,
         socio_pedido_items,
     } = socio_pedido
@@ -80,28 +82,27 @@ const validatePayment = async (req, res) => {
         return
     }
 
-    // console.log('ESTO ES ANTES', pagado)
-    const etapas = [
-        { id: 1, fecha: dayjs() },
-    ]
-    // ----- GUARDAR PEDIDO ----- //
+    const etapas = [{ id: 1, fecha: dayjs() }]
+
     const transaction = await sequelize.transaction()
+
     try {
-        var nuevo = await SocioPedido.create({
+        // ----- GUARDAR PEDIDO ----- //
+        var nuevo = await repository.create({
             tipo, origin, fecha, codigo,
             socio, socio_datos, contacto, contacto_datos,
-            pago_condicion, moneda, tipo_cambio, monto,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos,
+            moneda, tipo_cambio, monto,
+            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
+            pago_condicion, pago_metodo, pago_id,
             comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            pago_metodo, pago_id,
-            observacion, estado, pagado, etapas,
+            observacion, estado, etapas,
             empresa_datos,
-        }, { transaction })
+            empresa,
+        }, transaction)
 
         // ----- GUARDAR ITEMS ----- //
         const items = socio_pedido_items.map(a => ({ ...a, socio_pedido: nuevo.id, }))
-
-        await SocioPedidoItem.bulkCreate(items, { transaction })
+        await SocioPedidoItemRepo.createBulk(items, transaction)
 
         await transaction.commit()
 
@@ -114,25 +115,22 @@ const validatePayment = async (req, res) => {
 
     // ----- ENVIAR CORREO ----- //
     let send_email_err = null
-    try {
-        const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
-        const html = htmlConfirmacionCompra(
-            socio_datos.nombres, socio_datos.apellidos,
-            codigo, entrega_tipo1, monto,
-            socio_pedido_items
-        )
+    const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
+    const html = htmlConfirmacionCompra(
+        socio_datos.nombres, socio_datos.apellidos,
+        codigo, entrega_tipo1, monto,
+        socio_pedido_items
+    )
 
-        const nodemailer = nodeMailer()
-        const result = await nodemailer.sendMail({
-            from: `${companyName} <${config.SOPORTE_EMAIL}>`,
-            to: socio_datos.correo,
-            subject: `Confirmación de compra - Código ${codigo}`,
-            html
-        })
-    } catch (error) {
-        send_email_err = error
-        console.log(error)
-    }
+    const nodemailer = nodeMailer()
+    const result = await nodemailer.sendMail({
+        from: `${cSistema.sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
+        to: socio_datos.correo,
+        subject: `Confirmación de compra - Código ${codigo}`,
+        html
+    })
+
+    if (result.error) send_email_err = result.error
 
     res.json({ code: 0, data: { id: nuevo.id }, send_email_err });
 };
@@ -175,9 +173,7 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
     const MAX_ATTEMPTS = 10;
     const RETRY_DELAY = 30_000; // 30 segundos
 
-    const ped = await SocioPedido.findOne({
-        where: { codigo: orderId }
-    })
+    const ped = await repository.find({ codigo: orderId }, true)
 
     if (!ped) {
         console.log(`Intento ${attempt}: No se actualizó el pedido: ${orderId}`);
@@ -191,32 +187,14 @@ async function updateSocioPedidoPagado(orderId, transactionUUID, attempt = 1) {
         }
     }
 
-    const etapas = JSON.parse(JSON.stringify(ped.etapas))
+    const etapas = ped.etapas
     etapas.push({ id: 2, fecha: dayjs() })
 
-    // const [affectedRows] = await SocioPedido.update(
-    await SocioPedido.update(
-        {
-            pagado: true,
-            pago_id: transactionUUID,
-            etapas,
-        },
-        {
-            where: { codigo: orderId }
-        }
-    )
-
-    // if (affectedRows === 0) {
-    //     console.log(`Intento ${attempt}: No se actualizó el pedido: ${orderId}`);
-
-    //     if (attempt < MAX_ATTEMPTS) {
-    //         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-    //         return updateSocioPedidoPagado(orderId, transactionUUID, attempt + 1);
-    //     } else {
-    //         console.warn(`Se alcanzó el número máximo de intentos para actualizar el pedido: ${orderId}.`);
-    //         return false;
-    //     }
-    // }
+    await repository.update({ codigo: orderId }, {
+        pagado: true,
+        pago_id: transactionUUID,
+        etapas,
+    })
 
     console.log(`Estado de pago actualizado para pedido: ${orderId}, en el intento ${attempt}.`);
 }

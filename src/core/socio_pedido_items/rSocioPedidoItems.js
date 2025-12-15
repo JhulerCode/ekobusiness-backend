@@ -20,4 +20,9 @@ router.patch(
     controller.update
 )
 
+router.delete(
+    '/:id',
+    controller.delet
+)
+
 export default router
