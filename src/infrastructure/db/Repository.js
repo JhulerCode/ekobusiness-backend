@@ -110,7 +110,7 @@ const include1 = {
     lote_padre1: {
         model: Kardex,
         as: 'lote_padre1',
-        attributes: ['id', 'moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock'],
+        attributes: ['id', 'moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock', 'lote_fv_stock'],
         required: false
     },
     maquina1: {

@@ -87,6 +87,7 @@ const create = async (req, res) => {
 
         // ----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map((a, i) => ({
+            id: a.id,
             orden: i,
             articulo: a.articulo,
             cantidad: a.cantidad,
@@ -109,54 +110,107 @@ const create = async (req, res) => {
 
 
         // ----- GUARDAR KARDEX ----- //
-        const kardex_items = transaccion_items.map(a => ({
-            tipo, fecha,
-            articulo: a.articulo,
-            cantidad: a.cantidad,
+        let kardex_items = []
+        if (tipo == 1) {
+            kardex_items = transaccion_items.map(a => ({
+                tipo, fecha,
+                articulo: a.articulo,
+                cantidad: a.cantidad,
 
-            pu: a.pu,
-            igv_afectacion: a.igv_afectacion,
-            igv_porcentaje: a.igv_porcentaje,
-            moneda: a.moneda,
-            tipo_cambio: a.tipo_cambio,
+                pu: a.pu,
+                igv_afectacion: a.igv_afectacion,
+                igv_porcentaje: a.igv_porcentaje,
+                moneda: a.moneda,
+                tipo_cambio: a.tipo_cambio,
 
-            lote: tipo == 1 ? a.lote : null,
-            fv: tipo == 1 ? a.fv : null,
+                lote: a.lote,
+                fv: a.fv,
 
-            is_lote_padre: tipo == 1 ? true : false,
-            stock: tipo == 1 ? a.cantidad : null,
-            lote_padre: tipo == 1 ? null : a.lote_padre,
+                is_lote_padre: true,
+                stock: a.cantidad,
 
-            observacion: a.observacion,
+                transaccion_item: a.id,
+                transaccion: nuevo.id,
+                empresa,
+                createdBy: colaborador
+            }))
+        }
+        else {
+            for (const a of transaccion_items) {
+                for (const b of a.kardexes) {
+                    kardex_items.push({
+                        tipo, fecha,
+                        articulo: b.articulo,
+                        cantidad: b.cantidad,
 
-            transaccion: nuevo.id,
-            empresa,
-            createdBy: colaborador
-        }))
+                        is_lote_padre: false,
+                        lote_padre: b.lote_padre,
+
+                        transaccion_item: a.id,
+                        transaccion: nuevo.id,
+                        empresa,
+                        createdBy: colaborador
+                    })
+                }
+            }
+        }
 
         await KardexRepo.createBulk(kardex_items, transaction)
 
 
         // ----- ACTUALIZAR CANTIDAD ENTREGADA ----- //
         if (socio_pedido) {
-            for (const a of transaccion_items) {
-                await SocioPedidoItemRepo.update(
-                    { articulo: a.articulo, socio_pedido },
-                    { entregado: sequelize.literal(`COALESCE(entregado, 0) + ${a.cantidad}`) },
-                    transaction
-                )
-            }
+            const cases = transaccion_items
+                .map(a => `WHEN '${a.articulo}' THEN ${a.cantidad}`)
+                .join(' ')
+
+            const articulos = transaccion_items.map(a => `'${a.articulo}'`).join(',')
+
+            await sequelize.query(`
+                    UPDATE socio_pedido_items
+                    SET entregado = COALESCE(entregado, 0) + CASE articulo
+                        ${cases}
+                        ELSE 0
+                    END
+                    WHERE socio_pedido = '${socio_pedido}'
+                    AND articulo IN (${articulos})
+                `,
+                { transaction }
+            )
         }
+
 
         // ----- SI ES UNA VENTA ----- //
         if (tipo == 5) {
+            const kardexMap = {}
+
             for (const a of transaccion_items) {
-                await KardexRepo.update(
-                    { id: a.lote_padre },
-                    { stock: sequelize.literal(`COALESCE(stock, 0) - ${a.cantidad}`) },
-                    transaction
-                )
+                for (const b of a.kardexes) {
+                    kardexMap[b.lote_padre] =
+                        (kardexMap[b.lote_padre] || 0) + b.cantidad
+                }
             }
+
+            const kardexes = Object.entries(kardexMap).map(
+                ([lote_padre, cantidad]) => ({ lote_padre, cantidad })
+            )
+
+            const cases = kardexes
+                .map(k => `WHEN '${k.lote_padre}' THEN ${k.cantidad}`)
+                .join(' ')
+
+            const ids = kardexes.map(k => `'${k.lote_padre}'`).join(',')
+
+            await sequelize.query(`
+                UPDATE kardexes
+                    SET stock = COALESCE(stock, 0) - CASE id
+                        ${cases}
+                        ELSE 0
+                    END
+                    WHERE id IN (${ids})
+                `,
+                { transaction }
+            )
         }
 
         await transaction.commit()
