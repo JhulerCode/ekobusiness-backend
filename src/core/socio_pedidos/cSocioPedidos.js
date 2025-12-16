@@ -1,6 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import cSistema from "../_sistema/cSistema.js"
+import { resUpdateFalse } from '#http/helpers.js'
 
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
@@ -315,7 +316,7 @@ const confirmarPago = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
     }
@@ -339,7 +340,7 @@ const confirmarListo = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
     }
@@ -364,7 +365,7 @@ const confirmarEntrega = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
     }
@@ -383,7 +384,7 @@ const terminar = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
     }

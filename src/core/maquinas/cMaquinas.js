@@ -1,4 +1,5 @@
 import { Repository } from '#db/Repository.js'
+import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Maquina')
 
@@ -70,7 +71,7 @@ const update = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
@@ -85,7 +86,7 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return
+        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
     }

@@ -1,6 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import cSistema from "../_sistema/cSistema.js"
+import { resUpdateFalse } from '#http/helpers.js'
 
 const repository = new Repository('Transaccion')
 const TransaccionItemRepo = new Repository('TransaccionItem')
@@ -245,7 +246,7 @@ const update = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
         res.json({ code: 0, data })

@@ -1,6 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import cSistema from "../_sistema/cSistema.js"
 import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
+import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('ArticuloLinea')
 
@@ -81,7 +82,7 @@ const update = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
@@ -97,7 +98,7 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { fotos } = req.body
 
-        if (await repository.delete({ id }) == false) return
+        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
 
         for (const a of fotos) await minioRemoveObject(a.id)
 
@@ -141,7 +142,7 @@ const updateFotos = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         //--- ELIMINAR ARCHIVOS DE MINIO QUE YA NO ESTÁN ---//
         for (const a of eliminados) await minioRemoveObject(a.id)

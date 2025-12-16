@@ -2,6 +2,7 @@ import { Repository } from '#db/Repository.js'
 import cSistema from "../_sistema/cSistema.js"
 import sequelize from '#db/sequelize.js'
 import { cleanFloat } from '#shared/mine.js'
+import { resUpdateFalse } from '#http/helpers.js'
 
 const repository = new Repository('Kardex')
 const ProduccionOrdenRep = new Repository('ProduccionOrden')
@@ -159,7 +160,7 @@ const update = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         const data = await repository.find({ id })
 

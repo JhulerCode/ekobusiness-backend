@@ -1,5 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import { obtenerEmpresa, empresasStore } from '../_signin/sessions.js'
+import { resUpdateFalse } from '#http/helpers.js'
 
 const repository = new Repository('Empresa')
 
@@ -35,7 +36,7 @@ const update = async (req, res) => {
             updatedBy: colaborador
         })
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 

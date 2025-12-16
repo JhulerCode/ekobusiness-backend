@@ -1,5 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
+import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('TipoCambio')
 const TransaccionRepo = new Repository('Transaccion')
@@ -85,7 +86,7 @@ const update = async (req, res) => {
             updatedBy: colaborador
         }, transaction)
 
-        if (updated == false) return
+        if (updated == false) return resUpdateFalse(res)
 
         //--- Actualizar en transacciones y kardex ---//
         await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: venta }, transaction)
@@ -111,7 +112,7 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { fecha, moneda } = req.body
 
-        if (await repository.delete({ id }) == false) return
+        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
 
         //--- Actualizar en transacciones y kardex ---//
         await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: null }, transaction)
