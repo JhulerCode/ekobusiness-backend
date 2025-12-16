@@ -66,11 +66,11 @@ const include1 = {
         as: 'linea1',
         attributes: ['id', 'nombre']
     },
-    tipo1: {
-        model: ArticuloLinea,
-        as: 'tipo1',
-        attributes: ['id', 'nombre'],
-    },
+    // tipo1: {
+    //     model: ArticuloLinea,
+    //     as: 'tipo1',
+    //     attributes: ['id', 'nombre'],
+    // },
     categoria1: {
         model: ArticuloCategoria,
         as: 'categoria1',
@@ -132,7 +132,7 @@ const include1 = {
     produccion_orden1: {
         model: ProduccionOrden,
         as: 'produccion_orden1',
-        attributes: ['id', 'tipo', 'maquina', 'fecha', 'articulo'],
+        attributes: ['id', 'linea', 'maquina', 'fecha', 'articulo'],
         required: false,
     },
     receta_insumos: {

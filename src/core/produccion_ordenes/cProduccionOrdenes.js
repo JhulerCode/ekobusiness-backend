@@ -49,13 +49,13 @@ const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const {
-            fecha, tipo, orden, maquina, maquina_info,
+            fecha, linea, orden, maquina, maquina_info,
             articulo, articulo_info, cantidad, estado, observacion,
         } = req.body
 
         // ----- CREAR ----- //
         const nuevo = await repository.create({
-            fecha, tipo, orden, maquina, maquina_info,
+            fecha, linea, orden, maquina, maquina_info,
             articulo, articulo_info, cantidad, estado, observacion,
             empresa,
             createdBy: colaborador
@@ -75,13 +75,13 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            fecha, tipo, orden, maquina, maquina_info,
+            fecha, linea, orden, maquina, maquina_info,
             articulo, articulo_info, cantidad, estado, observacion,
         } = req.body
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update({ id }, {
-            fecha, tipo, orden, maquina, maquina_info,
+            fecha, linea, orden, maquina, maquina_info,
             articulo, articulo_info, cantidad, estado, observacion,
             updatedBy: colaborador
         })

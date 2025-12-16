@@ -8,7 +8,7 @@ import { Colaborador } from './Colaborador.js'
 export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha: { type: DataTypes.DATEONLY },
-    tipo: { type: DataTypes.STRING },
+    linea: { type: DataTypes.STRING },
     orden: { type: DataTypes.INTEGER },
 
     maquina: { type: DataTypes.STRING }, //required //linked
@@ -47,8 +47,8 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
 Articulo.hasMany(ProduccionOrden, { foreignKey: 'articulo', as: 'produccion_ordenes', onDelete: 'RESTRICT' })
 ProduccionOrden.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 
-ArticuloLinea.hasMany(ProduccionOrden, { foreignKey: 'tipo', as: 'produccion_ordenes', onDelete: 'RESTRICT' })
-ProduccionOrden.belongsTo(ArticuloLinea, { foreignKey: 'tipo', as: 'tipo1' })
+ArticuloLinea.hasMany(ProduccionOrden, { foreignKey: 'linea', as: 'produccion_ordenes', onDelete: 'RESTRICT' })
+ProduccionOrden.belongsTo(ArticuloLinea, { foreignKey: 'linea', as: 'linea1' })
 
 Maquina.hasMany(ProduccionOrden, { foreignKey: 'maquina', as: 'produccion_ordenes', onDelete: 'RESTRICT' })
 ProduccionOrden.belongsTo(Maquina, { foreignKey: 'maquina', as: 'maquina1' })

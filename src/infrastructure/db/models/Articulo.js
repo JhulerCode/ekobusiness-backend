@@ -18,9 +18,9 @@ export const Articulo = sequelize.define('articulos', {
     igv_afectacion: { type: DataTypes.STRING }, //required
 
     tipo: { type: DataTypes.STRING }, //required
+    linea: { type: DataTypes.STRING },
     categoria: { type: DataTypes.STRING }, //required //linked
     mp_tipo: { type: DataTypes.STRING },
-    linea: { type: DataTypes.STRING },
     filtrantes: { type: DataTypes.INTEGER },
     contenido_neto: { type: DataTypes.DOUBLE },
 
