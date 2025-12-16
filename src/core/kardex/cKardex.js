@@ -312,7 +312,7 @@ const findReporteProduccion = async (req, res) => {
             cols: ['nombre'],
             sqls: ['articulo_movimientos_cantidad'],
             fltr: {
-                produccion_tipo: { op: 'Es', val: linea },
+                linea: { op: 'Es', val: linea },
                 'kardexes.fecha': { op: 'Está dentro de', val: f1, val1: f2 },
                 'kardexes.tipo': { op: 'Es', val: 4 },
             },

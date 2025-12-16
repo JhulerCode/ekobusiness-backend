@@ -20,7 +20,7 @@ export const Articulo = sequelize.define('articulos', {
     tipo: { type: DataTypes.STRING }, //required
     categoria: { type: DataTypes.STRING }, //required //linked
     mp_tipo: { type: DataTypes.STRING },
-    produccion_tipo: { type: DataTypes.STRING },
+    linea: { type: DataTypes.STRING },
     filtrantes: { type: DataTypes.INTEGER },
     contenido_neto: { type: DataTypes.DOUBLE },
 
@@ -46,8 +46,8 @@ export const Articulo = sequelize.define('articulos', {
 ArticuloCategoria.hasMany(Articulo, { foreignKey: 'categoria', as: 'articulos', onDelete: 'RESTRICT' })
 Articulo.belongsTo(ArticuloCategoria, { foreignKey: 'categoria', as: 'categoria1' })
 
-ArticuloLinea.hasMany(Articulo, { foreignKey: 'produccion_tipo', as: 'articulos', onDelete: 'RESTRICT' })
-Articulo.belongsTo(ArticuloLinea, { foreignKey: 'produccion_tipo', as: 'produccion_tipo1' })
+ArticuloLinea.hasMany(Articulo, { foreignKey: 'linea', as: 'articulos', onDelete: 'RESTRICT' })
+Articulo.belongsTo(ArticuloLinea, { foreignKey: 'linea', as: 'linea1' })
 
 Colaborador.hasMany(Articulo, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
 Articulo.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })

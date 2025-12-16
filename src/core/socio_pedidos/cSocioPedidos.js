@@ -396,7 +396,7 @@ const terminar = async (req, res) => {
 const findPendientes = async (req, res) => {
     try {
         const { empresa } = req.user
-        const { socio, produccion_tipo } = req.query
+        const { socio, linea } = req.query
 
         const qry = {
             fltr: {
@@ -414,7 +414,7 @@ const findPendientes = async (req, res) => {
         }
 
         if (socio && socio !== 'null') qry.fltr['socio_pedido1.socio'] = { op: 'Es', val: socio }
-        if (produccion_tipo && produccion_tipo !== 'null') qry.fltr['articulo1.produccion_tipo'] = { op: 'Es', val: produccion_tipo }
+        if (linea && linea !== 'null') qry.fltr['articulo1.linea'] = { op: 'Es', val: linea }
 
         const pedidos = await SocioPedidoItemRepo.find(qry, true)
 

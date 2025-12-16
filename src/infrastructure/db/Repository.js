@@ -61,9 +61,9 @@ export const models = {
 }
 
 const include1 = {
-    produccion_tipo1: {
+    linea1: {
         model: ArticuloLinea,
-        as: 'produccion_tipo1',
+        as: 'linea1',
         attributes: ['id', 'nombre']
     },
     tipo1: {
@@ -157,7 +157,7 @@ const include1 = {
     transaccion1: {
         model: Transaccion,
         as: 'transaccion1',
-        attributes: ['id', 'socio', 'guia', 'factura'],
+        attributes: ['id', 'fecha', 'socio', 'guia', 'factura'],
         required: false,
     },
     transaccion_items: {

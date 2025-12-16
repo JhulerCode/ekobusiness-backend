@@ -59,7 +59,7 @@ const create = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
         } = req.body
@@ -72,7 +72,7 @@ const create = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
             empresa,
@@ -96,7 +96,7 @@ const update = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
         } = req.body
@@ -109,7 +109,7 @@ const update = async (req, res) => {
             codigo, codigo_barra, nombre, unidad, marca,
             vende, has_fv, activo,
             igv_afectacion,
-            tipo, categoria, mp_tipo, produccion_tipo, filtrantes, contenido_neto,
+            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
             is_combo, combo_articulos,
             is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
             updatedBy: colaborador
@@ -202,8 +202,8 @@ const createBulk = async (req, res) => {
             igv_afectacion: a.Tributo,
 
             tipo,
+            linea: a.Linea,
             categoria: a.Categoria,
-            produccion_tipo: a.Tipo_produccion,
             filtrantes: a.Sobres_caja,
             is_combo: false,
 
@@ -256,7 +256,7 @@ const updateBulk = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    const data = await repository.find({ id, incl: ['categoria1', 'produccion_tipo1'] }, true)
+    const data = await repository.find({ id, incl: ['categoria1', 'linea1'] }, true)
 
     if (data) {
         const estadosMap = cSistema.arrayMap('estados')
