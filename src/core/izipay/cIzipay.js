@@ -2,7 +2,7 @@ import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import { checkHash, createFormToken, cancelPaymentMethodToken } from "#infrastructure/izipay.js"
 import { genId } from '#shared/mine.js'
-import cSistema from '../_sistema/cSistema.js'
+import { sistemaData } from '#store/system.js'
 
 import config from '../../config.js'
 import { nodeMailer } from "#mail/nodeMailer.js"
@@ -115,7 +115,7 @@ const validatePayment = async (req, res) => {
 
     // ----- ENVIAR CORREO ----- //
     let send_email_err = null
-    const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
+    const entrega_tipo1 = sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
     const html = htmlConfirmacionCompra(
         socio_datos.nombres, socio_datos.apellidos,
         codigo, entrega_tipo1, monto,
@@ -124,7 +124,7 @@ const validatePayment = async (req, res) => {
 
     const nodemailer = nodeMailer()
     const result = await nodemailer.sendMail({
-        from: `${cSistema.sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
+        from: `${sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
         to: socio_datos.correo,
         subject: `Confirmación de compra - Código ${codigo}`,
         html

@@ -1,14 +1,9 @@
 import { Router } from "express"
-import controller from "../socios/cSocios.js"
+import controller from "./cAccounts.js"
 
 const router = Router()
 
-router.post('/register', controller.createUser)
-router.post('/login', controller.signin)
-
-router.get('/verify', controller.login)
-router.patch('/:id', controller.update)
-
+router.get('/login', controller.login)
 router.patch('/:id', controller.update)
 router.post('/send-codigo', controller.sendCodigo)
 router.post('/verify-codigo', controller.verifyCodigo)

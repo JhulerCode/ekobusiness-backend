@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
@@ -15,7 +15,7 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const estadosMap = cSistema.arrayMap('estados')
+            const estadosMap = arrayMap('estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
@@ -161,7 +161,7 @@ async function loadOne(id) {
     const data = await repository.find({ id }, true)
 
     if (data) {
-        const estadosMap = cSistema.arrayMap('estados')
+        const estadosMap = arrayMap('estados')
 
         data.activo1 = estadosMap[data.activo]
         data.is_destacado1 = estadosMap[data.is_destacado]

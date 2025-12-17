@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('PrecioLista')
@@ -14,7 +14,7 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const estadosMap = cSistema.arrayMap('estados')
+            const estadosMap = arrayMap('estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
@@ -110,7 +110,7 @@ async function loadOne(id) {
     const data = await repository.find({ id, incl: ['moneda1'] }, true)
 
     if (data) {
-        const estadosMap = cSistema.arrayMap('estados')
+        const estadosMap = arrayMap('estados')
 
         data.activo1 = estadosMap[data.activo]
     }

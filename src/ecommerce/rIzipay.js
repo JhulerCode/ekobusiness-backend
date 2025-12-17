@@ -1,5 +1,5 @@
 import { Router } from "express"
-import controller from "../izipay/cIzipay.js"
+import controller from "#core/izipay/cIzipay.js"
 
 const router = Router()
 

@@ -6,9 +6,8 @@ import { Articulo } from '#db/models/Articulo.js'
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
 import { Maquina } from '#db/models/Maquina.js'
 import { Colaborador } from '#db/models/Colaborador.js'
-// import { CuarentenaProducto } from '#db/models/CuarentenaProducto.js'
-import { existe, applyFilters } from '#shared/mine.js'
-import cSistema from "../_sistema/cSistema.js"
+import { applyFilters } from '#shared/mine.js'
+import { arrayMap } from '#store/system.js'
 
 const includes = {
     transaccion_item1: {
@@ -237,11 +236,11 @@ async function loadOne(id, transaccion_item, produccion_orden, transaccion, cuar
     if (data) {
         data = data.toJSON()
 
-        const conformidad_estadosMap = cSistema.arrayMap('conformidad_estados')
-        const cf_re_bpm_20_coloresMap = cSistema.arrayMap('cf_re_bpm_20_colores')
-        const cf_re_bpm_20_estadosMap = cSistema.arrayMap('cf_re_bpm_20_estados')
-        const estadosMap = cSistema.arrayMap('estados')
-        const cf_re_bpm_31_tiposMap = cSistema.arrayMap('cf_re_bpm_31_tipos')
+        const conformidad_estadosMap = arrayMap('conformidad_estados')
+        const cf_re_bpm_20_coloresMap = arrayMap('cf_re_bpm_20_colores')
+        const cf_re_bpm_20_estadosMap = arrayMap('cf_re_bpm_20_estados')
+        const estadosMap = arrayMap('estados')
+        const cf_re_bpm_31_tiposMap = arrayMap('cf_re_bpm_31_tipos')
 
         for (const b of data.values) {
             data[b.id] = b.value
@@ -308,11 +307,11 @@ const find = async (req, res) => {
         if (data.length > 0) {
             data = data.map(a => a.toJSON())
 
-            const conformidad_estadosMap = cSistema.arrayMap('conformidad_estados')
-            const cf_re_bpm_20_coloresMap = cSistema.arrayMap('cf_re_bpm_20_colores')
-            const cf_re_bpm_20_estadosMap = cSistema.arrayMap('cf_re_bpm_20_estados')
-            const estadosMap = cSistema.arrayMap('estados')
-            const cf_re_bpm_31_tiposMap = cSistema.arrayMap('cf_re_bpm_31_tipos')
+            const conformidad_estadosMap = arrayMap('conformidad_estados')
+            const cf_re_bpm_20_coloresMap = arrayMap('cf_re_bpm_20_colores')
+            const cf_re_bpm_20_estadosMap = arrayMap('cf_re_bpm_20_estados')
+            const estadosMap = arrayMap('estados')
+            const cf_re_bpm_31_tiposMap = arrayMap('cf_re_bpm_31_tipos')
 
             for (const a of data) {
                 for (const b of a.values) {

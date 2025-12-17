@@ -1,4 +1,4 @@
-import { calidad_formatos } from '../_sistema/cSistema.js'
+import { calidad_formatos } from '#store/calidadFormatos.js'
 
 const find = async (req, res) => {
     try {

@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import dayjs from '#shared/dayjs.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
@@ -15,7 +15,7 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const estadosMap = cSistema.arrayMap('caja_apertura_estados')
+            const estadosMap = arrayMap('caja_apertura_estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('estado')) a.estado1 = estadosMap[a.estado]
@@ -104,7 +104,7 @@ async function loadOne(id) {
     let data = await repository.find({ id }, true)
 
     if (data) {
-        const estadosMap = cSistema.arrayMap('caja_apertura_estados')
+        const estadosMap = arrayMap('caja_apertura_estados')
 
         data.estado1 = estadosMap[data.estado]
     }

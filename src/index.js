@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import config from './config.js'
 import routes from '#http/routes.js'
+import routesEcommerce from '#http/routesEcommerce.js'
 
 const app = express()
 
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }))
 
 // ----- RUTAS -----//
 app.use(routes)
+app.use(routesEcommerce)
 
 // ----- START SERVER -----//
 const PORT = config.PORT || 4000

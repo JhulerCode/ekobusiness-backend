@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('CajaMovimiento')
@@ -14,7 +14,7 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
+            const comprobante_tiposMap = arrayMap('comprobante_tipos')
 
             for (const a of data) {
                 if (qry?.cols?.includes('comprobante_tipo')) a.comprobante_tipo1 = comprobante_tiposMap[a.comprobante_tipo]
@@ -91,7 +91,7 @@ async function loadOne(id) {
     let data = await repository.find({ id }, true)
 
     if (data) {
-        const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
+        const comprobante_tiposMap = arrayMap('comprobante_tipos')
 
         data.comprobante_tipo1 = comprobante_tiposMap[data.comprobante_tipo]
     }

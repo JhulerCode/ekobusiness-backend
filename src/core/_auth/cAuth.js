@@ -1,12 +1,11 @@
 import bcrypt from 'bcrypt'
 import config from "../../config.js"
 import jat from '#shared/jat.js'
-import { guardarSesion, borrarSesion, obtenerEmpresa, guardarEmpresa, empresasStore, sessionStore } from './sessions.js'
+import { guardarSesion, borrarSesion, sessionStore } from '#store/sessions.js'
+import { obtenerEmpresa, guardarEmpresa, empresasStore } from '#store/empresas.js'
 
-import { Router } from "express"
 import { Repository } from '#db/Repository.js'
 
-const router = Router()
 const EmpresaRepository = new Repository('Empresa')
 const ColaboradorRepository = new Repository('Colaborador')
 
@@ -95,9 +94,9 @@ const getSessions = async (req, res) => {
     }
 }
 
-router.post('/', signin)
-router.post('/logout', logout)
-router.get('/empresas', getEmpresas)
-router.get('/sessions', getSessions)
-
-export default router
+export default {
+    signin,
+    logout,
+    getEmpresas,
+    getSessions,
+}

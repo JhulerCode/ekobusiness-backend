@@ -1,12 +1,12 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import { resUpdateFalse } from '#http/helpers.js'
 
 const repository = new Repository('Transaccion')
 const TransaccionItemRepo = new Repository('TransaccionItem')
 const KardexRepo = new Repository('Kardex')
-const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
+// const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
 
 const find = async (req, res) => {
     try {
@@ -18,8 +18,8 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-            const transaccion_estadosMap = cSistema.arrayMap('transaccion_estados')
+            const pago_condicionesMap = arrayMap('pago_condiciones')
+            const transaccion_estadosMap = arrayMap('transaccion_estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
@@ -302,8 +302,8 @@ async function loadOne(id) {
     const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'socio_pedido1'] }, true)
 
     if (data) {
-        const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-        const transaccion_estadosMap = cSistema.arrayMap('transaccion_estados')
+        const pago_condicionesMap = arrayMap('pago_condiciones')
+        const transaccion_estadosMap = arrayMap('transaccion_estados')
 
         data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
         data.estado1 = transaccion_estadosMap[data.estado]

@@ -1,6 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
-import cSistema from "../_sistema/cSistema.js"
+import { sistemaData } from '#store/system.js'
+import { arrayMap } from '#store/system.js'
 import { resUpdateFalse } from '#http/helpers.js'
 
 import config from '../../config.js'
@@ -22,11 +23,11 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
-            const estadoMap = cSistema.arrayMap('estados')
-            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+            const pedido_estadosMap = arrayMap('pedido_estados')
+            const estadoMap = arrayMap('estados')
+            const entrega_tiposMap = arrayMap('entrega_tipos')
+            const pago_condicionesMap = arrayMap('pago_condiciones')
+            const pago_metodosMap = arrayMap('pago_metodos')
 
             for (const a of data) {
                 if (qry?.cols?.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
@@ -56,13 +57,13 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, ...qry }, true)
 
         if (data) {
-            const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
-            const estadoMap = cSistema.arrayMap('estados')
-            const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
-            const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-            const pago_metodosMap = cSistema.arrayMap('pago_metodos')
-            const comprobante_tiposMap = cSistema.arrayMap('comprobante_tipos')
-            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
+            const pedido_estadosMap = arrayMap('pedido_estados')
+            const estadoMap = arrayMap('estados')
+            const entrega_tiposMap = arrayMap('entrega_tipos')
+            const pago_condicionesMap = arrayMap('pago_condiciones')
+            const pago_metodosMap = arrayMap('pago_metodos')
+            const comprobante_tiposMap = arrayMap('comprobante_tipos')
+            const documentos_identidadMap = arrayMap('documentos_identidad')
 
             data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
 
@@ -139,7 +140,7 @@ const create = async (req, res) => {
         let send_email_err = null
         if (origin == 'ecommerce') {
             // console.log('Enviando correo')
-            const entrega_tipo1 = cSistema.sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
+            const entrega_tipo1 = sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
             const html = htmlConfirmacionCompra(
                 socio_datos.nombres, socio_datos.apellidos,
                 codigo, entrega_tipo1, monto,
@@ -147,7 +148,7 @@ const create = async (req, res) => {
             )
             const nodemailer = nodeMailer()
             const result = await nodemailer.sendMail({
-                from: `${cSistema.sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
+                from: `${sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
                 to: socio_datos.correo,
                 subject: `Confirmación de compra - Código ${codigo}`,
                 html
@@ -492,11 +493,11 @@ async function loadOne(id) {
     const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'createdBy1'] }, true)
 
     if (data) {
-        const pedido_estadosMap = cSistema.arrayMap('pedido_estados')
-        const estadoMap = cSistema.arrayMap('estados')
-        const entrega_tiposMap = cSistema.arrayMap('entrega_tipos')
-        const pago_condicionesMap = cSistema.arrayMap('pago_condiciones')
-        const pago_metodosMap = cSistema.arrayMap('pago_metodos')
+        const pedido_estadosMap = arrayMap('pedido_estados')
+        const estadoMap = arrayMap('estados')
+        const entrega_tiposMap = arrayMap('entrega_tipos')
+        const pago_condicionesMap = arrayMap('pago_condiciones')
+        const pago_metodosMap = arrayMap('pago_metodos')
 
         data.estado1 = pedido_estadosMap[data.estado]
         data.pagado1 = estadoMap[data.pagado]

@@ -1,17 +1,10 @@
 import { Repository } from '#db/Repository.js'
-import { obtenerEmpresa, empresasStore } from '../_signin/sessions.js'
 import { resUpdateFalse } from '#http/helpers.js'
 
 const repository = new Repository('Empresa')
 
 const findById = async (req, res) => {
     try {
-        const { id } = req.params
-
-        // const data = await repository.find({ id })
-        // const data = obtenerEmpresa(id)
-        // console.log(data)
-        // console.log(empresasStore)
         const data = req.empresa
 
         res.json({ code: 0, data })

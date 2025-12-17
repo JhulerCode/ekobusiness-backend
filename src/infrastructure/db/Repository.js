@@ -27,7 +27,7 @@ import { Transaccion, TransaccionItem } from '#db/models/Transaccion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
 
 import { applyFilters } from '#db/helpers.js'
-import cSistema from "#core/_sistema/cSistema.js"
+import { sistemaData } from '#store/system.js'
 
 export const models = {
     Empresa,
@@ -170,7 +170,7 @@ const sqls1 = {
     // lote_padre_movimientos_cantidad1: [
     //     Sequelize.literal(`(
     //         SELECT SUM(
-    //             CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+    //             CASE ${sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
     //             ELSE 0 END
     //         )
     //         FROM kardexes AS lote_padre_items
@@ -182,7 +182,7 @@ const sqls1 = {
         Sequelize.fn('COALESCE',
             Sequelize.fn('SUM',
                 Sequelize.literal(`
-                    CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN kardexes.tipo = ${t.id} THEN kardexes.cantidad * ${t.operacion}`).join(' ')}
+                    CASE ${sistemaData.transaccion_tipos.map(t => `WHEN kardexes.tipo = ${t.id} THEN kardexes.cantidad * ${t.operacion}`).join(' ')}
                     ELSE 0 END
                     `)
             ), 0
@@ -193,7 +193,7 @@ const sqls1 = {
         Sequelize.fn('COALESCE',
             Sequelize.fn('SUM',
                 Sequelize.literal(`
-                        CASE ${cSistema.sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+                        CASE ${sistemaData.transaccion_tipos.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
                         ELSE 0 END
                     `)
             ), 0

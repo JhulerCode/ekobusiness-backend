@@ -1,5 +1,5 @@
 import { Router } from "express"
-import controller from "../libro_reclamos/cLibroReclamos.js"
+import controller from "#core/libro_reclamos/cLibroReclamos.js"
 
 const router = Router()
 

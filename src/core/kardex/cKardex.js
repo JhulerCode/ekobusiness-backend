@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import sequelize from '#db/sequelize.js'
 import { cleanFloat } from '#shared/mine.js'
 import { resUpdateFalse } from '#http/helpers.js'
@@ -19,9 +19,9 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
-            const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
-            const estadosMap = cSistema.arrayMap('estados')
+            const transaccion_tiposMap = arrayMap('transaccion_tipos')
+            const cuarentena_productos_estadosMap = arrayMap('cuarentena_productos_estados')
+            const estadosMap = arrayMap('estados')
 
             for (const a of data) {
                 //--- Datos del lote padre ---//
@@ -99,7 +99,7 @@ const create = async (req, res) => {
             createdBy: colaborador
         }, transaction)
 
-        const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
+        const transaccion_tiposMap = arrayMap('transaccion_tipos')
         const tipoInfo = transaccion_tiposMap[tipo]
 
         // ----- ACTUALIZAR STOCK ---
@@ -120,7 +120,7 @@ const create = async (req, res) => {
             data.cantidad = tipoInfo.operacion * data.cantidad
 
             if (tipo == 4) {
-                const cuarentena_productos_estadosMap = cSistema.arrayMap('cuarentena_productos_estados')
+                const cuarentena_productos_estadosMap = arrayMap('cuarentena_productos_estados')
                 data.producto_estado = 1
                 data.producto_estado1 = cuarentena_productos_estadosMap[data.producto_estado]
             }
@@ -183,7 +183,7 @@ const delet = async (req, res) => {
 
         // ----- ACTUALIZAR STOCK ---
         if (lote_padre) {
-            const transaccion_tiposMap = cSistema.arrayMap('transaccion_tipos')
+            const transaccion_tiposMap = arrayMap('transaccion_tipos')
             const tipoInfo = transaccion_tiposMap[tipo]
             const signo = tipoInfo.operacion == 1 ? '-' : '+'
             const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)

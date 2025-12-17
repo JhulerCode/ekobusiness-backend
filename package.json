@@ -12,6 +12,8 @@
   },
   "imports": {
     "#core/*": "./src/core/*",
+    "#ecommerce/*": "./src/ecommerce/*",
+    "#store/*": "./src/store/*",
     "#infrastructure/*": "./src/infrastructure/*",
     "#db/*": "./src/infrastructure/db/*",
     "#http/*": "./src/infrastructure/http/*",

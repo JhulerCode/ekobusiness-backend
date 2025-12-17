@@ -1,7 +1,7 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import bcrypt from 'bcrypt'
-import { borrarSesion, actualizarSesion } from '../_signin/sessions.js'
+import { borrarSesion, actualizarSesion } from '#store/sessions.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Colaborador')
@@ -16,9 +16,9 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const generosMap = cSistema.arrayMap('generos')
-            const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
-            const estadosMap = cSistema.arrayMap('estados')
+            const generosMap = arrayMap('generos')
+            const documentos_identidadMap = arrayMap('documentos_identidad')
+            const estadosMap = arrayMap('estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('sexo')) a.sexo1 = generosMap[a.sexo]
@@ -201,9 +201,9 @@ async function loadOne(id) {
     let data = await repository.find({ id }, true)
 
     if (data) {
-        const generosMap = cSistema.arrayMap('generos')
-        const documentos_identidadMap = cSistema.arrayMap('documentos_identidad')
-        const estadosMap = cSistema.arrayMap('estados')
+        const generosMap = arrayMap('generos')
+        const documentos_identidadMap = arrayMap('documentos_identidad')
+        const estadosMap = arrayMap('estados')
 
         data.sexo1 = generosMap[data.sexo]
         data.doc_tipo1 = documentos_identidadMap[data.doc_tipo]

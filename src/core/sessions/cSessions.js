@@ -1,4 +1,4 @@
-import { sessionStore } from '../_signin/sessions.js'
+import { sessionStore } from '#store/sessions.js'
 
 const find = async (req, res) => {
     try {

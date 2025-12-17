@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
-import verifyVersion from './middlewares/verifyVersion.js'
-import verifyToken from './middlewares/verifyToken.js'
+import verifyVersion from '#http/middlewares/verifyVersion.js'
+import verifyToken from '#http/middlewares/verifyToken.js'
 
-import signin from '#core/_signin/signin.js'
+import auth from '#core/_auth/rAuth.js'
 import sistema from '#core/_sistema/rSistema.js'
 import empresas from '#core/empresas/rEmpresas.js'
 
@@ -33,19 +33,7 @@ import socios from '#core/socios/rSocios.js'
 import tipo_cambios from '#core/tipo_cambios/rTipoCambios.js'
 import transacciones from '#core/transacciones/rTransacciones.js'
 import transaccion_items from '#core/transaccion_items/rTransaccionItems.js'
-
-import store_lineas from '#core/store/rArticuloLineas.js'
-import store_categorias from '#core/store/rArticuloCategorias.js'
-import store_articulos from '#core/store/rArticulos.js'
-import store_socios from '#core/store/rSocios.js'
-import store_arcos from '#core/store/rArco.js'
-import libro_reclamos from '#core/store/rLibroReclamos.js'
-import store_auth from '#core/store/rAuth.js'
-import izipay from '#core/store/rIzipay.js'
-import store_socio_pedidos from '#core/store/rSocioPedidos.js'
 import ubigeos from '#core/ubigeos/rUbigeos.js'
-
-// import socios1 from '#core/socios/infrastructure/http/SocioRoutes.js'
 
 const router = Router()
 
@@ -53,10 +41,10 @@ router.get('/', (req, res) => {
     res.send(`Eko Business's server is running`)
 })
 
-router.use('/signin', verifyVersion, signin)
 router.use('/api', verifyVersion)
-router.use('/api', verifyToken)
+router.use('/api/auth', auth)
 
+router.use('/api', verifyToken)
 router.use('/api/sistema', sistema)
 router.use('/api/empresas', empresas)
 
@@ -87,20 +75,5 @@ router.use('/api/tipo_cambios', tipo_cambios)
 router.use('/api/transacciones', transacciones)
 router.use('/api/transaccion_items', transaccion_items)
 router.use('/api/ubigeos', ubigeos)
-
-router.use('/store/sistema', sistema)
-router.use('/store/lineas', store_lineas)
-router.use('/store/categorias', store_categorias)
-router.use('/store/productos', store_articulos)
-router.use('/store/insumos', store_articulos)
-router.use('/store/newsletter', store_socios)
-router.use('/store/arco', store_arcos)
-router.use('/store/libro-reclamos', libro_reclamos)
-router.use('/store/ubigeos', ubigeos)
-router.use('/store/izipay', izipay)
-router.use('/store/socio-pedidos', store_socio_pedidos)
-router.use('/store/auth', store_auth)
-router.use('/store/account', verifyToken)
-router.use('/store/account', store_auth)
 
 export default router

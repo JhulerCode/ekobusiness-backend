@@ -1,5 +1,5 @@
 import { Router } from "express"
-import controller from "../articulo_lineas/cArticuloLineas.js"
+import controller from "#core/articulos/cArticulos.js"
 
 const router = Router()
 

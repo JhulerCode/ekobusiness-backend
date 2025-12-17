@@ -1,6 +1,7 @@
 import jat from "#shared/jat.js"
 import config from "../../../config.js"
-import { obtenerSesion, obtenerEmpresa } from "#core/_signin/sessions.js"
+import { obtenerSesion } from "#store/sessions.js"
+import { obtenerEmpresa } from "#store/empresas.js"
 
 async function verifyToken(req, res, next) {
     const authorization = req.headers['authorization']

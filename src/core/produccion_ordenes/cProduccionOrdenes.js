@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from '../_sistema/cSistema.js'
+import { arrayMap } from '#store/system.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('ProduccionOrden')
@@ -15,8 +15,8 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const produccion_orden_estadosMap = cSistema.arrayMap('produccion_orden_estados')
-            const cumplidado_estadosMap = cSistema.arrayMap('cumplidado_estados')
+            const produccion_orden_estadosMap = arrayMap('produccion_orden_estados')
+            const cumplidado_estadosMap = arrayMap('cumplidado_estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('estado')) a.estado1 = produccion_orden_estadosMap[a.estado]
@@ -203,7 +203,7 @@ async function loadOne(id) {
     const data = await repository.find({ id, incl: ['articulo1', 'maquina1'] }, true)
 
     if (data) {
-        const produccion_orden_estadosMap = cSistema.arrayMap('produccion_orden_estados')
+        const produccion_orden_estadosMap = arrayMap('produccion_orden_estados')
 
         data.estado1 = produccion_orden_estadosMap[data.estado]
     }

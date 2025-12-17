@@ -1,5 +1,5 @@
 import { Repository } from '#db/Repository.js'
-import cSistema from "../_sistema/cSistema.js"
+import { arrayMap } from '#store/system.js'
 import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
@@ -21,8 +21,8 @@ const find = async (req, res) => {
         let data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const estadosMap = cSistema.arrayMap('estados')
-            const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
+            const estadosMap = arrayMap('estados')
+            const igv_afectacionesMap = arrayMap('igv_afectaciones')
 
             for (const a of data) {
                 if (qry?.cols?.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
@@ -259,8 +259,8 @@ async function loadOne(id) {
     const data = await repository.find({ id, incl: ['categoria1', 'linea1'] }, true)
 
     if (data) {
-        const estadosMap = cSistema.arrayMap('estados')
-        const igv_afectacionesMap = cSistema.arrayMap('igv_afectaciones')
+        const estadosMap = arrayMap('estados')
+        const igv_afectacionesMap = arrayMap('igv_afectaciones')
 
         data.has_fv1 = estadosMap[data.has_fv]
         data.activo1 = estadosMap[data.activo]
