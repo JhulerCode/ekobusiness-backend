@@ -238,7 +238,7 @@ const update = async (req, res) => {
             observacion, estado,
         } = req.body
 
-        const updated = await repository.update(id, {
+        const updated = await repository.update({ id }, {
             tipo, fecha,
             socio_pedido, socio, guia, factura,
             pago_condicion, moneda, tipo_cambio, monto,
