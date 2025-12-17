@@ -168,6 +168,16 @@ const delet = async (req, res) => {
     }
 }
 
+
+const login = async (req, res) => {
+    try {
+        res.json({ code: 0, data: { ...req.user } })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const preferencias = async (req, res) => {
     try {
         const { id } = req.params
@@ -186,9 +196,37 @@ const preferencias = async (req, res) => {
     }
 }
 
-const login = async (req, res) => {
+const tables = async (req, res) => {
     try {
-        res.json({ code: 0, data: { ...req.user } })
+        const { id } = req.params
+        const { tables } = req.body
+
+        console.log(id)
+        const updated = await repository.update({ id }, { tables })
+        console.log('ASD1')
+        if (updated == false) return resUpdateFalse(res)
+        console.log('ASD2')
+        actualizarSesion(id, { tables })
+
+        res.json({ code: 0 })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const avances = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { avances } = req.body
+
+        const updated = await repository.update({ id }, { avances })
+
+        if (updated == false) return resUpdateFalse(res)
+
+        actualizarSesion(id, { avances })
+
+        res.json({ code: 0 })
     }
     catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -221,6 +259,8 @@ export default {
     update,
     delet,
 
-    preferencias,
     login,
+    preferencias,
+    tables,
+    avances,
 }
