@@ -27,17 +27,17 @@ export const Colaborador = sequelize.define('colaboradores', {
     contrasena: { type: DataTypes.STRING }, //required
     permisos: { type: DataTypes.JSON }, //required
     vista_inicial: { type: DataTypes.STRING },
-    
+
     lastSignin: { type: DataTypes.DATE },
     lastUpdatePassword: { type: DataTypes.DATE },
-    
+
     theme: { type: DataTypes.STRING, defaultValue: '1' },
     color: { type: DataTypes.STRING, defaultValue: '#2492c2' },
     format_date: { type: DataTypes.STRING, defaultValue: 'DD-MM-YYYY' },
     menu_visible: { type: DataTypes.BOOLEAN, defaultValue: true },
 
-    tables: { type: DataTypes.JSON, defaultValue: [] },
-    avances: { type: DataTypes.JSON, defaultValue: [] },
+    tables: { type: DataTypes.JSON, defaultValue: {} },
+    avances: { type: DataTypes.JSON, defaultValue: {} },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
