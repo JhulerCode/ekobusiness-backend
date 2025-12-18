@@ -201,11 +201,8 @@ const tables = async (req, res) => {
         const { id } = req.params
         const { tables } = req.body
 
-        console.log(id)
         const updated = await repository.update({ id }, { tables })
-        console.log('ASD1')
         if (updated == false) return resUpdateFalse(res)
-        console.log('ASD2')
         actualizarSesion(id, { tables })
 
         res.json({ code: 0 })

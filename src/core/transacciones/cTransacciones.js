@@ -121,8 +121,8 @@ const create = async (req, res) => {
                 pu: a.pu,
                 igv_afectacion: a.igv_afectacion,
                 igv_porcentaje: a.igv_porcentaje,
-                moneda: a.moneda,
-                tipo_cambio: a.tipo_cambio,
+                moneda,
+                tipo_cambio,
 
                 lote: a.lote,
                 fv: a.fv,
