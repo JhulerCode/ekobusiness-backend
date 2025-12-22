@@ -74,11 +74,11 @@ const signin = async (req, res) => {
             cols: { exclude: [] }
         }
         const data = await repository.find(qry, true)
-        if (data.length > 0) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+        if (data.length == 0) return res.json({ code: 1, msg: 'Correo o contraseña incorrecta' })
 
         const cliente = data[0]
         const correct = await bcrypt.compare(contrasena, cliente.contrasena)
-        if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+        if (!correct) return res.json({ code: 1, msg: 'Correo o contraseña incorrecta' })
 
         //--- GUARDAR SESSION ---//
         const token = jat.encrypt({ id: cliente.id }, config.tokenMyApi)

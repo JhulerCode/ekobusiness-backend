@@ -1,5 +1,6 @@
 import { Router } from 'express'
 
+import addEmpresaId from '#http/middlewares/addEmpresaId.js'
 import verifyToken from '#http/middlewares/verifyToken.js'
 
 import sistema from '#core/_sistema/rSistema.js'
@@ -20,15 +21,15 @@ const router = Router()
 
 router.use('/ecommerce/sistema', sistema)
 
-router.use('/ecommerce/lineas', lineas)
-router.use('/ecommerce/categorias', categorias)
-router.use('/ecommerce/productos', articulos)
-router.use('/ecommerce/insumos', articulos)
+router.use('/ecommerce/lineas', addEmpresaId, lineas)
+router.use('/ecommerce/categorias', addEmpresaId, categorias)
+router.use('/ecommerce/productos', addEmpresaId, articulos)
+router.use('/ecommerce/insumos', addEmpresaId, articulos)
 router.use('/ecommerce/arco', derecho_arcos)
-router.use('/ecommerce/izipay', izipay)
+router.use('/ecommerce/izipay', addEmpresaId, izipay)
 router.use('/ecommerce/libro-reclamos', libro_reclamos)
-router.use('/ecommerce/socio_pedidos', socio_pedidos)
-router.use('/ecommerce/ubigeos', ubigeos)
+router.use('/ecommerce/pedidos', addEmpresaId, socio_pedidos)
+router.use('/ecommerce/ubigeos', addEmpresaId, ubigeos)
 router.use('/ecommerce/auth', auth)
 
 router.use('/ecommerce', verifyToken)

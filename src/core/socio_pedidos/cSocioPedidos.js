@@ -94,7 +94,7 @@ const create = async (req, res) => {
     try {
         const {
             tipo, origin, fecha, codigo,
-            socio, socio_datos, contacto, contacto_datos,
+            socio_datos, contacto, contacto_datos,
             moneda, tipo_cambio, monto,
             entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
             pago_condicion, pago_metodo, pago_id,
@@ -104,10 +104,17 @@ const create = async (req, res) => {
             socio_pedido_items,
         } = req.body
 
-        if (req.user) {
-            var { colaborador, empresa } = req.user
+        let { socio } = req.body
+        let colaborador, empresa
+
+        if (origin == 'ecommerce') {
+            if (!socio) socio = req.user.id
         }
-        // const colaborador = origin != 'ecommerce' ? req.user.colaborador : undefined
+        else {
+            colaborador = req.user.colaborador
+        }
+        empresa = req.user.empresa
+
         const etapas = [{ id: 1, fecha: dayjs() }]
 
         // ----- GUARDAR ----- //

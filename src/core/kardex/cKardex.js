@@ -339,23 +339,23 @@ const findReporteProduccion = async (req, res) => {
             recetaMap[r.articulo_principal].push(r)
         }
 
-        const insumos_esperados_obj = {};
+        const insumos_esperados_obj = {}
         for (const prod of data.produccion_mes) {
-            prod.cantidad = Number(prod.cantidad);
-            const receta = recetaMap[prod.id] || [];
+            prod.cantidad = Number(prod.cantidad)
+            const receta = recetaMap[prod.id] || []
 
             for (const r of receta) {
-                const total = r.cantidad * prod.cantidad;
+                const total = r.cantidad * prod.cantidad
 
                 if (!insumos_esperados_obj[r.articulo]) {
                     insumos_esperados_obj[r.articulo] = {
                         id: r.articulo,
                         nombre: r['articulo1.nombre'],
                         cantidad: 0
-                    };
+                    }
                 }
 
-                insumos_esperados_obj[r.articulo].cantidad += total;
+                insumos_esperados_obj[r.articulo].cantidad += total
             }
         }
 

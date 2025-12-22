@@ -76,6 +76,7 @@ const validatePayment = async (req, res) => {
         empresa_datos,
         socio_pedido_items,
     } = socio_pedido
+    const { empresa } = req.user
 
     if (!checkHash(clientAnswer, hash, hashKey)) {
         res.json({ code: 1, msg: "Payment hash mismatch!" });
