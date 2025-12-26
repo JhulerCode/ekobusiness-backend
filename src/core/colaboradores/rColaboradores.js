@@ -39,12 +39,14 @@ router.delete(
     controller.delet
 )
 
+router.get('/login', controller.login)
+
+router.get('/reload-user', controller.reloadUsuario)
+
 router.patch('/preferencias/:id', controller.preferencias)
 
 router.patch('/tables/:id', controller.tables)
 
 router.patch('/avances/:id', controller.avances)
-
-router.get('/login', controller.login)
 
 export default router

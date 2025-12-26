@@ -178,6 +178,18 @@ const login = async (req, res) => {
     }
 }
 
+const reloadUsuario = async (req, res) => {
+    try {
+        const { id } = req.user
+        const data = await loadOne(id)
+        actualizarSesion(id, data)
+        res.json({ code: 0, data })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const preferencias = async (req, res) => {
     try {
         const { id } = req.params
@@ -257,6 +269,7 @@ export default {
     delet,
 
     login,
+    reloadUsuario,
     preferencias,
     tables,
     avances,
