@@ -25,4 +25,9 @@ router.delete(
     controller.delet
 )
 
+router.post(
+    '/recalcular-entregados',
+    controller.recalcularEntregados
+)
+
 export default router

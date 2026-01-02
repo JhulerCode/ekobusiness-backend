@@ -2,6 +2,8 @@ import { Repository } from '#db/Repository.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('SocioPedidoItem')
+const TransaccionRepository = new Repository('Transaccion')
+const KardexRepository = new Repository('Kardex')
 
 const find = async (req, res) => {
     try {
@@ -99,6 +101,53 @@ const delet = async (req, res) => {
     }
 }
 
+const recalcularEntregados = async (req, res) => {
+    try {
+        const { empresa } = req.user
+        const { socio_pedido } = req.body
+
+        const qry = {
+            fltr: {
+                socio_pedido: { op: 'Es', val: socio_pedido },
+            },
+            cols: ['id', 'articulo'],
+        }
+        const socio_pedido_items = await repository.find(qry, true)
+
+        const qry1 = {
+            fltr: {
+                socio_pedido: { op: 'Es', val: socio_pedido },
+            },
+            cols: ['id'],
+        }
+        const transacciones = await TransaccionRepository.find(qry1, true)
+
+        const qry2 = {
+            fltr: {
+                transaccion: { op: 'Es', val: transacciones.map(d => d.id) },
+            },
+            cols: ['articulo', 'cantidad'],
+        }
+        const kardex = await KardexRepository.find(qry2, true)
+
+        const entregados = {}
+        for (const a of kardex) {
+            if (!entregados[a.articulo]) entregados[a.articulo] = 0
+            entregados[a.articulo] += Number(a.cantidad)
+        }
+
+        for (const a of socio_pedido_items) {
+            const entregado = entregados[a.articulo] ? entregados[a.articulo] : 0
+            await repository.update({ id: a.id }, { entregado })
+        }
+
+        res.json({ code: 0, socio_pedido_items, kardex, entregados })
+    }
+    catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 
 //--- Helpers ---//
 async function loadOne(id) {
@@ -112,4 +161,5 @@ export default {
     create,
     update,
     delet,
+    recalcularEntregados,
 }
