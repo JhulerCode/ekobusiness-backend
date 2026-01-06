@@ -46,14 +46,14 @@ const findById = async (req, res) => {
 const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
-        const { tipo, nombre, descripcion, activo } = req.body
+        const { tipo, nombre, descripcion, activo, is_destacado } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
         if (await repository.existe({ nombre, empresa }, res) == true) return
 
         //--- CREAR ---//
         const nuevo = await repository.create({
-            tipo, nombre, descripcion, activo,
+            tipo, nombre, descripcion, activo, is_destacado,
             empresa,
             createdBy: colaborador,
         })
@@ -71,14 +71,14 @@ const update = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const { id } = req.params
-        const { tipo, nombre, descripcion, activo } = req.body
+        const { tipo, nombre, descripcion, activo, is_destacado } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
         if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update({ id }, {
-            tipo, nombre, descripcion, activo,
+            tipo, nombre, descripcion, activo, is_destacado,
             updatedBy: colaborador
         })
 
