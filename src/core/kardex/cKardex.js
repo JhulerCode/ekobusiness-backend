@@ -19,7 +19,7 @@ const find = async (req, res) => {
         const data = await repository.find(qry, true)
 
         if (data.length > 0) {
-            const transaccion_tiposMap = arrayMap('transaccion_tipos')
+            const transaccion_tiposMap = arrayMap('kardex_operaciones')
             const cuarentena_productos_estadosMap = arrayMap('cuarentena_productos_estados')
             const estadosMap = arrayMap('estados')
 
@@ -99,7 +99,7 @@ const create = async (req, res) => {
             createdBy: colaborador
         }, transaction)
 
-        const transaccion_tiposMap = arrayMap('transaccion_tipos')
+        const transaccion_tiposMap = arrayMap('kardex_operaciones')
         const tipoInfo = transaccion_tiposMap[tipo]
 
         // ----- ACTUALIZAR STOCK ---
@@ -183,7 +183,7 @@ const delet = async (req, res) => {
 
         // ----- ACTUALIZAR STOCK ---
         if (lote_padre) {
-            const transaccion_tiposMap = arrayMap('transaccion_tipos')
+            const transaccion_tiposMap = arrayMap('kardex_operaciones')
             const tipoInfo = transaccion_tiposMap[tipo]
             const signo = tipoInfo.operacion == 1 ? '-' : '+'
             const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)

@@ -56,7 +56,7 @@ const sistemaData = {
         { id: 3, nombre: "Listo para entrega", descripcion: 'Tu pedido ya está preparado y listo para ser entregado o recogido.' },
         { id: 4, nombre: "Entregado", descripcion: 'La entrega se realizó con éxito.' },
     ],
-    transaccion_tipos: [
+    kardex_operaciones: [
         { id: '1', nombre: 'COMPRA', operacion: 1 },
         { id: '2', nombre: 'PRODUCCIÓN SALIDA', operacion: -1 },
         { id: '3', nombre: 'PRODUCCIÓN DEVOLUCIÓN', operacion: 1 },
