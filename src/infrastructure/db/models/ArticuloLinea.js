@@ -7,10 +7,10 @@ export const ArticuloLinea = sequelize.define('articulo_lineas', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     nombre: { type: DataTypes.STRING }, //required
     activo: { type: DataTypes.BOOLEAN }, //required
-
+    
+    is_ecommerce: { type: DataTypes.BOOLEAN, defaultValue: false },
     descripcion: { type: DataTypes.TEXT },
     fotos: { type: DataTypes.JSON, defaultValue: [] },
-    videos: { type: DataTypes.JSON, defaultValue: [] },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },

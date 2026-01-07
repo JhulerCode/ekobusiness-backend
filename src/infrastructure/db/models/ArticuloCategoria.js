@@ -8,6 +8,7 @@ export const ArticuloCategoria = sequelize.define('articulo_categorias', {
     nombre: { type: DataTypes.STRING }, //required
     activo: { type: DataTypes.BOOLEAN }, //required
 
+    is_ecommerce: { type: DataTypes.BOOLEAN, defaultValue: false },
     descripcion: { type: DataTypes.TEXT },
     is_destacado: { type: DataTypes.BOOLEAN, defaultValue: false },
     fotos: { type: DataTypes.JSON, defaultValue: [] },

@@ -20,6 +20,7 @@ const find = async (req, res) => {
             for (const a of data) {
                 if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
                 if (qry?.cols?.includes('is_destacado')) a.is_destacado1 = estadosMap[a.is_destacado]
+                if (qry?.cols?.includes('is_ecommerce')) a.is_ecommerce1 = estadosMap[a.is_ecommerce]
             }
         }
 
@@ -46,14 +47,14 @@ const findById = async (req, res) => {
 const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
-        const { tipo, nombre, descripcion, activo, is_destacado } = req.body
+        const { tipo, nombre, activo, is_ecommerce, descripcion, is_destacado } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
         if (await repository.existe({ nombre, empresa }, res) == true) return
 
         //--- CREAR ---//
         const nuevo = await repository.create({
-            tipo, nombre, descripcion, activo, is_destacado,
+            tipo, nombre, activo, is_ecommerce, descripcion, is_destacado,
             empresa,
             createdBy: colaborador,
         })
@@ -71,14 +72,14 @@ const update = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const { id } = req.params
-        const { tipo, nombre, descripcion, activo, is_destacado } = req.body
+        const { tipo, nombre, activo, is_ecommerce, descripcion, is_destacado } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
         if (await repository.existe({ nombre, id, empresa }, res) == true) return
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update({ id }, {
-            tipo, nombre, descripcion, activo, is_destacado,
+            tipo, nombre, activo, is_ecommerce, descripcion, is_destacado,
             updatedBy: colaborador
         })
 
@@ -162,6 +163,7 @@ async function loadOne(id) {
 
         data.activo1 = estadosMap[data.activo]
         data.is_destacado1 = estadosMap[data.is_destacado]
+        data.is_ecommerce1 = estadosMap[data.is_ecommerce]
     }
 
     return data

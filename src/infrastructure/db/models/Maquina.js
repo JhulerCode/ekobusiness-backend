@@ -11,6 +11,7 @@ export const Maquina = sequelize.define('maquinas', {
     fecha_compra: { type: DataTypes.DATEONLY }, //required
 
     linea: { type: DataTypes.STRING }, //required
+    orden: { type: DataTypes.INTEGER },
     velocidad: { type: DataTypes.DOUBLE },
     limpieza_tiempo: { type: DataTypes.DOUBLE },
 
