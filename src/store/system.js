@@ -64,6 +64,11 @@ const sistemaData = {
         { id: '5', nombre: 'VENTA', operacion: -1 },
         { id: '6', nombre: 'AJUSTE ENTRADA', operacion: 1 },
         { id: '7', nombre: 'AJUSTE SALIDA', operacion: -1 },
+        { id: '8', nombre: 'MAQUILA SALIDA', operacion: -1 },
+        { id: '9', nombre: 'MAQUILA ENTRADA', operacion: 1 },
+        { id: '10', nombre: 'ASIGNACIÓN A MÁQUINA', operacion: 1 },
+        { id: '11', nombre: 'DEVOLUCIÓN DE MÁQUINA', operacion: 1 },
+        { id: '12', nombre: 'DESCARTADO', operacion: 0 }
     ],
     transaccion_estados: [
         { id: '0', nombre: 'ANULADO' },
