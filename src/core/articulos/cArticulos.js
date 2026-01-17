@@ -186,9 +186,9 @@ const updateFotos = async (req, res) => {
 
 const createBulk = async (req, res) => {
     try {
+        const { colaborador, empresa } = req.user
         const { tipo, articulos } = req.body
-        const { colaborador } = req.user
-        // console.log(articulos)
+        
         const send = articulos.map(a => ({
             codigo_barra: a.EAN,
             nombre: a.Nombre,
@@ -207,6 +207,7 @@ const createBulk = async (req, res) => {
             filtrantes: a.Sobres_caja,
             is_combo: false,
 
+            empresa,
             createdBy: colaborador
         }))
 
@@ -224,7 +225,6 @@ const deleteBulk = async (req, res) => {
         const { ids } = req.body
 
         if (await repository.delete(ids) == false) return resDeleteFalse(res)
-
 
         res.json({ code: 0 })
     }

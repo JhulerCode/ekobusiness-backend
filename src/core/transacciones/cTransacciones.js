@@ -298,6 +298,7 @@ const delet = async (req, res) => {
 }
 
 
+// --- Helpers --- //
 async function loadOne(id) {
     const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'socio_pedido1'] }, true)
 
