@@ -8,6 +8,7 @@ router.get(
     '/',
     verifyPermiso([
         'vTipoCambios:listar',
+        'vCompras:crear',
         'vVentas:crear',
     ]),
     controller.find
