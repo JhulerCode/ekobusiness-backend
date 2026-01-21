@@ -64,7 +64,7 @@ const include1 = {
     linea1: {
         model: ArticuloLinea,
         as: 'linea1',
-        attributes: ['id', 'nombre']
+        attributes: ['id', 'nombre'],
     },
     // tipo1: {
     //     model: ArticuloLinea,
@@ -74,7 +74,7 @@ const include1 = {
     categoria1: {
         model: ArticuloCategoria,
         as: 'categoria1',
-        attributes: ['id', 'nombre']
+        attributes: ['id', 'nombre'],
     },
     articulo1: {
         model: Articulo,
@@ -84,7 +84,7 @@ const include1 = {
     colaborador1: {
         model: Colaborador,
         as: 'colaborador1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
     },
     createdBy1: {
         model: Colaborador,
@@ -110,8 +110,25 @@ const include1 = {
     lote_padre1: {
         model: Kardex,
         as: 'lote_padre1',
-        attributes: ['id', 'moneda', 'tipo_cambio', 'igv_afectacion', 'igv_porcentaje', 'pu', 'fv', 'lote', 'stock', 'lote_fv_stock'],
-        required: false
+        attributes: [
+            'id',
+            'moneda',
+            'tipo_cambio',
+            'igv_afectacion',
+            'igv_porcentaje',
+            'pu',
+            'fv',
+            'lote',
+            'stock',
+            'lote_fv_stock',
+        ],
+        required: false,
+    },
+    lote_padre2: {
+        model: Kardex,
+        as: 'lote_padre1',
+        attributes: [],
+        required: false,
     },
     maquina1: {
         model: Maquina,
@@ -122,12 +139,12 @@ const include1 = {
     moneda1: {
         model: Moneda,
         as: 'moneda1',
-        attributes: ['id', 'nombre']
+        attributes: ['id', 'nombre'],
     },
     precio_lista1: {
         model: PrecioLista,
         as: 'precio_lista1',
-        attributes: ['id', 'nombre', 'moneda']
+        attributes: ['id', 'nombre', 'moneda'],
     },
     produccion_orden1: {
         model: ProduccionOrden,
@@ -143,7 +160,7 @@ const include1 = {
     socio1: {
         model: Socio,
         as: 'socio1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
     },
     socio_pedido1: {
         model: SocioPedido,
@@ -178,34 +195,69 @@ const sqls1 = {
     //     )`),
     //     'movimientos'
     // ],
-    articulo_movimientos_cantidad: [
-        Sequelize.fn('COALESCE',
-            Sequelize.fn('SUM',
+
+    articulo_movimientos_valorizado: [
+        Sequelize.fn(
+            'COALESCE',
+            Sequelize.fn(
+                'SUM',
                 Sequelize.literal(`
-                    CASE ${sistemaData.kardex_operaciones.map(t => `WHEN kardexes.tipo = ${t.id} THEN kardexes.cantidad * ${t.operacion}`).join(' ')}
+                    CASE ${sistemaData.kardex_operaciones
+                        .map(
+                            (t) => `
+                            WHEN kardexes.tipo = ${t.id}
+                            THEN kardexes.cantidad * ${t.operacion} * COALESCE(\`kardexes->lote_padre1\`.pu, kardexes.pu) * COALESCE(\`kardexes->lote_padre1\`.tipo_cambio, kardexes.tipo_cambio)
+                        `,
+                        )
+                        .join(' ')}
                     ELSE 0 END
-                    `)
-            ), 0
+                `),
+            ),
+            0,
         ),
-        'cantidad'
+        'articulo_movimientos_valorizado',
+    ],
+    articulo_movimientos_cantidad: [
+        Sequelize.fn(
+            'COALESCE',
+            Sequelize.fn(
+                'SUM',
+                Sequelize.literal(`
+                    CASE ${sistemaData.kardex_operaciones
+                        .map(
+                            (t) => `
+                            WHEN kardexes.tipo = ${t.id}
+                            THEN kardexes.cantidad * ${t.operacion}`,
+                        )
+                        .join(' ')}
+                    ELSE 0 END
+                `),
+            ),
+            0,
+        ),
+        'cantidad',
     ],
     lote_padre_movimientos_cantidad: [
-        Sequelize.fn('COALESCE',
-            Sequelize.fn('SUM',
+        Sequelize.fn(
+            'COALESCE',
+            Sequelize.fn(
+                'SUM',
                 Sequelize.literal(`
-                        CASE ${sistemaData.kardex_operaciones.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+                        CASE ${sistemaData.kardex_operaciones.map((t) => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
                         ELSE 0 END
-                    `)
-            ), 0
+                    `),
+            ),
+            0,
         ),
-        'movimientos_cantidad'
+        'movimientos_cantidad',
     ],
-    articulo_stock: [Sequelize.literal(`(
+    articulo_stock: [
+        Sequelize.literal(`(
             SELECT COALESCE(SUM(k.stock), 0)
             FROM kardexes AS k
             WHERE k.articulo = articulos.id AND k.is_lote_padre = TRUE
         )`),
-        'stock'
+        'stock',
     ],
     productos_terminados: [
         Sequelize.literal(`(
@@ -213,7 +265,7 @@ const sqls1 = {
             FROM kardexes AS k
             WHERE k.produccion_orden = produccion_ordenes.id AND k.tipo = 4
         )`),
-        'productos_terminados'
+        'productos_terminados',
     ],
 }
 
@@ -223,7 +275,7 @@ export class Repository {
     }
 
     async find(qry, tojson = false) {
-        const columns = Object.keys(this.model.getAttributes());
+        const columns = Object.keys(this.model.getAttributes())
 
         const findProps = {
             include: [],
@@ -237,14 +289,14 @@ export class Repository {
                 findProps.include.push({
                     ...include1[a],
                     attributes: include1[a].attributes ? [...include1[a].attributes] : undefined,
-                    include: []
+                    include: [],
                 })
             }
         }
 
         if (qry?.iccl) {
             for (const [key, val] of Object.entries(qry.iccl)) {
-                const item = findProps.include.find(b => b.as === key);
+                const item = findProps.include.find((b) => b.as === key)
                 if (item) {
                     if (val.incl) {
                         for (const a of val.incl) {
@@ -262,9 +314,8 @@ export class Repository {
         if (qry?.cols) {
             if (qry.cols.exclude) {
                 findProps.attributes = { exclude: qry.cols.exclude }
-            }
-            else {
-                const cols1 = qry.cols.filter(a => columns.includes(a))
+            } else {
+                const cols1 = qry.cols.filter((a) => columns.includes(a))
                 findProps.attributes.push(...cols1)
                 // findProps.attributes = findProps.attributes.concat(cols1)
             }
@@ -278,15 +329,15 @@ export class Repository {
 
         if (qry?.fltr) {
             const fltr1 = Object.fromEntries(
-                Object.entries(qry.fltr).filter(([key]) => columns.includes(key))
+                Object.entries(qry.fltr).filter(([key]) => columns.includes(key)),
             )
             Object.assign(findProps.where, applyFilters(fltr1))
 
             // Filtros de relaciones
             Object.entries(qry.fltr)
-                .filter(([k]) => Object.keys(include1).some(pref => k.startsWith(pref)))
+                .filter(([k]) => Object.keys(include1).some((pref) => k.startsWith(pref)))
                 .forEach(([k, v]) =>
-                    Object.assign(findProps.where, applyFilters({ [`$${k}$`]: v }))
+                    Object.assign(findProps.where, applyFilters({ [`$${k}$`]: v })),
                 )
         }
 
@@ -304,18 +355,15 @@ export class Repository {
 
             if (tojson) {
                 return data.toJSON()
-            }
-            else {
+            } else {
                 return data
             }
-        }
-        else {
+        } else {
             const data = await this.model.findAll(findProps)
 
             if (tojson) {
-                return data.map(a => a.toJSON())
-            }
-            else {
+                return data.map((a) => a.toJSON())
+            } else {
                 return data
             }
         }
@@ -344,8 +392,7 @@ export class Repository {
         if (affectedRows == 0) {
             // if (res) res.json({ code: 1, msg: 'No se actualizó ningún registro' })
             return false
-        }
-        else {
+        } else {
             return true
         }
     }
@@ -356,8 +403,7 @@ export class Repository {
         if (deletedCount == 0) {
             // res.json({ code: 1, msg: 'No se eliminó ningún registro' })
             return false
-        }
-        else {
+        } else {
             return true
         }
     }
