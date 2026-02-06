@@ -190,9 +190,15 @@ const sistemaData = {
         { id: 4, nombre: 'ESPECIA' },
     ],
     mrp_bom_tipos: [
-        { id: 1, nombre: 'FABRICAR' },
-        { id: 2, nombre: 'KIT' },
-        { id: 3, nombre: 'SUBCONTRATACIÓN' },
+        { id: 'fabricar', nombre: 'FABRICACIÓN' },
+        // { id: 2, nombre: 'KIT' },
+        { id: 'subcontratar', nombre: 'SUBCONTRATACIÓN' },
+    ],
+
+    articulo_tipos: [
+        { id: 'consumable', nombre: 'BIEN' },
+        { id: 'service', nombre: 'SERVICIO' },
+        { id: 'combo', nombre: 'COMBO' },
     ],
 }
 

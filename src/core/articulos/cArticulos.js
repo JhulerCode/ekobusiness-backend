@@ -1,6 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import { arrayMap } from '#store/system.js'
-import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
+import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Articulo')
@@ -27,14 +27,15 @@ const find = async (req, res) => {
             for (const a of data) {
                 if (qry?.cols?.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
                 if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry?.cols?.includes('igv_afectacion')) a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-                if (qry?.cols?.includes('is_ecommerce')) a.is_ecommerce1 = estadosMap[a.is_ecommerce]
+                if (qry?.cols?.includes('igv_afectacion'))
+                    a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
+                if (qry?.cols?.includes('is_ecommerce'))
+                    a.is_ecommerce1 = estadosMap[a.is_ecommerce]
             }
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -46,8 +47,7 @@ const findById = async (req, res) => {
         const data = await repository.find({ id })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -56,34 +56,96 @@ const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const {
-            codigo, codigo_barra, nombre, unidad, marca,
-            vende, has_fv, activo,
+            nombre,
+            code,
+            codigo_barra,
+            type,
+            purchase_ok,
+            sale_ok,
+            activo,
+
+            unidad,
+            categoria,
+            marca,
+
+            tracking,
+
+            list_price,
+
+            is_ecommerce,
+            descripcion,
+            precio,
+            precio_anterior,
+            contenido_neto,
+            dimenciones,
+            envase_tipo,
+            is_destacado,
+            fotos,
+            ingredientes,
+            beneficios,
+
+            linea,
+            filtrantes,
+
+            is_combo,
+            combo_articulos,
+            tipo,
+            mp_tipo,
+            has_fv,
             igv_afectacion,
-            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
-            is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await repository.existe({ nombre, empresa }, res) == true) return
+        if ((await repository.existe({ nombre, empresa }, res)) == true) return
 
         // ----- CREAR ----- //
         const nuevo = await repository.create({
-            codigo, codigo_barra, nombre, unidad, marca,
-            vende, has_fv, activo,
+            nombre,
+            code,
+            codigo_barra,
+            type,
+            purchase_ok,
+            sale_ok,
+            activo,
+
+            unidad,
+            categoria,
+            marca,
+
+            tracking,
+
+            list_price,
+
+            is_ecommerce,
+            descripcion,
+            precio,
+            precio_anterior,
+            contenido_neto,
+            dimenciones,
+            envase_tipo,
+            is_destacado,
+            fotos,
+            ingredientes,
+            beneficios,
+
+            linea,
+            filtrantes,
+
+            is_combo,
+            combo_articulos,
+            tipo,
+            mp_tipo,
+            has_fv,
             igv_afectacion,
-            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
-            is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
+
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -93,35 +155,100 @@ const update = async (req, res) => {
         const { colaborador, empresa } = req.user
         const { id } = req.params
         const {
-            codigo, codigo_barra, nombre, unidad, marca,
-            vende, has_fv, activo,
+            nombre,
+            code,
+            codigo_barra,
+            type,
+            purchase_ok,
+            sale_ok,
+            activo,
+
+            unidad,
+            categoria,
+            marca,
+
+            tracking,
+
+            list_price,
+
+            is_ecommerce,
+            descripcion,
+            precio,
+            precio_anterior,
+            contenido_neto,
+            dimenciones,
+            envase_tipo,
+            is_destacado,
+            fotos,
+            ingredientes,
+            beneficios,
+
+            linea,
+            filtrantes,
+
+            is_combo,
+            combo_articulos,
+            tipo,
+            mp_tipo,
+            has_fv,
             igv_afectacion,
-            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
-            is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if (await repository.existe({ nombre, id, empresa }, res) == true) return
+        if ((await repository.existe({ nombre, id, empresa }, res)) == true) return
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update({ id }, {
-            codigo, codigo_barra, nombre, unidad, marca,
-            vende, has_fv, activo,
-            igv_afectacion,
-            tipo, categoria, mp_tipo, linea, filtrantes, contenido_neto,
-            is_combo, combo_articulos,
-            is_ecommerce, descripcion, precio, precio_anterior, fotos, dimenciones, envase_tipo, is_destacado, ingredientes, beneficios,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                nombre,
+                code,
+                codigo_barra,
+                type,
+                purchase_ok,
+                sale_ok,
+                activo,
+
+                unidad,
+                categoria,
+                marca,
+
+                tracking,
+
+                list_price,
+
+                is_ecommerce,
+                descripcion,
+                precio,
+                precio_anterior,
+                contenido_neto,
+                dimenciones,
+                envase_tipo,
+                is_destacado,
+                fotos,
+                ingredientes,
+                beneficios,
+
+                linea,
+                filtrantes,
+
+                is_combo,
+                combo_articulos,
+                tipo,
+                mp_tipo,
+                has_fv,
+                igv_afectacion,
+
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -129,14 +256,14 @@ const update = async (req, res) => {
 const delet = async (req, res) => {
     try {
         const { id } = req.params
+        const { fotos } = req.body
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         for (const a of fotos) await minioRemoveObject(a.id)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -158,7 +285,7 @@ const updateFotos = async (req, res) => {
 
         //--- SUBIR ARCHIVOS NUEVOS A MINIO ---//
         for (const a of vigentes) {
-            const file = archivos.find(b => b.originalname === a.name)
+            const file = archivos.find((b) => b.originalname === a.name)
 
             const entry = file ? await minioPutObject(file) : a
 
@@ -166,10 +293,13 @@ const updateFotos = async (req, res) => {
         }
 
         //--- ACTUALIZAR EN BASE DE DATOS ---//
-        const updated = await repository.update({ id }, {
-            fotos: files,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                fotos: files,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
@@ -177,8 +307,7 @@ const updateFotos = async (req, res) => {
         for (const a of eliminados) await minioRemoveObject(a.id)
 
         res.json({ code: 0, data: files })
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error en updateFotos:', error)
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -188,8 +317,8 @@ const createBulk = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const { tipo, articulos } = req.body
-        
-        const send = articulos.map(a => ({
+
+        const send = articulos.map((a) => ({
             codigo_barra: a.EAN,
             nombre: a.Nombre,
             unidad: a.Unidad,
@@ -208,14 +337,13 @@ const createBulk = async (req, res) => {
             is_combo: false,
 
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         }))
 
         await repository.createBulk(send)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -224,11 +352,10 @@ const deleteBulk = async (req, res) => {
     try {
         const { ids } = req.body
 
-        if (await repository.delete(ids) == false) return resDeleteFalse(res)
+        if ((await repository.delete(ids)) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -239,20 +366,21 @@ const updateBulk = async (req, res) => {
         const { ids, prop, val } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id: ids }, {
-            [prop]: val,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id: ids },
+            {
+                [prop]: val,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {

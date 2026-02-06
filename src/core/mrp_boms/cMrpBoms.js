@@ -109,7 +109,7 @@ const update = async (req, res) => {
 
         const data = await loadOne(id)
 
-        res.json({ code: 0 })
+        res.json({ code: 0, data })
     } catch (error) {
         await transaction.rollback()
 
@@ -132,12 +132,6 @@ const delet = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     const data = await repository.find({ id, incl: ['articulo1'] }, true)
-
-    // if (data) {
-    //     const mrp_bom_tiposMap = arrayMap('mrp_bom_tipos')
-
-    //     data.tipo1 = mrp_bom_tiposMap[data.tipo]
-    // }
 
     return data
 }
