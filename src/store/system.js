@@ -26,20 +26,40 @@ const sistemaData = {
                 principal: true,
                 datos_adicionales: {
                     referencia: 'Altura cuadra 4',
-                }
+                },
             },
-            { id: 2, nombre: 'OFICINA', direccion: 'Av. Mariscal La Mar 638', distrito: 'Miraflores - Lima - Lima', principal: false },
+            {
+                id: 2,
+                nombre: 'OFICINA',
+                direccion: 'Av. Mariscal La Mar 638',
+                distrito: 'Miraflores - Lima - Lima',
+                principal: false,
+            },
         ],
         bancos: [
-            { id: 1, nombre: 'SCOTIABANK PERU S.A.A.', moneda: 'SOL', nc: '000-1927574', cci: '009-230-000001927574-42', principal: true },
-            { id: 2, nombre: 'BANCO DE CRÉDITO DEL PERÚ - BCP', moneda: 'SOL', nc: '191-2611781-0-25', cci: '002-191002611781-025-54', principal: false },
-        ]
+            {
+                id: 1,
+                nombre: 'SCOTIABANK PERU S.A.A.',
+                moneda: 'SOL',
+                nc: '000-1927574',
+                cci: '009-230-000001927574-42',
+                principal: true,
+            },
+            {
+                id: 2,
+                nombre: 'BANCO DE CRÉDITO DEL PERÚ - BCP',
+                moneda: 'SOL',
+                nc: '191-2611781-0-25',
+                cci: '002-191002611781-025-54',
+                principal: false,
+            },
+        ],
     },
     documentos_identidad: [
         { id: 6, nombre: 'RUC' },
         { id: 1, nombre: 'DNI' },
         { id: 4, nombre: 'CARNET DE EXTRANJERÍA' },
-        { id: 7, nombre: 'PASAPORTE' }
+        { id: 7, nombre: 'PASAPORTE' },
     ],
     unidades: [
         { id: 'NIU', nombre: 'Unidad', nombre_completo: 'Unidad (NIU)' },
@@ -48,13 +68,26 @@ const sistemaData = {
     pedido_estados: [
         { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' }
+        { id: '2', nombre: 'CERRADO' },
     ],
     socio_pedidos_etapas: [
-        { id: 1, nombre: "Pedido recibido", descripcion: 'Hemos recibido tu pedido correctamente y está siendo revisado por nuestro equipo.' },
-        { id: 2, nombre: "Pago confirmado", descripcion: 'Tu pago ha sido validado. Ahora preparemos tu pedido lo antes posible.' },
-        { id: 3, nombre: "Listo para entrega", descripcion: 'Tu pedido ya está preparado y listo para ser entregado o recogido.' },
-        { id: 4, nombre: "Entregado", descripcion: 'La entrega se realizó con éxito.' },
+        {
+            id: 1,
+            nombre: 'Pedido recibido',
+            descripcion:
+                'Hemos recibido tu pedido correctamente y está siendo revisado por nuestro equipo.',
+        },
+        {
+            id: 2,
+            nombre: 'Pago confirmado',
+            descripcion: 'Tu pago ha sido validado. Ahora preparemos tu pedido lo antes posible.',
+        },
+        {
+            id: 3,
+            nombre: 'Listo para entrega',
+            descripcion: 'Tu pedido ya está preparado y listo para ser entregado o recogido.',
+        },
+        { id: 4, nombre: 'Entregado', descripcion: 'La entrega se realizó con éxito.' },
     ],
     kardex_operaciones: [
         { id: '1', nombre: 'COMPRA', operacion: 1 },
@@ -68,23 +101,23 @@ const sistemaData = {
         { id: '9', nombre: 'MAQUILA ENTRADA', operacion: 1 },
         { id: '10', nombre: 'ASIGNACIÓN A MÁQUINA', operacion: 1 },
         { id: '11', nombre: 'DEVOLUCIÓN DE MÁQUINA', operacion: 1 },
-        { id: '12', nombre: 'DESCARTADO', operacion: 0 }
+        { id: '12', nombre: 'DESCARTADO', operacion: 0 },
     ],
     transaccion_estados: [
         { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' }
+        { id: '2', nombre: 'CERRADO' },
     ],
     igv_afectaciones: [
         { id: '10', nombre: 'Gravado - Operación Onerosa' },
         { id: '20', nombre: 'Exonerado - Operación Onerosa' },
-        { id: '30', nombre: 'Inafecto - Operación Onerosa' }
+        { id: '30', nombre: 'Inafecto - Operación Onerosa' },
     ],
 
     produccion_orden_estados: [
         { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' }
+        { id: '2', nombre: 'CERRADO' },
     ],
     documentos_estados: [
         { id: '0', nombre: 'VENCIDO' },
@@ -94,11 +127,11 @@ const sistemaData = {
     ],
     estados: [
         { id: true, nombre: 'SI' },
-        { id: false, nombre: 'NO' }
+        { id: false, nombre: 'NO' },
     ],
     generos: [
         { id: 'M', nombre: 'MASCULINO' },
-        { id: 'F', nombre: 'FEMENINO' }
+        { id: 'F', nombre: 'FEMENINO' },
     ],
     caja_apertura_estados: [
         { id: '1', nombre: 'ABIERTO' },
@@ -107,7 +140,7 @@ const sistemaData = {
     cuarentena_productos_estados: [
         // { id: '0', nombre: 'ANULADO' },
         { id: '1', nombre: 'PENDIENTE' },
-        { id: '2', nombre: 'ACEPTADO' }
+        { id: '2', nombre: 'ACEPTADO' },
     ],
     cumplidado_estados: [
         { id: 1, nombre: 'PENDIENTE' },
@@ -132,13 +165,13 @@ const sistemaData = {
     ],
 
     entrega_tipos: [
-        { id: 'envio', nombre: 'ENVÍO', nombre_tienda: 'Envío a domicilio', },
+        { id: 'envio', nombre: 'ENVÍO', nombre_tienda: 'Envío a domicilio' },
         { id: 'retiro', nombre: 'RETIRO', nombre_tienda: 'Retira tu producto' },
     ],
     pago_condiciones: [
         { id: 1, nombre: 'CONTADO' },
         { id: 2, nombre: 'CRÉDITO 30 DÍAS' },
-        { id: 3, nombre: 'CRÉDITO 60 DÍAS' }
+        { id: 3, nombre: 'CRÉDITO 60 DÍAS' },
     ],
     pago_metodos: [
         { id: 'tarjeta', nombre: 'Tarjeta de crédito o débito' },
@@ -155,14 +188,16 @@ const sistemaData = {
         { id: 2, nombre: 'HIERBA COMPLEMENTO' },
         { id: 3, nombre: 'FRUTA' },
         { id: 4, nombre: 'ESPECIA' },
-    ]
+    ],
+    mrp_bom_tipos: [
+        { id: 1, nombre: 'FABRICAR' },
+        { id: 2, nombre: 'KIT' },
+        { id: 3, nombre: 'SUBCONTRATACIÓN' },
+    ],
 }
 
 function arrayMap(array) {
-    return sistemaData[array].reduce((obj, a) => (obj[a.id] = a, obj), {})
+    return sistemaData[array].reduce((obj, a) => ((obj[a.id] = a), obj), {})
 }
 
-export {
-    sistemaData,
-    arrayMap,
-}
+export { sistemaData, arrayMap }

@@ -16,6 +16,8 @@ import { Kardex } from '#db/models/Kardex.js'
 import { LibroReclamo } from '#db/models/LibroReclamo.js'
 import { Maquina } from '#db/models/Maquina.js'
 import { Moneda } from '#db/models/Moneda.js'
+import { MrpBom } from '#db/models/MrpBom.js'
+import { MrpBomLine } from '#db/models/MrpBomLine.js'
 import { PrecioLista } from '#db/models/PrecioLista.js'
 import { PrecioListaItem } from '#db/models/PrecioListaItem.js'
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
@@ -47,6 +49,8 @@ export const models = {
     LibroReclamo,
     Maquina,
     Moneda,
+    MrpBom,
+    MrpBomLine,
     PrecioLista,
     PrecioListaItem,
     ProduccionOrden,
