@@ -49,7 +49,6 @@ export const Articulo = sequelize.define('articulos', {
     filtrantes: { type: DataTypes.INTEGER },
 
     //--- ELIMINAR ---//
-    is_combo: { type: DataTypes.BOOLEAN },
     combo_articulos: { type: DataTypes.JSON, defaultValue: [] },
     tipo: { type: DataTypes.STRING },
     mp_tipo: { type: DataTypes.STRING },

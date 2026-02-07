@@ -87,7 +87,6 @@ const create = async (req, res) => {
             linea,
             filtrantes,
 
-            is_combo,
             combo_articulos,
             tipo,
             mp_tipo,
@@ -131,7 +130,6 @@ const create = async (req, res) => {
             linea,
             filtrantes,
 
-            is_combo,
             combo_articulos,
             tipo,
             mp_tipo,
@@ -186,7 +184,6 @@ const update = async (req, res) => {
             linea,
             filtrantes,
 
-            is_combo,
             combo_articulos,
             tipo,
             mp_tipo,
@@ -232,7 +229,6 @@ const update = async (req, res) => {
                 linea,
                 filtrantes,
 
-                is_combo,
                 combo_articulos,
                 tipo,
                 mp_tipo,
@@ -334,7 +330,6 @@ const createBulk = async (req, res) => {
             linea: a.Linea,
             categoria: a.Categoria,
             filtrantes: a.Sobres_caja,
-            is_combo: false,
 
             empresa,
             createdBy: colaborador,

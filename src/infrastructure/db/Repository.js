@@ -83,7 +83,7 @@ const include1 = {
     articulo1: {
         model: Articulo,
         as: 'articulo1',
-        attributes: ['id', 'nombre', 'unidad', 'has_fv'],
+        attributes: ['id', 'nombre', 'type', 'purchase_ok', 'sale_ok', 'unidad', 'has_fv'],
     },
     colaborador1: {
         model: Colaborador,
