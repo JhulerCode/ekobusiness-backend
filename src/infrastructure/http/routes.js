@@ -24,6 +24,7 @@ import maquinas from '#core/maquinas/rMaquinas.js'
 import monedas from '#core/monedas/rMonedas.js'
 import mrp_boms from '#core/mrp_boms/rMrpBoms.js'
 import mrp_bom_lines from '#core/mrp_bom_lines/rMrpBomLines.js'
+import mrp_bom_socios from '#core/mrp_bom_socios/rMrpBomSocios.js'
 import precio_listas from '#core/precio_listas/rPrecioListas.js'
 import precio_lista_items from '#core/precio_lista_items/rPrecioListaItems.js'
 import produccion_ordenes from '#core/produccion_ordenes/rProduccionOrdenes.js'
@@ -67,6 +68,7 @@ router.use('/api/maquinas', maquinas)
 router.use('/api/monedas', monedas)
 router.use('/api/mrp_boms', mrp_boms)
 router.use('/api/mrp_bom_lines', mrp_bom_lines)
+router.use('/api/mrp_bom_socios', mrp_bom_socios)
 router.use('/api/precio_listas', precio_listas)
 router.use('/api/precio_lista_items', precio_lista_items)
 router.use('/api/produccion_ordenes', produccion_ordenes)

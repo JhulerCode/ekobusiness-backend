@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Articulo } from './Articulo.js'
-// import { Socio } from './Socio.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
 
@@ -9,9 +8,7 @@ export const MrpBom = sequelize.define('mrp_boms', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     articulo: { type: DataTypes.STRING }, //required //linked
     tipo: { type: DataTypes.STRING }, //required
-    // socio: { type: DataTypes.STRING }, //required
     // cantidad: { type: DataTypes.DOUBLE }, //required
-    // orden: { type: DataTypes.INTEGER }, //required
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
@@ -28,9 +25,6 @@ export const MrpBom = sequelize.define('mrp_boms', {
 
 Articulo.hasMany(MrpBom, { foreignKey: 'articulo', as: 'mrp_boms', onDelete: 'RESTRICT' })
 MrpBom.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
-
-// Socio.hasMany(MrpBom, { foreignKey: 'socio', as: 'mrp_boms', onDelete: 'RESTRICT' })
-// MrpBom.belongsTo(Socio, { foreignKey: 'socio', as: 'socio1' })
 
 Colaborador.hasMany(MrpBom, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
 MrpBom.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })

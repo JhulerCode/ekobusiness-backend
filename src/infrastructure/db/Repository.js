@@ -18,6 +18,7 @@ import { Maquina } from '#db/models/Maquina.js'
 import { Moneda } from '#db/models/Moneda.js'
 import { MrpBom } from '#db/models/MrpBom.js'
 import { MrpBomLine } from '#db/models/MrpBomLine.js'
+import { MrpBomSocio } from '#db/models/MrpBomSocio.js'
 import { PrecioLista } from '#db/models/PrecioLista.js'
 import { PrecioListaItem } from '#db/models/PrecioListaItem.js'
 import { ProduccionOrden } from '#db/models/ProduccionOrden.js'
@@ -51,6 +52,7 @@ export const models = {
     Moneda,
     MrpBom,
     MrpBomLine,
+    MrpBomSocio,
     PrecioLista,
     PrecioListaItem,
     ProduccionOrden,

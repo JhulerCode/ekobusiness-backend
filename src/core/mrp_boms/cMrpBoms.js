@@ -3,8 +3,9 @@ import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 // import { arrayMap } from '#store/system.js'
 import sequelize from '#db/sequelize.js'
 
-const repository = new Repository('MrpBom')
+const MrpBomRepository = new Repository('MrpBom')
 const MrpBomLineRepository = new Repository('MrpBomLine')
+const MrpBomSocioRepository = new Repository('MrpBomSocio')
 
 const find = async (req, res) => {
     try {
@@ -13,7 +14,7 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry)
+        const data = await MrpBomRepository.find(qry)
 
         res.json({ code: 0, data })
     } catch (error) {
@@ -26,7 +27,7 @@ const findById = async (req, res) => {
         const { id } = req.params
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await repository.find({ id, ...qry }, true)
+        const data = await MrpBomRepository.find({ id, ...qry }, true)
 
         res.json({ code: 0, data })
     } catch (error) {
@@ -39,10 +40,10 @@ const create = async (req, res) => {
 
     try {
         const { colaborador, empresa } = req.user
-        const { articulo, tipo, mrp_bom_lines } = req.body
+        const { articulo, tipo, mrp_bom_lines, mrp_bom_socios } = req.body
 
         //--- CREAR ---//
-        const nuevo = await repository.create(
+        const nuevo = await MrpBomRepository.create(
             {
                 articulo,
                 tipo,
@@ -53,13 +54,26 @@ const create = async (req, res) => {
         )
 
         const lines = mrp_bom_lines.map((a) => ({
-            ...a,
+            orden: a.orden,
+            articulo: a.articulo,
+            cantidad: a.cantidad,
             mrp_bom: nuevo.id,
             empresa,
             createdBy: colaborador,
         }))
+        console.log('lines', lines)
 
         await MrpBomLineRepository.createBulk(lines, transaction)
+
+        const socios = mrp_bom_socios.map((a) => ({
+            socio: a.socio,
+            mrp_bom: nuevo.id,
+            empresa,
+            createdBy: colaborador,
+        }))
+        console.log('socios', socios)
+
+        await MrpBomSocioRepository.createBulk(socios, transaction)
 
         await transaction.commit()
 
@@ -82,7 +96,7 @@ const update = async (req, res) => {
         const { articulo, tipo, mrp_bom_lines } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update(
+        const updated = await MrpBomRepository.update(
             { id },
             {
                 articulo,
@@ -118,20 +132,30 @@ const update = async (req, res) => {
 }
 
 const delet = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { id } = req.params
 
-        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
+        await MrpBomLineRepository.delete({ mrp_bom: id }, transaction)
+        await MrpBomSocioRepository.delete({ mrp_bom: id }, transaction)
+
+        if ((await MrpBomRepository.delete({ id }, transaction)) == false)
+            return resDeleteFalse(res)
+
+        await transaction.commit()
 
         res.json({ code: 0 })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 //--- Helpers ---//
 async function loadOne(id) {
-    const data = await repository.find({ id, incl: ['articulo1'] }, true)
+    const data = await MrpBomRepository.find({ id, incl: ['articulo1'] })
 
     return data
 }
