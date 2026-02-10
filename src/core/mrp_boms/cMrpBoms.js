@@ -61,8 +61,6 @@ const create = async (req, res) => {
             empresa,
             createdBy: colaborador,
         }))
-        console.log('lines', lines)
-
         await MrpBomLineRepository.createBulk(lines, transaction)
 
         const socios = mrp_bom_socios.map((a) => ({
@@ -71,8 +69,6 @@ const create = async (req, res) => {
             empresa,
             createdBy: colaborador,
         }))
-        console.log('socios', socios)
-
         await MrpBomSocioRepository.createBulk(socios, transaction)
 
         await transaction.commit()
@@ -93,7 +89,7 @@ const update = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const { id } = req.params
-        const { articulo, tipo, mrp_bom_lines } = req.body
+        const { articulo, tipo, mrp_bom_lines, mrp_bom_socios } = req.body
 
         //--- ACTUALIZAR ---//
         const updated = await MrpBomRepository.update(
@@ -109,15 +105,25 @@ const update = async (req, res) => {
         if (updated == false) return resUpdateFalse(res)
 
         await MrpBomLineRepository.delete({ mrp_bom: id }, transaction)
+        await MrpBomSocioRepository.delete({ mrp_bom: id }, transaction)
 
         const lines = mrp_bom_lines.map((a) => ({
-            ...a,
+            orden: a.orden,
+            articulo: a.articulo,
+            cantidad: a.cantidad,
             mrp_bom: id,
             empresa,
             createdBy: colaborador,
         }))
-
         await MrpBomLineRepository.createBulk(lines, transaction)
+
+        const socios = mrp_bom_socios.map((a) => ({
+            socio: a.socio,
+            mrp_bom: id,
+            empresa,
+            createdBy: colaborador,
+        }))
+        await MrpBomSocioRepository.createBulk(socios, transaction)
 
         await transaction.commit()
 

@@ -5,13 +5,14 @@ import { arrayMap } from '#store/system.js'
 import { resUpdateFalse } from '#http/helpers.js'
 
 import config from '../../config.js'
-import { nodeMailer } from "#mail/nodeMailer.js"
+import { nodeMailer } from '#mail/nodeMailer.js'
 import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
 import dayjs from '#shared/dayjs.js'
 
 const repository = new Repository('SocioPedido')
 const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
 const ArticuloRepo = new Repository('Articulo')
+const MrpBomSocioRepo = new Repository('MrpBomSocio')
 
 const find = async (req, res) => {
     try {
@@ -35,16 +36,18 @@ const find = async (req, res) => {
                 if (qry?.cols?.includes('listo')) a.listo1 = estadoMap[a.listo]
                 if (qry?.cols?.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
 
-                if (qry?.cols?.includes('entrega_tipo')) a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
+                if (qry?.cols?.includes('entrega_tipo'))
+                    a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
 
-                if (qry?.cols?.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
-                if (qry?.cols?.includes('pago_metodo')) a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
+                if (qry?.cols?.includes('pago_condicion'))
+                    a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
+                if (qry?.cols?.includes('pago_metodo'))
+                    a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
             }
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -82,8 +85,7 @@ const findById = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -92,44 +94,106 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
+        const { empresa } = req.user
         const {
-            tipo, origin, fecha, codigo,
-            socio_datos, contacto, contacto_datos,
-            moneda, tipo_cambio, monto,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
-            pago_condicion, pago_metodo, pago_id,
-            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            observacion, estado,
+            tipo,
+            origin,
+            fecha,
+            codigo,
+
+            socio_datos,
+            contacto,
+            contacto_datos,
+
+            moneda,
+            monto,
+
+            entrega_tipo,
+            fecha_entrega,
+            entrega_ubigeo,
+            direccion_entrega,
+            entrega_direccion_datos,
+            entrega_costo,
+
+            pago_condicion,
+            pago_metodo,
+            pago_id,
+
+            comprobante_tipo,
+            comprobante_ruc,
+            comprobante_razon_social,
+
+            observacion,
+            estado,
             empresa_datos,
             socio_pedido_items,
         } = req.body
 
         let { socio } = req.body
-        let colaborador, empresa
+        let colaborador,
+            is_maquila = false
 
         if (origin == 'ecommerce') {
             if (!socio) socio = req.user.id
-        }
-        else {
+        } else {
             colaborador = req.user.colaborador
+
+            const qry = {
+                fltr: {
+                    socio: { op: 'Es', val: socio },
+                    'mrp_bom1.articulo': {
+                        op: 'Es',
+                        val: socio_pedido_items.map((a) => a.articulo),
+                    },
+                },
+            }
+            const mrp_bom_socios = await MrpBomSocioRepo.find(qry, true)
+            if (mrp_bom_socios.length > 0) is_maquila = true
         }
-        empresa = req.user.empresa
 
         const etapas = [{ id: 1, fecha: dayjs() }]
 
         // ----- GUARDAR ----- //
-        const nuevo = await repository.create({
-            tipo, origin, fecha, codigo,
-            socio, socio_datos, contacto, contacto_datos,
-            moneda, tipo_cambio, monto,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
-            pago_condicion, pago_metodo, pago_id,
-            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            observacion, estado, etapas,
-            empresa_datos,
-            empresa,
-            createdBy: colaborador
-        }, transaction)
+        const nuevo = await repository.create(
+            {
+                tipo,
+                origin,
+                fecha,
+                codigo,
+                is_maquila,
+
+                socio,
+                socio_datos,
+                contacto,
+                contacto_datos,
+
+                moneda,
+                monto,
+
+                entrega_tipo,
+                fecha_entrega,
+                entrega_ubigeo,
+                direccion_entrega,
+                entrega_direccion_datos,
+                entrega_costo,
+
+                pago_condicion,
+                pago_metodo,
+                pago_id,
+
+                comprobante_tipo,
+                comprobante_ruc,
+                comprobante_razon_social,
+
+                observacion,
+                estado,
+                etapas,
+                empresa_datos,
+                empresa,
+                createdBy: colaborador,
+            },
+            transaction,
+        )
 
         // ----- GUARDAR ITEMS ----- //
         const items = socio_pedido_items.map((a, i) => ({
@@ -137,7 +201,7 @@ const create = async (req, res) => {
             orden: i,
             socio_pedido: nuevo.id,
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         }))
         await SocioPedidoItemRepo.createBulk(items, transaction)
 
@@ -147,18 +211,21 @@ const create = async (req, res) => {
         let send_email_err = null
         if (origin == 'ecommerce') {
             // console.log('Enviando correo')
-            const entrega_tipo1 = sistemaData.entrega_tipos.find(a => a.id == entrega_tipo).nombre
+            const entrega_tipo1 = sistemaData.entrega_tipos.find((a) => a.id == entrega_tipo).nombre
             const html = htmlConfirmacionCompra(
-                socio_datos.nombres, socio_datos.apellidos,
-                codigo, entrega_tipo1, monto,
-                socio_pedido_items
+                socio_datos.nombres,
+                socio_datos.apellidos,
+                codigo,
+                entrega_tipo1,
+                monto,
+                socio_pedido_items,
             )
             const nodemailer = nodeMailer()
             const result = await nodemailer.sendMail({
                 from: `${sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
                 to: socio_datos.correo,
                 subject: `Confirmación de compra - Código ${codigo}`,
-                html
+                html,
             })
             // console.log(result)
             if (result.error) send_email_err = result.error
@@ -167,8 +234,7 @@ const create = async (req, res) => {
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data, send_email_err })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
 
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -180,30 +246,78 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            tipo, origin, fecha, codigo,
-            socio, socio_datos, contacto, contacto_datos,
-            moneda, tipo_cambio, monto,
-            pago_condicion, pago_metodo, pago_id,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
-            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            observacion, estado,
+            tipo,
+            origin,
+            fecha,
+            codigo,
+
+            socio,
+            socio_datos,
+            contacto,
+            contacto_datos,
+
+            moneda,
+            monto,
+
+            entrega_tipo,
+            fecha_entrega,
+            entrega_ubigeo,
+            direccion_entrega,
+            entrega_direccion_datos,
+            entrega_costo,
+
+            pago_condicion,
+            pago_metodo,
+            pago_id,
+
+            comprobante_tipo,
+            comprobante_ruc,
+            comprobante_razon_social,
+
+            observacion,
+            estado,
             empresa_datos,
             socio_pedido_items,
         } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id }, {
-            tipo, origin, fecha, codigo,
-            socio, socio_datos, contacto, contacto_datos,
-            moneda, tipo_cambio, monto,
-            pago_condicion, pago_metodo, pago_id,
-            entrega_tipo, fecha_entrega, entrega_ubigeo, direccion_entrega, entrega_direccion_datos, entrega_costo,
-            comprobante_tipo, comprobante_ruc, comprobante_razon_social,
-            observacion, estado,
-            empresa_datos,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                tipo,
+                origin,
+                fecha,
+                codigo,
 
+                socio,
+                socio_datos,
+                contacto,
+                contacto_datos,
+
+                moneda,
+                monto,
+
+                entrega_tipo,
+                fecha_entrega,
+                entrega_ubigeo,
+                direccion_entrega,
+                entrega_direccion_datos,
+                entrega_costo,
+
+                pago_condicion,
+                pago_metodo,
+                pago_id,
+
+                comprobante_tipo,
+                comprobante_ruc,
+                comprobante_razon_social,
+
+                observacion,
+                estado,
+                empresa_datos,
+                updatedBy: colaborador,
+            },
+        )
 
         // // ----- OBTENER ITEMS QUE ESTABAN ----- //
         // const socio_pedido_items_past = await SocioPedidoItem.findAll({
@@ -279,10 +393,9 @@ const update = async (req, res) => {
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(id)
-        res.json({ code: 0, data })
 
-    }
-    catch (error) {
+        res.json({ code: 0, data })
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -300,14 +413,12 @@ const delet = async (req, res) => {
         await transaction.commit()
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
 
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 const confirmarPago = async (req, res) => {
     try {
@@ -318,17 +429,19 @@ const confirmarPago = async (req, res) => {
         const etapas = ped.etapas
         etapas.push({ id: 2, fecha: dayjs() })
 
-        const updated = await repository.update({ id }, {
-            pagado: true,
-            etapas,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                pagado: true,
+                etapas,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -342,17 +455,19 @@ const confirmarListo = async (req, res) => {
         const etapas = ped.etapas
         etapas.push({ id: 3, fecha: dayjs() })
 
-        const updated = await repository.update({ id }, {
-            listo: true,
-            etapas,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                listo: true,
+                etapas,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -366,18 +481,20 @@ const confirmarEntrega = async (req, res) => {
         const etapas = ped.etapas
         etapas.push({ id: 4, fecha: dayjs() })
 
-        const updated = await repository.update({ id }, {
-            entregado: true,
-            etapas,
-            estado: 2,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                entregado: true,
+                etapas,
+                estado: 2,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -387,16 +504,18 @@ const terminar = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
 
-        const updated = await repository.update({ id }, {
-            estado: 2,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                estado: 2,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -416,9 +535,9 @@ const findPendientes = async (req, res) => {
             incl: ['socio_pedido1', 'articulo1'],
             iccl: {
                 articulo1: {
-                    cols: ['combo_articulos']
+                    cols: ['combo_articulos'],
                 },
-            }
+            },
         }
 
         if (socio && socio !== 'null') qry.fltr['socio_pedido1.socio'] = { op: 'Es', val: socio }
@@ -448,7 +567,7 @@ const findPendientes = async (req, res) => {
                 sqls: ['articulo_stock'],
             }
             const productosStock = await ArticuloRepo.find(qry1, true)
-            const productosStockMap = productosStock.reduce((obj, a) => (obj[a.id] = a, obj), {})
+            const productosStockMap = productosStock.reduce((obj, a) => ((obj[a.id] = a), obj), {})
 
             for (const a of pedidos) {
                 if (a.articulo1.combo_articulos.length > 0) {
@@ -464,9 +583,10 @@ const findPendientes = async (req, res) => {
                             }
                         }
 
-                        productosMap[b.articulo].cantidad += (a.cantidad * b.cantidad)
-                        productosMap[b.articulo].entregado += (a.entregado * b.cantidad)
-                        productosMap[b.articulo].pendiente += ((a.cantidad - a.entregado) * b.cantidad)
+                        productosMap[b.articulo].cantidad += a.cantidad * b.cantidad
+                        productosMap[b.articulo].entregado += a.entregado * b.cantidad
+                        productosMap[b.articulo].pendiente +=
+                            (a.cantidad - a.entregado) * b.cantidad
                     }
                 } else {
                     if (!productosMap[a.articulo]) {
@@ -482,18 +602,19 @@ const findPendientes = async (req, res) => {
 
                     productosMap[a.articulo].cantidad += a.cantidad
                     productosMap[a.articulo].entregado += a.entregado
-                    productosMap[a.articulo].pendiente += (a.cantidad - a.entregado)
+                    productosMap[a.articulo].pendiente += a.cantidad - a.entregado
                 }
             }
         }
 
-        res.json({ code: 0, data: Object.values(productosMap).sort((a, b) => a.nombre.localeCompare(b.nombre)) })
-    }
-    catch (error) {
+        res.json({
+            code: 0,
+            data: Object.values(productosMap).sort((a, b) => a.nombre.localeCompare(b.nombre)),
+        })
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {

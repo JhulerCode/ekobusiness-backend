@@ -11,6 +11,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     origin: { type: DataTypes.STRING }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
     codigo: { type: DataTypes.STRING }, //required
+    is_maquila: { type: DataTypes.BOOLEAN }, //required
 
     socio: { type: DataTypes.STRING }, //required //linked
     socio_datos: { type: DataTypes.JSON },
@@ -18,9 +19,9 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     contacto_datos: { type: DataTypes.JSON },
 
     moneda: { type: DataTypes.STRING }, //required //linked
-    // tipo_cambio: { type: DataTypes.DOUBLE }, //required
     monto: { type: DataTypes.DOUBLE }, //required
 
+    //--- ENTREGA ---//
     entrega_tipo: { type: DataTypes.STRING }, //required
     fecha_entrega: { type: DataTypes.DATEONLY }, //required
     entrega_ubigeo: { type: DataTypes.STRING }, //required
@@ -28,6 +29,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     entrega_direccion_datos: { type: DataTypes.JSON, defaultValue: {} }, //required
     entrega_costo: { type: DataTypes.DOUBLE }, //required
 
+    //--- PAGO ---//
     pago_condicion: { type: DataTypes.STRING }, //required
     pago_metodo: { type: DataTypes.STRING }, //required
     pago_id: { type: DataTypes.STRING },
