@@ -10,7 +10,7 @@ import { Maquina } from './Maquina.js'
 
 export const Transaccion = sequelize.define('transacciones', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tipo: { type: DataTypes.SMALLINT }, //required
+    tipo: { type: DataTypes.STRING }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
 
     socio_pedido: { type: DataTypes.STRING }, //required //linked

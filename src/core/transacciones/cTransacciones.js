@@ -22,14 +22,14 @@ const find = async (req, res) => {
             const transaccion_estadosMap = arrayMap('transaccion_estados')
 
             for (const a of data) {
-                if (qry?.cols?.includes('pago_condicion')) a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
+                if (qry?.cols?.includes('pago_condicion'))
+                    a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
                 if (qry?.cols?.includes('estado')) a.estado1 = transaccion_estadosMap[a.estado]
             }
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -57,8 +57,7 @@ const findById = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -69,22 +68,41 @@ const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const {
-            tipo, fecha,
-            socio_pedido, socio, guia, factura,
-            pago_condicion, moneda, tipo_cambio, monto,
-            observacion, estado,
-            transaccion_items
+            tipo,
+            fecha,
+            socio_pedido,
+            socio,
+            guia,
+            factura,
+            pago_condicion,
+            moneda,
+            tipo_cambio,
+            monto,
+            observacion,
+            estado,
+            transaccion_items,
         } = req.body
 
         // ----- CREAR ----- //
-        const nuevo = await repository.create({
-            tipo, fecha,
-            socio_pedido, socio, guia, factura,
-            pago_condicion, moneda, tipo_cambio, monto,
-            observacion, estado,
-            empresa,
-            createdBy: colaborador
-        }, transaction)
+        const nuevo = await repository.create(
+            {
+                tipo,
+                fecha,
+                socio_pedido,
+                socio,
+                guia,
+                factura,
+                pago_condicion,
+                moneda,
+                tipo_cambio,
+                monto,
+                observacion,
+                estado,
+                empresa,
+                createdBy: colaborador,
+            },
+            transaction,
+        )
 
         // ----- GUARDAR ITEMS ----- //
         const items = transaccion_items.map((a, i) => ({
@@ -104,17 +122,17 @@ const create = async (req, res) => {
 
             transaccion: nuevo.id,
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         }))
 
         await TransaccionItemRepo.createBulk(items, transaction)
 
-
         // ----- GUARDAR KARDEX ----- //
         let kardex_items = []
         if (tipo == 1) {
-            kardex_items = transaccion_items.map(a => ({
-                tipo, fecha,
+            kardex_items = transaccion_items.map((a) => ({
+                tipo,
+                fecha,
                 articulo: a.articulo,
                 cantidad: a.cantidad,
 
@@ -133,14 +151,14 @@ const create = async (req, res) => {
                 transaccion_item: a.id,
                 transaccion: nuevo.id,
                 empresa,
-                createdBy: colaborador
+                createdBy: colaborador,
             }))
-        }
-        else {
+        } else {
             for (const a of transaccion_items) {
                 for (const b of a.kardexes) {
                     kardex_items.push({
-                        tipo, fecha,
+                        tipo,
+                        fecha,
                         articulo: b.articulo,
                         cantidad: b.cantidad,
 
@@ -150,7 +168,7 @@ const create = async (req, res) => {
                         transaccion_item: a.id,
                         transaccion: nuevo.id,
                         empresa,
-                        createdBy: colaborador
+                        createdBy: colaborador,
                     })
                 }
             }
@@ -158,51 +176,51 @@ const create = async (req, res) => {
 
         await KardexRepo.createBulk(kardex_items, transaction)
 
-
         // ----- ACTUALIZAR CANTIDAD ENTREGADA ----- //
-        if (socio_pedido) {
-            const cases = transaccion_items
-                .map(a => `WHEN '${a.articulo}' THEN ${a.cantidad}`)
-                .join(' ')
+        if (tipo == 1 || tipo == 5) {
+            if (socio_pedido) {
+                const cases = transaccion_items
+                    .map((a) => `WHEN '${a.articulo}' THEN ${a.cantidad}`)
+                    .join(' ')
 
-            const articulos = transaccion_items.map(a => `'${a.articulo}'`).join(',')
+                const articulos = transaccion_items.map((a) => `'${a.articulo}'`).join(',')
 
-            await sequelize.query(`
-                    UPDATE socio_pedido_items
-                    SET entregado = COALESCE(entregado, 0) + CASE articulo
-                        ${cases}
-                        ELSE 0
-                    END
-                    WHERE socio_pedido = '${socio_pedido}'
-                    AND articulo IN (${articulos})
-                `,
-                { transaction }
-            )
+                await sequelize.query(
+                    `
+                        UPDATE socio_pedido_items
+                        SET entregado = COALESCE(entregado, 0) + CASE articulo
+                            ${cases}
+                            ELSE 0
+                        END
+                        WHERE socio_pedido = '${socio_pedido}'
+                        AND articulo IN (${articulos})
+                    `,
+                    { transaction },
+                )
+            }
         }
 
-
         // ----- SI ES UNA VENTA ----- //
-        if (tipo == 5) {
+        if (tipo == 5 || tipo == 'abastacer_maquila') {
             const kardexMap = {}
 
             for (const a of transaccion_items) {
                 for (const b of a.kardexes) {
-                    kardexMap[b.lote_padre] =
-                        (kardexMap[b.lote_padre] || 0) + b.cantidad
+                    kardexMap[b.lote_padre] = (kardexMap[b.lote_padre] || 0) + b.cantidad
                 }
             }
 
-            const kardexes = Object.entries(kardexMap).map(
-                ([lote_padre, cantidad]) => ({ lote_padre, cantidad })
-            )
+            const kardexes = Object.entries(kardexMap).map(([lote_padre, cantidad]) => ({
+                lote_padre,
+                cantidad,
+            }))
 
-            const cases = kardexes
-                .map(k => `WHEN '${k.lote_padre}' THEN ${k.cantidad}`)
-                .join(' ')
+            const cases = kardexes.map((k) => `WHEN '${k.lote_padre}' THEN ${k.cantidad}`).join(' ')
 
-            const ids = kardexes.map(k => `'${k.lote_padre}'`).join(',')
+            const ids = kardexes.map((k) => `'${k.lote_padre}'`).join(',')
 
-            await sequelize.query(`
+            await sequelize.query(
+                `
                 UPDATE kardexes
                     SET stock = COALESCE(stock, 0) - CASE id
                         ${cases}
@@ -210,7 +228,7 @@ const create = async (req, res) => {
                     END
                     WHERE id IN (${ids})
                 `,
-                { transaction }
+                { transaction },
             )
         }
 
@@ -219,8 +237,7 @@ const create = async (req, res) => {
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
 
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -232,26 +249,44 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            tipo, fecha,
-            socio_pedido, socio, guia, factura,
-            pago_condicion, moneda, tipo_cambio, monto,
-            observacion, estado,
+            tipo,
+            fecha,
+            socio_pedido,
+            socio,
+            guia,
+            factura,
+            pago_condicion,
+            moneda,
+            tipo_cambio,
+            monto,
+            observacion,
+            estado,
         } = req.body
 
-        const updated = await repository.update({ id }, {
-            tipo, fecha,
-            socio_pedido, socio, guia, factura,
-            pago_condicion, moneda, tipo_cambio, monto,
-            observacion, estado,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                tipo,
+                fecha,
+                socio_pedido,
+                socio,
+                guia,
+                factura,
+                pago_condicion,
+                moneda,
+                tipo_cambio,
+                monto,
+                observacion,
+                estado,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -273,7 +308,7 @@ const delet = async (req, res) => {
         if (tipo == 5) {
             const qry = {
                 fltr: { transaccion: { op: 'Es', val: id } },
-                cols: ['id', 'lote_padre', 'cantidad']
+                cols: ['id', 'lote_padre', 'cantidad'],
             }
             const kardexes = await KardexRepo.find(qry)
 
@@ -281,7 +316,7 @@ const delet = async (req, res) => {
                 await KardexRepo.update(
                     { id: a.lote_padre },
                     { stock: sequelize.literal(`COALESCE(stock, 0) + ${a.cantidad}`) },
-                    transaction
+                    transaction,
                 )
             }
         }
@@ -289,14 +324,12 @@ const delet = async (req, res) => {
         await transaction.commit()
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
 
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 // --- Helpers --- //
 async function loadOne(id) {

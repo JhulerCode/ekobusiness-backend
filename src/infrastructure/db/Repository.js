@@ -147,6 +147,16 @@ const include1 = {
         as: 'moneda1',
         attributes: ['id', 'nombre'],
     },
+    mrp_bom_lines: {
+        model: MrpBomLine,
+        as: 'mrp_bom_lines',
+        attributes: ['id', 'articulo', 'cantidad'],
+    },
+    mrp_bom_socios: {
+        model: MrpBomSocio,
+        as: 'mrp_bom_socios',
+        attributes: ['id', 'socio'],
+    },
     precio_lista1: {
         model: PrecioLista,
         as: 'precio_lista1',

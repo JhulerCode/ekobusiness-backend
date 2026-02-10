@@ -9,7 +9,7 @@ import { Moneda } from './Moneda.js'
 
 export const Kardex = sequelize.define('kardexes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tipo: { type: DataTypes.SMALLINT },
+    tipo: { type: DataTypes.STRING },
     fecha: { type: DataTypes.DATEONLY },
 
     articulo: { type: DataTypes.STRING },
@@ -47,16 +47,14 @@ export const Kardex = sequelize.define('kardexes', {
             const stock = this.stock
 
             if (fv) {
-                const [año, mes, dia] = fv.split("-")
+                const [año, mes, dia] = fv.split('-')
                 const fecha_vencimiento = `${dia}-${mes}-${año}`
                 return `${lote} | ${fecha_vencimiento} | ${stock}`
-            }
-            else {
+            } else {
                 return `${lote} | ${stock}`
             }
-
-        }
-    }
+        },
+    },
 })
 
 Articulo.hasMany(Kardex, { foreignKey: 'articulo', as: 'kardexes', onDelete: 'RESTRICT' })
@@ -71,10 +69,18 @@ Kardex.belongsTo(Kardex, { foreignKey: 'lote_padre', as: 'lote_padre1' })
 Transaccion.hasMany(Kardex, { foreignKey: 'transaccion', as: 'kardexes', onDelete: 'RESTRICT' })
 Kardex.belongsTo(Transaccion, { foreignKey: 'transaccion', as: 'transaccion1' })
 
-TransaccionItem.hasMany(Kardex, { foreignKey: 'transaccion_item', as: 'kardexes', onDelete: 'RESTRICT' })
+TransaccionItem.hasMany(Kardex, {
+    foreignKey: 'transaccion_item',
+    as: 'kardexes',
+    onDelete: 'RESTRICT',
+})
 Kardex.belongsTo(TransaccionItem, { foreignKey: 'transaccion_item', as: 'transaccion_item1' })
 
-ProduccionOrden.hasMany(Kardex, { foreignKey: 'produccion_orden', as: 'kardexes', onDelete: 'RESTRICT' })
+ProduccionOrden.hasMany(Kardex, {
+    foreignKey: 'produccion_orden',
+    as: 'kardexes',
+    onDelete: 'RESTRICT',
+})
 Kardex.belongsTo(ProduccionOrden, { foreignKey: 'produccion_orden', as: 'produccion_orden1' })
 
 Maquina.hasMany(Kardex, { foreignKey: 'maquina', as: 'kardexes', onDelete: 'RESTRICT' })
