@@ -13,6 +13,10 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     cantidad: { type: DataTypes.DOUBLE },
     mrp_bom: { type: DataTypes.STRING },
     orden: { type: DataTypes.INTEGER },
+    responsable: { type: DataTypes.STRING },
+
+    inicio: { type: DataTypes.DATE },
+    fin: { type: DataTypes.DATE },
 
     linea: { type: DataTypes.STRING },
     maquina: { type: DataTypes.STRING }, //required //linked
@@ -59,6 +63,13 @@ MrpBom.hasMany(ProduccionOrden, {
     onDelete: 'RESTRICT',
 })
 ProduccionOrden.belongsTo(MrpBom, { foreignKey: 'mrp_bom', as: 'mrp_bom1' })
+
+Colaborador.hasMany(MrpBom, {
+    foreignKey: 'responsable',
+    as: 'produccion_ordenes',
+    onDelete: 'RESTRICT',
+})
+MrpBom.belongsTo(Colaborador, { foreignKey: 'responsable', as: 'responsable1' })
 
 ArticuloLinea.hasMany(ProduccionOrden, {
     foreignKey: 'linea',

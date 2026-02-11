@@ -146,6 +146,7 @@ const create = async (req, res) => {
                         val: socio_pedido_items.map((a) => a.articulo),
                     },
                 },
+                incl: ['mrp_bom1'],
             }
             const mrp_bom_socios = await MrpBomSocioRepo.find(qry, true)
             if (mrp_bom_socios.length > 0) is_maquila = true
