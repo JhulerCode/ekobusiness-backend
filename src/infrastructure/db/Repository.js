@@ -147,10 +147,15 @@ const include1 = {
         as: 'moneda1',
         attributes: ['id', 'nombre'],
     },
+    mrp_bom1: {
+        model: MrpBom,
+        as: 'mrp_bom1',
+        attributes: ['id', 'referencia'],
+    },
     mrp_bom_lines: {
         model: MrpBomLine,
         as: 'mrp_bom_lines',
-        attributes: ['id', 'articulo', 'cantidad'],
+        attributes: ['id', 'articulo', 'cantidad', 'orden'],
     },
     mrp_bom_socios: {
         model: MrpBomSocio,
@@ -221,7 +226,7 @@ const sqls1 = {
                     CASE ${sistemaData.kardex_operaciones
                         .map(
                             (t) => `
-                            WHEN kardexes.tipo = ${t.id}
+                            WHEN kardexes.tipo = '${t.id}'
                             THEN kardexes.cantidad * ${t.operacion} * COALESCE(\`kardexes->lote_padre1\`.pu, kardexes.pu) * COALESCE(\`kardexes->lote_padre1\`.tipo_cambio, kardexes.tipo_cambio)
                         `,
                         )
@@ -242,7 +247,7 @@ const sqls1 = {
                     CASE ${sistemaData.kardex_operaciones
                         .map(
                             (t) => `
-                            WHEN kardexes.tipo = ${t.id}
+                            WHEN kardexes.tipo = '${t.id}'
                             THEN kardexes.cantidad * ${t.operacion}`,
                         )
                         .join(' ')}
@@ -259,7 +264,13 @@ const sqls1 = {
             Sequelize.fn(
                 'SUM',
                 Sequelize.literal(`
-                        CASE ${sistemaData.kardex_operaciones.map((t) => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
+                        CASE ${sistemaData.kardex_operaciones
+                            .map(
+                                (t) => `
+                                WHEN lote_padre_items.tipo = '${t.id}'
+                                THEN lote_padre_items.cantidad * ${t.operacion}`,
+                            )
+                            .join(' ')}
                         ELSE 0 END
                     `),
             ),

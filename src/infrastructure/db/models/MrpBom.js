@@ -8,6 +8,7 @@ export const MrpBom = sequelize.define('mrp_boms', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     articulo: { type: DataTypes.STRING }, //required //linked
     tipo: { type: DataTypes.STRING }, //required
+    referencia: { type: DataTypes.STRING },
     // cantidad: { type: DataTypes.DOUBLE }, //required
 
     empresa: { type: DataTypes.STRING },

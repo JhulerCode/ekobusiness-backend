@@ -20,14 +20,14 @@ const find = async (req, res) => {
 
             for (const a of data) {
                 if (qry?.cols?.includes('estado')) a.estado1 = produccion_orden_estadosMap[a.estado]
-                if (a.estado_calidad_revisado) a.estado_calidad_revisado1 = cumplidado_estadosMap[a.estado_calidad_revisado]
+                if (a.estado_calidad_revisado)
+                    a.estado_calidad_revisado1 = cumplidado_estadosMap[a.estado_calidad_revisado]
                 if (a.estado_cf_ppc) a.estado_cf_ppc1 = cumplidado_estadosMap[a.estado_cf_ppc]
             }
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -35,12 +35,12 @@ const find = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await repository.find({ id, incl: ['maquina1', 'articulo1'] })
+        const data = await repository.find({ id, ...qry })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -49,23 +49,46 @@ const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const {
-            fecha, linea, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado, observacion,
+            fecha,
+            articulo,
+            cantidad,
+            mrp_bom,
+            orden,
+
+            linea,
+            maquina,
+            maquina_info,
+
+            observacion,
+            estado,
+
+            articulo_info,
         } = req.body
 
         // ----- CREAR ----- //
         const nuevo = await repository.create({
-            fecha, linea, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado, observacion,
+            fecha,
+            articulo,
+            cantidad,
+            mrp_bom,
+            orden,
+
+            linea,
+            maquina,
+            maquina_info,
+
+            observacion,
+            estado,
+
+            articulo_info,
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -75,24 +98,50 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            fecha, linea, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado, observacion,
+            fecha,
+            articulo,
+            cantidad,
+            mrp_bom,
+            orden,
+
+            linea,
+            maquina,
+            maquina_info,
+
+            observacion,
+            estado,
+
+            articulo_info,
         } = req.body
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id }, {
-            fecha, linea, orden, maquina, maquina_info,
-            articulo, articulo_info, cantidad, estado, observacion,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                fecha,
+                articulo,
+                cantidad,
+                mrp_bom,
+                orden,
+
+                linea,
+                maquina,
+                maquina_info,
+
+                observacion,
+                estado,
+
+                articulo_info,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -101,11 +150,10 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -116,16 +164,18 @@ const terminar = async (req, res) => {
         const { id } = req.params
 
         //--- CERRAR ---//
-        const updated = await repository.update({ id }, {
-            estado: 2,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                estado: 2,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -136,16 +186,18 @@ const abrir = async (req, res) => {
         const { id } = req.params
 
         // ----- ABRIR ----- //
-        const updated = await repository.update({ id }, {
-            estado: 1,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                estado: 1,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -156,14 +208,17 @@ const findTrazabilidad = async (req, res) => {
 
         // const data = await repository.find({ id, incl: ['articulo1', 'maquina1'] }, true)
 
-        const kardexes = await KardexRep.find({
-            cols: ['tipo', 'articulo', 'cantidad'],
-            incl: ['articulo1', 'lote_padre1'],
-            fltr: {
-                produccion_orden: { op: 'Es', val: id }
+        const kardexes = await KardexRep.find(
+            {
+                cols: ['tipo', 'articulo', 'cantidad'],
+                incl: ['articulo1', 'lote_padre1'],
+                fltr: {
+                    produccion_orden: { op: 'Es', val: id },
+                },
+                ordr: [['articulo1', 'nombre', 'ASC']],
             },
-            ordr: [['articulo1', 'nombre', 'ASC']]
-        }, true)
+            true,
+        )
 
         const insumosMap = {}
         const data = { productos_terminados: [] }
@@ -173,13 +228,13 @@ const findTrazabilidad = async (req, res) => {
                 const key = a.articulo + '-' + a.lote_padre
 
                 if (!insumosMap[key]) {
-                    insumosMap[key] = { ...a, cantidad: 0 };
+                    insumosMap[key] = { ...a, cantidad: 0 }
                 }
 
                 if (a.tipo == 2) {
-                    insumosMap[key].cantidad += Number(a.cantidad);
+                    insumosMap[key].cantidad += Number(a.cantidad)
                 } else if (a.tipo == 3) {
-                    insumosMap[key].cantidad -= Number(a.cantidad);
+                    insumosMap[key].cantidad -= Number(a.cantidad)
                 }
             }
 
@@ -191,12 +246,10 @@ const findTrazabilidad = async (req, res) => {
         data.insumos = Object.values(insumosMap)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {
