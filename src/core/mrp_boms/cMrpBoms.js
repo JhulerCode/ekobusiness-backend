@@ -63,18 +63,19 @@ const create = async (req, res) => {
         }))
         await MrpBomLineRepository.createBulk(lines, transaction)
 
-        const socios = mrp_bom_socios.map((a) => ({
-            socio: a.socio,
-            mrp_bom: nuevo.id,
-            empresa,
-            createdBy: colaborador,
-        }))
-        await MrpBomSocioRepository.createBulk(socios, transaction)
+        if (mrp_bom_socios.length > 0) {
+            const socios = mrp_bom_socios.map((a) => ({
+                socio: a.socio,
+                mrp_bom: nuevo.id,
+                empresa,
+                createdBy: colaborador,
+            }))
+            await MrpBomSocioRepository.createBulk(socios, transaction)
+        }
 
         await transaction.commit()
 
-        const data = await loadOne(id)
-
+        const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     } catch (error) {
         await transaction.rollback()
@@ -117,13 +118,15 @@ const update = async (req, res) => {
         }))
         await MrpBomLineRepository.createBulk(lines, transaction)
 
-        const socios = mrp_bom_socios.map((a) => ({
-            socio: a.socio,
-            mrp_bom: id,
-            empresa,
-            createdBy: colaborador,
-        }))
-        await MrpBomSocioRepository.createBulk(socios, transaction)
+        if (mrp_bom_socios.length > 0) {
+            const socios = mrp_bom_socios.map((a) => ({
+                socio: a.socio,
+                mrp_bom: id,
+                empresa,
+                createdBy: colaborador,
+            }))
+            await MrpBomSocioRepository.createBulk(socios, transaction)
+        }
 
         await transaction.commit()
 
