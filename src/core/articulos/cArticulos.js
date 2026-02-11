@@ -312,24 +312,25 @@ const updateFotos = async (req, res) => {
 const createBulk = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
-        const { tipo, articulos } = req.body
+        const { articulos } = req.body
 
         const send = articulos.map((a) => ({
-            codigo_barra: a.EAN,
-            nombre: a.Nombre,
-            unidad: a.Unidad,
-            marca: a.Marca,
+            // id: a.id,
+            nombre: a.nombre,
+            codigo_barra: a.codigo_barra,
+            type: a.type,
+            purchase_ok: a.purchase_ok,
+            sale_ok: a.sale_ok,
 
-            vende: tipo == 1 ? false : true,
-            has_fv: tipo == 1 ? false : true,
-            activo: true,
+            igv_afectacion: a.igv_afectacion,
+            unidad: a.unidad,
+            categoria: a.categoria,
+            marca: a.marca,
 
-            igv_afectacion: a.Tributo,
+            has_fv: a.has_fv,
 
-            tipo,
-            linea: a.Linea,
-            categoria: a.Categoria,
-            filtrantes: a.Sobres_caja,
+            // linea: a.Linea,
+            // filtrantes: a.Sobres_caja,
 
             empresa,
             createdBy: colaborador,
