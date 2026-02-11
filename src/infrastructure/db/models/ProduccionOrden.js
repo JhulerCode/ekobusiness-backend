@@ -64,12 +64,12 @@ MrpBom.hasMany(ProduccionOrden, {
 })
 ProduccionOrden.belongsTo(MrpBom, { foreignKey: 'mrp_bom', as: 'mrp_bom1' })
 
-Colaborador.hasMany(MrpBom, {
+Colaborador.hasMany(ProduccionOrden, {
     foreignKey: 'responsable',
     as: 'produccion_ordenes',
     onDelete: 'RESTRICT',
 })
-MrpBom.belongsTo(Colaborador, { foreignKey: 'responsable', as: 'responsable1' })
+ProduccionOrden.belongsTo(Colaborador, { foreignKey: 'responsable', as: 'responsable1' })
 
 ArticuloLinea.hasMany(ProduccionOrden, {
     foreignKey: 'linea',

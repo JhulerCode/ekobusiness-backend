@@ -54,6 +54,7 @@ const create = async (req, res) => {
             cantidad,
             mrp_bom,
             orden,
+            responsable,
 
             linea,
             maquina,
@@ -72,6 +73,7 @@ const create = async (req, res) => {
             cantidad,
             mrp_bom,
             orden,
+            responsable,
 
             linea,
             maquina,
@@ -103,6 +105,10 @@ const update = async (req, res) => {
             cantidad,
             mrp_bom,
             orden,
+            responsable,
+
+            inicio,
+            fin,
 
             linea,
             maquina,
@@ -123,6 +129,10 @@ const update = async (req, res) => {
                 cantidad,
                 mrp_bom,
                 orden,
+                responsable,
+
+                inicio,
+                fin,
 
                 linea,
                 maquina,

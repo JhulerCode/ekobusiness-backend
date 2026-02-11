@@ -178,6 +178,11 @@ const include1 = {
         as: 'receta_insumos',
         attributes: ['id', 'articulo', 'cantidad', 'orden'],
     },
+    responsable1: {
+        model: Colaborador,
+        as: 'responsable1',
+        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'produccion_codigo'],
+    },
     socio1: {
         model: Socio,
         as: 'socio1',

@@ -22,6 +22,8 @@ export const Colaborador = sequelize.define('colaboradores', {
     sueldo: { type: DataTypes.DOUBLE },
     activo: { type: DataTypes.BOOLEAN },
 
+    produccion_codigo: { type: DataTypes.STRING },
+
     has_signin: { type: DataTypes.BOOLEAN }, //required
     usuario: { type: DataTypes.STRING }, //required
     contrasena: { type: DataTypes.STRING }, //required
