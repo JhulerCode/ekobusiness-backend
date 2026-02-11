@@ -4,7 +4,7 @@ import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.get('/', verifyPermiso(['vReceta:listar']), controller.find)
+router.get('/', controller.find)
 
 router.get('/uno/:id', verifyPermiso(['vReceta:editar']), controller.findById)
 
