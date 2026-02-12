@@ -37,8 +37,9 @@ const find = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await repository.find({ id })
+        const data = await repository.find({ id, ...qry })
 
         res.json({ code: 0, data })
     } catch (error) {

@@ -4,6 +4,7 @@ import { ActivityLog } from '#db/models/ActivityLog.js'
 import { Articulo } from '#db/models/Articulo.js'
 import { ArticuloCategoria } from '#db/models/ArticuloCategoria.js'
 import { ArticuloLinea } from '#db/models/ArticuloLinea.js'
+import { ArticuloSupplier } from '#db/models/ArticuloSupplier.js'
 import { Asistencia } from '#db/models/Asistencia.js'
 import { CajaApertura } from '#db/models/CajaApertura.js'
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
@@ -86,6 +87,24 @@ const include1 = {
         model: Articulo,
         as: 'articulo1',
         attributes: ['id', 'nombre', 'type', 'purchase_ok', 'sale_ok', 'unidad', 'has_fv'],
+    },
+    articulo_suppliers: {
+        model: ArticuloSupplier,
+        as: 'articulo_suppliers',
+        attributes: [
+            'id',
+            'articulo',
+            'socio',
+            'min_qty',
+            'price',
+            'currency_id',
+            'delay',
+            'date_start',
+            'date_end',
+            'product_code',
+            'product_name',
+            'sequence',
+        ],
     },
     colaborador1: {
         model: Colaborador,
