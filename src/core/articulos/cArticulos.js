@@ -5,12 +5,6 @@ import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Articulo')
 
-// const sqlValor = [Sequelize.literal(`(
-//     SELECT COALESCE(SUM(t.stock * t.pu), 0)
-//     FROM transaccion_items AS t
-//     WHERE t.articulo = articulos.id AND t.is_lote_padre = TRUE
-// )`), 'valor']
-
 const find = async (req, res) => {
     try {
         const { empresa } = req.user
@@ -62,6 +56,7 @@ const create = async (req, res) => {
             type,
             purchase_ok,
             sale_ok,
+            produce_ok,
             activo,
 
             unidad,
@@ -105,6 +100,7 @@ const create = async (req, res) => {
             type,
             purchase_ok,
             sale_ok,
+            produce_ok,
             activo,
 
             unidad,
@@ -159,6 +155,7 @@ const update = async (req, res) => {
             type,
             purchase_ok,
             sale_ok,
+            produce_ok,
             activo,
 
             unidad,
@@ -204,6 +201,7 @@ const update = async (req, res) => {
                 type,
                 purchase_ok,
                 sale_ok,
+                produce_ok,
                 activo,
 
                 unidad,
@@ -321,6 +319,7 @@ const createBulk = async (req, res) => {
             type: a.type,
             purchase_ok: a.purchase_ok,
             sale_ok: a.sale_ok,
+            produce_ok: a.produce_ok,
 
             igv_afectacion: a.igv_afectacion,
             unidad: a.unidad,

@@ -13,6 +13,7 @@ export const Articulo = sequelize.define('articulos', {
     type: { type: DataTypes.STRING }, //required
     purchase_ok: { type: DataTypes.BOOLEAN }, //required
     sale_ok: { type: DataTypes.BOOLEAN }, //required
+    produce_ok: { type: DataTypes.BOOLEAN }, //required
     activo: { type: DataTypes.BOOLEAN, defaultValue: true }, //required
 
     //--- CARACTERISTICAS ---//
