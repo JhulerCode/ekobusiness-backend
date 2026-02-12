@@ -263,7 +263,7 @@ const findTrazabilidad = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    const data = await repository.find({ id, incl: ['articulo1', 'maquina1'] }, true)
+    const data = await repository.find({ id, incl: ['articulo1', 'maquina1', 'responsable1', 'linea1'] }, true)
 
     if (data) {
         const produccion_orden_estadosMap = arrayMap('produccion_orden_estados')
@@ -273,6 +273,7 @@ async function loadOne(id) {
 
     return data
 }
+
 export default {
     find,
     findById,

@@ -39,12 +39,14 @@ const find = async (req, res) => {
                     a.lote = loteFuente.lote
                     a.fv = loteFuente.fv
 
-                    a.vu_real = a.tipo_cambio == null ? 'error' : cleanFloat((a.vu || 0) * a.tipo_cambio)
+                    a.vu_real =
+                        a.tipo_cambio == null ? 'error' : cleanFloat((a.vu || 0) * a.tipo_cambio)
 
                     if (a.igv_afectacion === '10') {
-                        a.pu = a.vu_real === 'error'
-                            ? a.vu_real
-                            : cleanFloat(a.vu_real * (1 + (a.igv_porcentaje / 100)))
+                        a.pu =
+                            a.vu_real === 'error'
+                                ? a.vu_real
+                                : cleanFloat(a.vu_real * (1 + a.igv_porcentaje / 100))
                     } else {
                         a.pu = a.vu_real
                     }
@@ -64,8 +66,7 @@ const find = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -77,27 +78,54 @@ const create = async (req, res) => {
         const { empresa } = req.user
         const { colaborador } = req.user
         const {
-            tipo, fecha,
-            articulo, cantidad,
-            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
-            lote, fv,
-            is_lote_padre, stock, lote_padre,
+            tipo,
+            fecha,
+            articulo,
+            cantidad,
+            pu,
+            igv_afectacion,
+            igv_porcentaje,
+            moneda,
+            tipo_cambio,
+            lote,
+            fv,
+            is_lote_padre,
+            stock,
+            lote_padre,
             observacion,
-            transaccion, transaccion_item, produccion_orden, maquina,
+            transaccion,
+            transaccion_item,
+            produccion_orden,
+            maquina,
         } = req.body
 
         // ----- CREAR ---
-        const nuevo = await repository.create({
-            tipo, fecha,
-            articulo, cantidad,
-            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
-            lote, fv,
-            is_lote_padre, stock, lote_padre,
-            observacion,
-            transaccion, transaccion_item, produccion_orden, maquina,
-            empresa,
-            createdBy: colaborador
-        }, transaction)
+        const nuevo = await repository.create(
+            {
+                tipo,
+                fecha,
+                articulo,
+                cantidad,
+                pu,
+                igv_afectacion,
+                igv_porcentaje,
+                moneda,
+                tipo_cambio,
+                lote,
+                fv,
+                is_lote_padre,
+                stock,
+                lote_padre,
+                observacion,
+                transaccion,
+                transaccion_item,
+                produccion_orden,
+                maquina,
+                empresa,
+                createdBy: colaborador,
+            },
+            transaction,
+        )
 
         const transaccion_tiposMap = arrayMap('kardex_operaciones')
         const tipoInfo = transaccion_tiposMap[tipo]
@@ -127,8 +155,7 @@ const create = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
 
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -140,33 +167,59 @@ const update = async (req, res) => {
         const { colaborador } = req.user
         const { id } = req.params
         const {
-            tipo, fecha,
-            articulo, cantidad,
-            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
-            lote, fv,
-            is_lote_padre, stock, lote_padre,
+            tipo,
+            fecha,
+            articulo,
+            cantidad,
+            pu,
+            igv_afectacion,
+            igv_porcentaje,
+            moneda,
+            tipo_cambio,
+            lote,
+            fv,
+            is_lote_padre,
+            stock,
+            lote_padre,
             observacion,
-            transaccion, transaccion_item, produccion_orden, maquina,
+            transaccion,
+            transaccion_item,
+            produccion_orden,
+            maquina,
         } = req.body
 
-        const updated = await repository.update({ id }, {
-            tipo, fecha,
-            articulo, cantidad,
-            pu, igv_afectacion, igv_porcentaje, moneda, tipo_cambio,
-            lote, fv,
-            is_lote_padre, stock, lote_padre,
-            observacion,
-            transaccion, transaccion_item, produccion_orden, maquina,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                tipo,
+                fecha,
+                articulo,
+                cantidad,
+                pu,
+                igv_afectacion,
+                igv_porcentaje,
+                moneda,
+                tipo_cambio,
+                lote,
+                fv,
+                is_lote_padre,
+                stock,
+                lote_padre,
+                observacion,
+                transaccion,
+                transaccion_item,
+                produccion_orden,
+                maquina,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await repository.find({ id })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -179,7 +232,7 @@ const delet = async (req, res) => {
         const { tipo, lote_padre, cantidad } = req.body
 
         // ----- ELIMINAR ---
-        if (await repository.delete({ id }, transaction) == false) return
+        if ((await repository.delete({ id }, transaction)) == false) return
 
         // ----- ACTUALIZAR STOCK ---
         if (lote_padre) {
@@ -194,8 +247,7 @@ const delet = async (req, res) => {
         await transaction.commit()
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
 
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -216,24 +268,19 @@ const ingresarProduccionProductos = async (req, res) => {
                 cantidad: a.cantidad_real,
                 is_lote_padre: true,
                 stock: a.cantidad_real,
-                updatedBy: colaborador
+                updatedBy: colaborador,
             }
             await repository.update({ id: a.id }, send, transaction)
 
             produccion_ordenes_ids.push(a.produccion_orden1.id)
         }
 
-        await ProduccionOrdenRep.update(
-            { id: produccion_ordenes_ids },
-            { estado: 2 },
-            transaction
-        )
+        await ProduccionOrdenRep.update({ id: produccion_ordenes_ids }, { estado: 2 }, transaction)
 
         await transaction.commit()
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         await transaction.rollback()
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -263,7 +310,13 @@ const recalcularStock = async (req, res) => {
 
             for (let a of lotes_padre) {
                 const stock = Number(a.cantidad) + Number(a.movimientos_cantidad)
-                console.log('Actualizando ', i, `Cantidad: ${a.cantidad}`, `Movimientos: ${a.movimientos_cantidad}`, `Stock: ${stock}`)
+                console.log(
+                    'Actualizando ',
+                    i,
+                    `Cantidad: ${a.cantidad}`,
+                    `Movimientos: ${a.movimientos_cantidad}`,
+                    `Stock: ${stock}`,
+                )
 
                 await repository.update({ id: a.id }, { stock })
 
@@ -274,8 +327,7 @@ const recalcularStock = async (req, res) => {
         }
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -288,8 +340,7 @@ const findInventario = async (req, res) => {
         const data = await ArticuloRep.find(qry)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -322,13 +373,16 @@ const findReporteProduccion = async (req, res) => {
 
         data.produccion_mes = await ArticuloRep.find(qry, true)
 
-        data.produccion_mes_total = data.produccion_mes.reduce((acc, a) => acc + Number(a.cantidad), 0)
+        data.produccion_mes_total = data.produccion_mes.reduce(
+            (acc, a) => acc + Number(a.cantidad),
+            0,
+        )
 
         //--- Lo que debería haberse consumido ---//
         const qry1 = {
             incl: ['articulo1'],
             cols: ['articulo_principal', 'articulo', 'cantidad'],
-            fltr: { articulo_principal: { op: 'Es', val: data.produccion_mes.map(a => a.id) } },
+            fltr: { articulo_principal: { op: 'Es', val: data.produccion_mes.map((a) => a.id) } },
         }
 
         const produccion_mes_insumos = await RecetaInsumoRep.find(qry1, true)
@@ -351,7 +405,7 @@ const findReporteProduccion = async (req, res) => {
                     insumos_esperados_obj[r.articulo] = {
                         id: r.articulo,
                         nombre: r['articulo1.nombre'],
-                        cantidad: 0
+                        cantidad: 0,
                     }
                 }
 
@@ -365,7 +419,7 @@ const findReporteProduccion = async (req, res) => {
             cols: ['nombre'],
             sqls: ['articulo_movimientos_cantidad'],
             fltr: {
-                id: { op: 'Es', val: produccion_mes_insumos.map(a => a.articulo) },
+                id: { op: 'Es', val: produccion_mes_insumos.map((a) => a.articulo) },
                 'kardexes.fecha': { op: 'Está dentro de', val: f1, val1: f2 },
                 'kardexes.tipo': { op: 'Es', val: [2, 3] },
             },
@@ -387,14 +441,15 @@ const findReporteProduccion = async (req, res) => {
 
             insumos_utilizados_obj[a.id].cantidad_plan += insumos_esperados_obj[a.id].cantidad
             insumos_utilizados_obj[a.id].cantidad += a.cantidad * -1
-            insumos_utilizados_obj[a.id].diferencia += insumos_utilizados_obj[a.id].cantidad_plan - insumos_utilizados_obj[a.id].cantidad
+            insumos_utilizados_obj[a.id].diferencia +=
+                insumos_utilizados_obj[a.id].cantidad_plan - insumos_utilizados_obj[a.id].cantidad
         }
-        data.insumos = Object.values(insumos_utilizados_obj);
+        data.insumos = Object.values(insumos_utilizados_obj)
 
         //--- Agrupar por categoria ---//
-        const insumos_categorias_obj = {};
+        const insumos_categorias_obj = {}
         for (const a of data.insumos) {
-            const cat = a.categoria1.nombre || 'SIN CATEGORÍA';
+            const cat = a.categoria1.nombre || 'SIN CATEGORÍA'
             console.log(cat)
 
             if (!insumos_categorias_obj[cat]) {
@@ -403,16 +458,48 @@ const findReporteProduccion = async (req, res) => {
                     cantidad_plan: 0,
                     cantidad: 0,
                     diferencia: 0,
-                };
+                }
             }
 
-            insumos_categorias_obj[cat].cantidad_plan += a.cantidad_plan;
-            insumos_categorias_obj[cat].cantidad += a.cantidad;
-            insumos_categorias_obj[cat].diferencia += a.diferencia;
+            insumos_categorias_obj[cat].cantidad_plan += a.cantidad_plan
+            insumos_categorias_obj[cat].cantidad += a.cantidad
+            insumos_categorias_obj[cat].diferencia += a.diferencia
         }
-        data.insumos_categorias = Object.values(insumos_categorias_obj);
+        data.insumos_categorias = Object.values(insumos_categorias_obj)
 
-        res.json({ code: 0, data, produccion_mes_insumos })
+        //--- Programado ---//
+        const qry3 = {
+            fltr: {
+                linea: { op: 'Es', val: linea },
+                fecha: { op: 'Está dentro de', val: f1, val1: f2 },
+            },
+            cols: ['fecha', 'cantidad', 'articulo', 'responsable'],
+            incl: ['responsable1'],
+            sqls: ['productos_terminados'],
+            ordr: [['fecha', 'ASC']],
+        }
+
+        const programados = await ProduccionOrdenRep.find(qry3, true)
+        const responsablesMap = {}
+        for (const a of programados) {
+            if (!responsablesMap[a.responsable]) {
+                responsablesMap[a.responsable] = {
+                    ...a,
+                    cantidad: 0,
+                    productos_terminados: 0,
+                    diferencia: 0,
+                }
+            }
+
+            responsablesMap[a.responsable].cantidad += Number(a.cantidad)
+            responsablesMap[a.responsable].productos_terminados += Number(a['productos_terminados'])
+            responsablesMap[a.responsable].diferencia +=
+                responsablesMap[a.responsable].productos_terminados -
+                responsablesMap[a.responsable].cantidad
+        }
+        data.por_responsable = Object.values(responsablesMap)
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
