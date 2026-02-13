@@ -171,6 +171,7 @@ const sistemaData = {
     pago_condiciones: [
         { id: 1, nombre: 'CONTADO' },
         { id: 2, nombre: 'CRÉDITO 30 DÍAS' },
+        { id: 4, nombre: 'CRÉDITO 45 DÍAS' },
         { id: 3, nombre: 'CRÉDITO 60 DÍAS' },
     ],
     pago_metodos: [
