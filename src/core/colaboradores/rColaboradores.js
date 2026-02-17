@@ -1,5 +1,5 @@
-import { Router } from "express"
-import controller from "./cColaboradores.js"
+import { Router } from 'express'
+import controller from './cColaboradores.js'
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
@@ -8,36 +8,34 @@ router.get(
     '/',
     verifyPermiso([
         'vColaboradores:listar',
-        'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
-        'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',
+        'vFormatosBpm:crear',
+        'vFormatosBpm:ver',
+        'vFormatosBpm:editar',
+        'vFormatosPhs:crear',
+        'vFormatosPhs:ver',
+        'vFormatosPhs:editar',
         'vActivityLogs:listar',
+        'vPrograma:crear',
+        'vPrograma:ver',
+        'vPrograma:editar',
+        'vProduccionHistorial:crear',
+        'vProduccionHistorial:ver',
+        'vProduccionHistorial:editar',
     ]),
-    controller.find
+    controller.find,
 )
 
-router.post(
-    '/',
-    verifyPermiso(['vColaboradores:crear']),
-    controller.create
-)
+router.post('/', verifyPermiso(['vColaboradores:crear']), controller.create)
 
 router.get(
     '/uno/:id',
     verifyPermiso(['vColaboradores:ver', 'vColaboradores:editar']),
-    controller.findById
+    controller.findById,
 )
 
-router.patch(
-    '/:id',
-    verifyPermiso(['vColaboradores:editar']),
-    controller.update
-)
+router.patch('/:id', verifyPermiso(['vColaboradores:editar']), controller.update)
 
-router.delete(
-    '/:id',
-    verifyPermiso(['vColaboradores:eliminar']),
-    controller.delet
-)
+router.delete('/:id', verifyPermiso(['vColaboradores:eliminar']), controller.delet)
 
 router.get('/login', controller.login)
 
