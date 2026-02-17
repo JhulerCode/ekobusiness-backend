@@ -25,6 +25,15 @@ const find = async (req, res) => {
                     a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
                 if (qry?.cols?.includes('is_ecommerce'))
                     a.is_ecommerce1 = estadosMap[a.is_ecommerce]
+
+                if (qry?.cols?.includes('purchase_ok'))
+                    a.purchase_ok1 = estadosMap[a.purchase_ok]
+
+                if (qry?.cols?.includes('sale_ok'))
+                    a.sale_ok1 = estadosMap[a.sale_ok]
+
+                if (qry?.cols?.includes('produce_ok'))
+                    a.produce_ok1 = estadosMap[a.produce_ok]
             }
         }
 
@@ -390,6 +399,9 @@ async function loadOne(id) {
         data.activo1 = estadosMap[data.activo]
         data.igv_afectacion1 = igv_afectacionesMap[data.igv_afectacion]
         data.is_ecommerce1 = estadosMap[data.is_ecommerce]
+        data.purchase_ok1 = estadosMap[data.purchase_ok]
+        data.sale_ok1 = estadosMap[data.sale_ok]
+        data.produce_ok1 = estadosMap[data.produce_ok]
     }
 
     return data
