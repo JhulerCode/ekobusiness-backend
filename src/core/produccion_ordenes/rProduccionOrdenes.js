@@ -1,5 +1,5 @@
-import { Router } from "express"
-import controller from "./cProduccionOrdenes.js"
+import { Router } from 'express'
+import controller from './cProduccionOrdenes.js'
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
@@ -12,7 +12,7 @@ router.get(
         // 'vProgramaLuxury:listar',
         'vProduccionHistorial:listar',
     ]),
-    controller.find
+    controller.find,
 )
 
 router.post(
@@ -22,18 +22,21 @@ router.post(
         // 'vProgramaGranel:crear',
         // 'vProgramaLuxury:crear'
     ]),
-    controller.create
+    controller.create,
 )
 
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vPrograma:ver', 'vPrograma:editar', 'vPrograma:salidaInsumos',
+        'vPrograma:ver',
+        'vPrograma:editar',
+        'vPrograma:salidaInsumos',
         // 'vProgramaGranel:ver', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
         // 'vProgramaLuxury:ver', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:ver', 'vProduccionHistorial:salidaInsumos',
+        'vProduccionHistorial:ver',
+        'vProduccionHistorial:salidaInsumos',
     ]),
-    controller.findById
+    controller.findById,
 )
 
 router.patch(
@@ -43,7 +46,7 @@ router.patch(
         // 'vProgramaGranel:editar',
         // 'vProgramaLuxury:editar'
     ]),
-    controller.update
+    controller.update,
 )
 
 router.patch(
@@ -53,7 +56,7 @@ router.patch(
         // 'vProgramaGranel:terminar',
         // 'vProgramaLuxury:terminar'
     ]),
-    controller.terminar
+    controller.terminar,
 )
 
 router.patch(
@@ -63,8 +66,12 @@ router.patch(
         // 'vProgramaGranel:terminar',
         // 'vProgramaLuxury:terminar'
     ]),
-    controller.abrir
+    controller.abrir,
 )
+
+router.patch('/inicio/:id', controller.setInicio)
+
+router.patch('/fin/:id', controller.setFin)
 
 router.delete(
     '/:id',
@@ -73,16 +80,13 @@ router.delete(
         // 'vProgramaGranel:eliminar',
         // 'vProgramaLuxury:eliminar'
     ]),
-    controller.delet
+    controller.delet,
 )
 
 router.get(
     '/trazabilidad/:id',
-    verifyPermiso([
-        'vProduccionHistorial:trazabilidad',
-        'vProductosCuarentena:trazabilidad',
-    ]),
-    controller.findTrazabilidad
+    verifyPermiso(['vProduccionHistorial:trazabilidad', 'vProductosCuarentena:trazabilidad']),
+    controller.findTrazabilidad,
 )
 
 export default router

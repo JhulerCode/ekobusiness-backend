@@ -107,9 +107,6 @@ const update = async (req, res) => {
             orden,
             responsable,
 
-            inicio,
-            fin,
-
             linea,
             maquina,
             maquina_info,
@@ -212,6 +209,52 @@ const abrir = async (req, res) => {
     }
 }
 
+const setInicio = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+        const { inicio } = req.body
+
+        // ----- ABRIR ----- //
+        const updated = await repository.update(
+            { id },
+            {
+                inicio,
+                updatedBy: colaborador,
+            },
+        )
+
+        if (updated == false) return resUpdateFalse(res)
+
+        res.json({ code: 0 })
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const setFin = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const { id } = req.params
+        const { fin } = req.body
+
+        // ----- ABRIR ----- //
+        const updated = await repository.update(
+            { id },
+            {
+                fin,
+                updatedBy: colaborador,
+            },
+        )
+
+        if (updated == false) return resUpdateFalse(res)
+
+        res.json({ code: 0 })
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const findTrazabilidad = async (req, res) => {
     try {
         const { id } = req.params
@@ -263,7 +306,10 @@ const findTrazabilidad = async (req, res) => {
 
 //--- Helpers ---//
 async function loadOne(id) {
-    const data = await repository.find({ id, incl: ['articulo1', 'maquina1', 'responsable1', 'linea1'] }, true)
+    const data = await repository.find(
+        { id, incl: ['articulo1', 'maquina1', 'responsable1', 'linea1'] },
+        true,
+    )
 
     if (data) {
         const produccion_orden_estadosMap = arrayMap('produccion_orden_estados')
@@ -282,5 +328,7 @@ export default {
     delet,
     terminar,
     abrir,
+    setInicio,
+    setFin,
     findTrazabilidad,
 }
