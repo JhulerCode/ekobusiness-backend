@@ -128,9 +128,6 @@ const update = async (req, res) => {
                 orden,
                 responsable,
 
-                inicio,
-                fin,
-
                 linea,
                 maquina,
                 maquina_info,
