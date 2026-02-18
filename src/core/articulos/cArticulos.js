@@ -1,9 +1,11 @@
+import sequelize from '#db/sequelize.js'
 import { Repository } from '#db/Repository.js'
 import { arrayMap } from '#store/system.js'
 import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Articulo')
+const ArticuloSupplieRepository = new Repository('ArticuloSupplier')
 
 const find = async (req, res) => {
     try {
@@ -26,14 +28,11 @@ const find = async (req, res) => {
                 if (qry?.cols?.includes('is_ecommerce'))
                     a.is_ecommerce1 = estadosMap[a.is_ecommerce]
 
-                if (qry?.cols?.includes('purchase_ok'))
-                    a.purchase_ok1 = estadosMap[a.purchase_ok]
+                if (qry?.cols?.includes('purchase_ok')) a.purchase_ok1 = estadosMap[a.purchase_ok]
 
-                if (qry?.cols?.includes('sale_ok'))
-                    a.sale_ok1 = estadosMap[a.sale_ok]
+                if (qry?.cols?.includes('sale_ok')) a.sale_ok1 = estadosMap[a.sale_ok]
 
-                if (qry?.cols?.includes('produce_ok'))
-                    a.produce_ok1 = estadosMap[a.produce_ok]
+                if (qry?.cols?.includes('produce_ok')) a.produce_ok1 = estadosMap[a.produce_ok]
             }
         }
 
@@ -57,6 +56,8 @@ const findById = async (req, res) => {
 }
 
 const create = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { colaborador, empresa } = req.user
         const {
@@ -97,64 +98,86 @@ const create = async (req, res) => {
             mp_tipo,
             has_fv,
             igv_afectacion,
+
+            articulo_suppliers,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
         if ((await repository.existe({ nombre, empresa }, res)) == true) return
 
         // ----- CREAR ----- //
-        const nuevo = await repository.create({
-            nombre,
-            code,
-            codigo_barra,
-            type,
-            purchase_ok,
-            sale_ok,
-            produce_ok,
-            activo,
+        const nuevo = await repository.create(
+            {
+                nombre,
+                code,
+                codigo_barra,
+                type,
+                purchase_ok,
+                sale_ok,
+                produce_ok,
+                activo,
 
-            unidad,
-            categoria,
-            marca,
+                unidad,
+                categoria,
+                marca,
 
-            tracking,
+                tracking,
 
-            list_price,
+                list_price,
 
-            is_ecommerce,
-            descripcion,
-            precio,
-            precio_anterior,
-            contenido_neto,
-            dimenciones,
-            envase_tipo,
-            is_destacado,
-            fotos,
-            ingredientes,
-            beneficios,
+                is_ecommerce,
+                descripcion,
+                precio,
+                precio_anterior,
+                contenido_neto,
+                dimenciones,
+                envase_tipo,
+                is_destacado,
+                fotos,
+                ingredientes,
+                beneficios,
 
-            linea,
-            filtrantes,
+                linea,
+                filtrantes,
 
-            combo_articulos,
-            tipo,
-            mp_tipo,
-            has_fv,
-            igv_afectacion,
+                combo_articulos,
+                tipo,
+                mp_tipo,
+                has_fv,
+                igv_afectacion,
 
-            empresa,
+                empresa,
+                createdBy: colaborador,
+            },
+            transaction,
+        )
+
+        //--- CREAR SUPLIERS ---//
+        const send_articulo_suppliers = articulo_suppliers.map((a) => ({
+            ...a,
+            id: undefined,
+            articulo: nuevo.id,
+            empresa: empresa,
             createdBy: colaborador,
-        })
+            updatedBy: colaborador,
+        }))
+        await ArticuloSupplieRepository.createBulk(send_articulo_suppliers, transaction)
+
+        await transaction.commit()
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const update = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { colaborador, empresa } = req.user
         const { id } = req.params
@@ -196,6 +219,8 @@ const update = async (req, res) => {
             mp_tipo,
             has_fv,
             igv_afectacion,
+
+            articulo_suppliers,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -245,14 +270,51 @@ const update = async (req, res) => {
 
                 updatedBy: colaborador,
             },
+            transaction,
         )
 
         if (updated == false) return resUpdateFalse(res)
+
+        //--- UPDATE SUPPLIERS ---//
+        if (articulo_suppliers) {
+            const send_articulo_suppliers = articulo_suppliers.map((a) => ({
+                ...a,
+                empresa: empresa,
+                createdBy: colaborador,
+                updatedBy: colaborador,
+            }))
+            await repository.syncHasMany(
+                {
+                    model: 'ArticuloSupplier',
+                    foreignKey: 'articulo',
+                    parentId: id,
+                    newData: send_articulo_suppliers,
+                    updateFields: [
+                        'socio',
+                        'min_qty',
+                        'price',
+                        'currency_id',
+                        'delay',
+                        'date_start',
+                        'date_end',
+                        'product_code',
+                        'product_name',
+                        'sequence',
+                        'updatedBy',
+                    ],
+                },
+                transaction,
+            )
+        }
+
+        await transaction.commit()
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

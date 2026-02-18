@@ -39,6 +39,7 @@ export const models = {
     Articulo,
     ArticuloCategoria,
     ArticuloLinea,
+    ArticuloSupplier,
     Asistencia,
     CajaApertura,
     CajaMovimiento,
@@ -119,6 +120,11 @@ const include1 = {
     caja_movimientos: {
         model: CajaMovimiento,
         as: 'caja_movimientos',
+    },
+    currency_id1: {
+        model: Moneda,
+        as: 'currency_id1',
+        attributes: ['id', 'nombre'],
     },
     kardexes: {
         model: Kardex,
@@ -425,7 +431,7 @@ export class Repository {
             where.id = { [Op.not]: where.id }
         }
 
-        const result = await this.model.findAll({ where })
+        const result = await this.model.findAll({ where, attributes: ['id'] })
 
         if (result.length > 0) {
             res.json({ code: 1, msg: ms ? ms : 'El nombre ya existe' })
@@ -461,5 +467,46 @@ export class Repository {
 
     async createBulk(data, transaction) {
         await this.model.bulkCreate(data, { transaction })
+    }
+
+    async syncHasMany(props, transaction) {
+        const { model, foreignKey, parentId, newData, updateFields } = props
+
+        const modelRel = models[model]
+
+        // 1️⃣ Obtener ids entrantes (solo los que ya existen)
+        const incomingIds = newData.filter((a) => a.id).map((a) => a.id)
+
+        // 2️⃣ DELETE
+        if (incomingIds.length > 0) {
+            await modelRel.destroy({
+                where: {
+                    [foreignKey]: parentId,
+                    id: {
+                        [Op.notIn]: incomingIds,
+                    },
+                },
+                transaction,
+            })
+        } else {
+            // Si no viene ningún id existente → borrar todo
+            await modelRel.destroy({
+                where: { [foreignKey]: parentId },
+                transaction,
+            })
+        }
+
+        // 3️⃣ Preparar datos para UPSERT
+        const rows = newData.map((item) => ({
+            ...item,
+            [foreignKey]: parentId,
+        }))
+
+        if (rows.length > 0) {
+            await modelRel.bulkCreate(rows, {
+                updateOnDuplicate: updateFields,
+                transaction,
+            })
+        }
     }
 }

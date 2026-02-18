@@ -10,6 +10,7 @@ import empresas from '#core/empresas/rEmpresas.js'
 import activity_logs from '#core/activity_logs/rActivityLogs.js'
 import articulo_lineas from '#core/articulo_lineas/rArticuloLineas.js'
 import articulo_categorias from '#core/articulo_categorias/rArticuloCategorias.js'
+import articulo_suppliers from '#core/articulo_suppliers/rArticuloSuppliers.js'
 import articulos from '#core/articulos/rArticulos.js'
 import asistencias from '#core/asistencias/rAsistencias.js'
 import caja_aperturas from '#core/caja_aperturas/rCajaAperturas.js'
@@ -54,6 +55,7 @@ router.use('/api/empresas', empresas)
 router.use('/api/activity_logs', activity_logs)
 router.use('/api/articulo_lineas', articulo_lineas)
 router.use('/api/articulo_categorias', articulo_categorias)
+router.use('/api/articulo_suppliers', articulo_suppliers)
 router.use('/api/articulos', articulos)
 router.use('/api/asistencias', asistencias)
 router.use('/api/caja_aperturas', caja_aperturas)
