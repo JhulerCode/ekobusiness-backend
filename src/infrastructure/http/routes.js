@@ -16,6 +16,7 @@ import asistencias from '#core/asistencias/rAsistencias.js'
 import caja_aperturas from '#core/caja_aperturas/rCajaAperturas.js'
 import caja_movimientos from '#core/caja_movimientos/rCajaMovimientos.js'
 import colaboradores from '#core/colaboradores/rColaboradores.js'
+import combo_componentes from '#core/combo_componentes/rComboComponentes.js'
 import documentos from '#core/documentos/rDocumentos.js'
 import formatos from '#core/formatos/rFormatos.js'
 import formato_values from '#core/formato_values/rFormatoValues.js'
@@ -61,6 +62,7 @@ router.use('/api/asistencias', asistencias)
 router.use('/api/caja_aperturas', caja_aperturas)
 router.use('/api/caja_movimientos', caja_movimientos)
 router.use('/api/colaboradores', colaboradores)
+router.use('/api/combo_componentes', combo_componentes)
 router.use('/api/documentos', documentos)
 router.use('/api/formatos', formatos)
 router.use('/api/formato_values', formato_values)

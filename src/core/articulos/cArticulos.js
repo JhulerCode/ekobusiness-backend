@@ -5,7 +5,8 @@ import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.j
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Articulo')
-const ArticuloSupplieRepository = new Repository('ArticuloSupplier')
+const ArticuloSupplierRepository = new Repository('ArticuloSupplier')
+const ComboComponenteRepository = new Repository('ComboComponente')
 
 const find = async (req, res) => {
     try {
@@ -100,6 +101,7 @@ const create = async (req, res) => {
             igv_afectacion,
 
             articulo_suppliers,
+            combo_componentes,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -161,7 +163,21 @@ const create = async (req, res) => {
             createdBy: colaborador,
             updatedBy: colaborador,
         }))
-        await ArticuloSupplieRepository.createBulk(send_articulo_suppliers, transaction)
+        await ArticuloSupplierRepository.createBulk(send_articulo_suppliers, transaction)
+
+        //--- CREAR COMBO COMPONENTES ---//
+        if (type == 'combo') {
+            const send_combo_componentes = combo_componentes.map((a) => ({
+                articulo_principal: nuevo.id,
+                articulo: a.articulo,
+                cantidad: a.cantidad,
+                orden: a.orden,
+                empresa,
+                createdBy: colaborador,
+            }))
+
+            await ComboComponenteRepository.createBulk(send_combo_componentes, transaction)
+        }
 
         await transaction.commit()
 
@@ -221,6 +237,7 @@ const update = async (req, res) => {
             igv_afectacion,
 
             articulo_suppliers,
+            combo_componentes,
         } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
@@ -279,7 +296,7 @@ const update = async (req, res) => {
         if (articulo_suppliers) {
             const send_articulo_suppliers = articulo_suppliers.map((a) => ({
                 ...a,
-                empresa: empresa,
+                empresa,
                 createdBy: colaborador,
                 updatedBy: colaborador,
             }))
@@ -307,6 +324,26 @@ const update = async (req, res) => {
             )
         }
 
+        //--- UPDATE COMBO COMPONENTES ---//
+        if (combo_componentes) {
+            const send_combo_componentes = combo_componentes.map((a) => ({
+                ...a,
+                empresa,
+                createdBy: colaborador,
+                createdBy: colaborador,
+            }))
+            await repository.syncHasMany(
+                {
+                    model: 'ComboComponente',
+                    foreignKey: 'articulo_principal',
+                    parentId: id,
+                    newData: send_combo_componentes,
+                    updateFields: ['articulo', 'cantidad', 'orden', 'updatedBy'],
+                },
+                transaction,
+            )
+        }
+
         await transaction.commit()
 
         const data = await loadOne(id)
@@ -320,16 +357,27 @@ const update = async (req, res) => {
 }
 
 const delet = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { id } = req.params
         const { fotos } = req.body
 
-        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
+        await ArticuloSupplierRepository.delete({ articulo: id }, transaction)
+        await ComboComponenteRepository.delete({ articulo_principal: id }, transaction)
 
-        for (const a of fotos) await minioRemoveObject(a.id)
+        if ((await repository.delete({ id }, transaction)) == false) return resDeleteFalse(res)
+
+        await transaction.commit()
+
+        if (fotos && fotos.length > 0) {
+            for (const a of fotos) await minioRemoveObject(a.id)
+        }
 
         res.json({ code: 0 })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

@@ -9,6 +9,7 @@ import { Asistencia } from '#db/models/Asistencia.js'
 import { CajaApertura } from '#db/models/CajaApertura.js'
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
 import { Colaborador } from '#db/models/Colaborador.js'
+import { ComboComponente } from './models/ComboComponente.js'
 import { DerechoArco } from '#db/models/DerechoArco.js'
 import { Documento } from '#db/models/Documento.js'
 import { FormatoValue } from '#db/models/FormatoValue.js'
@@ -44,6 +45,7 @@ export const models = {
     CajaApertura,
     CajaMovimiento,
     Colaborador,
+    ComboComponente,
     DerechoArco,
     Documento,
     FormatoValue,
