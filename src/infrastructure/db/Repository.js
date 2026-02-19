@@ -339,8 +339,6 @@ export class Repository {
         const findProps = {
             include: [],
             attributes: ['id'],
-            where: {},
-            order: [['createdAt', 'DESC']],
         }
 
         if (qry?.incl) {
@@ -370,42 +368,10 @@ export class Repository {
             }
         }
 
-        if (qry?.cols) {
-            if (qry.cols.exclude) {
-                findProps.attributes = { exclude: qry.cols.exclude }
-            } else {
-                const cols1 = qry.cols.filter((a) => columns.includes(a))
-                findProps.attributes.push(...cols1)
-                // findProps.attributes = findProps.attributes.concat(cols1)
-            }
-        }
-
         if (qry?.sqls) {
             for (const a of qry.sqls) {
                 findProps.attributes.push(sqls1[a])
             }
-        }
-
-        if (qry?.fltr) {
-            const fltr1 = Object.fromEntries(
-                Object.entries(qry.fltr).filter(([key]) => columns.includes(key)),
-            )
-            Object.assign(findProps.where, applyFilters(fltr1))
-
-            // Filtros de relaciones
-            Object.entries(qry.fltr)
-                .filter(([k]) => Object.keys(include1).some((pref) => k.startsWith(pref)))
-                .forEach(([k, v]) =>
-                    Object.assign(findProps.where, applyFilters({ [`$${k}$`]: v })),
-                )
-        }
-
-        if (qry?.grop) {
-            findProps.group = qry.grop
-        }
-
-        if (qry?.ordr) {
-            findProps.order = qry.ordr
         }
 
         if (qry?.id) {
@@ -418,12 +384,64 @@ export class Repository {
                 return data
             }
         } else {
-            const data = await this.model.findAll(findProps)
+            findProps.where = {}
+            findProps.order = [['createdAt', 'DESC']]
+            const pageSize = 100
+            const page = qry.page ?? 1
+            findProps.limit = pageSize
+            findProps.offset = pageSize * (page - 1)
 
-            if (tojson) {
-                return data.map((a) => a.toJSON())
+            if (qry?.cols) {
+                if (qry.cols.exclude) {
+                    findProps.attributes = { exclude: qry.cols.exclude }
+                } else {
+                    const cols1 = qry.cols.filter((a) => columns.includes(a))
+                    findProps.attributes.push(...cols1)
+                    // findProps.attributes = findProps.attributes.concat(cols1)
+                }
+            }
+
+            if (qry?.fltr) {
+                const fltr1 = Object.fromEntries(
+                    Object.entries(qry.fltr).filter(([key]) => columns.includes(key)),
+                )
+                Object.assign(findProps.where, applyFilters(fltr1))
+
+                // Filtros de relaciones
+                Object.entries(qry.fltr)
+                    .filter(([k]) => Object.keys(include1).some((pref) => k.startsWith(pref)))
+                    .forEach(([k, v]) =>
+                        Object.assign(findProps.where, applyFilters({ [`$${k}$`]: v })),
+                    )
+            }
+
+            if (qry?.grop) {
+                findProps.group = qry.grop
+            }
+
+            if (qry?.ordr) {
+                findProps.order = qry.ordr
+            }
+
+            if (qry?.page) {
+                const { count, rows } = await this.model.findAndCountAll(findProps)
+
+                const meta = {
+                    per_page: pageSize,
+                    current_page: qry.page,
+                    last_page: Math.ceil(count / pageSize),
+                    total_records: count,
+                }
+
+                return { data: rows.map((a) => a.toJSON()), meta }
             } else {
-                return data
+                const data = await this.model.findAll(findProps)
+
+                if (tojson) {
+                    return data.map((a) => a.toJSON())
+                } else {
+                    return data
+                }
             }
         }
     }

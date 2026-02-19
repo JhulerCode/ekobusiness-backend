@@ -15,7 +15,15 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        let data = await repository.find(qry, true)
+        const response = await repository.find(qry, true)
+
+        let data, meta
+        if (qry && qry.page) {
+            data = response.data
+            meta = response.meta
+        } else {
+            data = response
+        }
 
         if (data.length > 0) {
             const estadosMap = arrayMap('estados')
@@ -37,7 +45,7 @@ const find = async (req, res) => {
             }
         }
 
-        res.json({ code: 0, data })
+        res.json({ code: 0, data, meta })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
