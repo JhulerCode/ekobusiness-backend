@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer'
-import config from "../../config.js"
+import config from '../../config.js'
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -11,9 +11,9 @@ const transporter = nodemailer.createTransport({
     },
 })
 
-transporter.verify().then(() => {
-    console.log('Listo para enviar correos')
-})
+// transporter.verify().then(() => {
+//     console.log('Listo para enviar correos')
+// })
 
 const nodeMailer = () => {
     // console.log(config.email,config.emailpass)

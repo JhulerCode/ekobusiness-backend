@@ -4,24 +4,11 @@ import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.get(
-    '/',
-    verifyPermiso([
-        'vPrograma:listar',
-        // 'vProgramaGranel:listar',
-        // 'vProgramaLuxury:listar',
-        'vProduccionHistorial:listar',
-    ]),
-    controller.find,
-)
+router.get('/', verifyPermiso(['vPrograma:listar', 'vProduccionHistorial:listar']), controller.find)
 
 router.post(
     '/',
-    verifyPermiso([
-        'vPrograma:crear',
-        // 'vProgramaGranel:crear',
-        // 'vProgramaLuxury:crear'
-    ]),
+    verifyPermiso(['vPrograma:crear', 'vProduccionHistorial:crear']),
     controller.create,
 )
 
@@ -31,9 +18,8 @@ router.get(
         'vPrograma:ver',
         'vPrograma:editar',
         'vPrograma:salidaInsumos',
-        // 'vProgramaGranel:ver', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
-        // 'vProgramaLuxury:ver', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:ver',
+        'vProduccionHistorial:editar',
         'vProduccionHistorial:salidaInsumos',
     ]),
     controller.findById,
@@ -41,31 +27,19 @@ router.get(
 
 router.patch(
     '/:id',
-    verifyPermiso([
-        'vPrograma:editar',
-        // 'vProgramaGranel:editar',
-        // 'vProgramaLuxury:editar'
-    ]),
+    verifyPermiso(['vPrograma:editar', 'vProduccionHistorial:editar']),
     controller.update,
 )
 
 router.patch(
     '/terminar/:id',
-    verifyPermiso([
-        'vPrograma:terminar',
-        // 'vProgramaGranel:terminar',
-        // 'vProgramaLuxury:terminar'
-    ]),
+    verifyPermiso(['vPrograma:terminar', 'vProduccionHistorial:terminar']),
     controller.terminar,
 )
 
 router.patch(
     '/abrir/:id',
-    verifyPermiso([
-        'vPrograma:terminar',
-        // 'vProgramaGranel:terminar',
-        // 'vProgramaLuxury:terminar'
-    ]),
+    verifyPermiso(['vPrograma:terminar', 'vProduccionHistorial:terminar']),
     controller.abrir,
 )
 
@@ -75,11 +49,7 @@ router.patch('/fin/:id', controller.setFin)
 
 router.delete(
     '/:id',
-    verifyPermiso([
-        'vPrograma:eliminar',
-        // 'vProgramaGranel:eliminar',
-        // 'vProgramaLuxury:eliminar'
-    ]),
+    verifyPermiso(['vPrograma:eliminar', 'vProduccionHistorial:eliminar']),
     controller.delet,
 )
 

@@ -1,5 +1,5 @@
-import { Router } from "express"
-import controller from "./cArticulos.js"
+import { Router } from 'express'
+import controller from './cArticulos.js'
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 import { uploadMem } from '#http/middlewares/uploadFiles.js'
 
@@ -10,92 +10,92 @@ router.get(
     verifyPermiso([
         'vArticulos:listar',
         'vPrecioListaItems:crear',
-        'vCompraPedidos:crear', 'vCompraPedidos:editar', 'vCompraPedidos:ingresarMercaderia',
+        'vCompraPedidos:crear',
+        'vCompraPedidos:editar',
+        'vCompraPedidos:ingresarMercaderia',
         'vCompras:crear',
-        'vProductosTerminados:listar', 'vProductosTerminados:crearCombo',
-        'vReceta:crear',
-        'vVentaPedidos:crear', 'vVentaPedidos:editar', 'vVentaPedidos:entregarMercaderia',
+        'vProductosTerminados:listar',
+        'vProductosTerminados:crearCombo',
+        'vMrpBom:crear',
+        'vMrpBom:editar',
+        'vVentaPedidos:crear',
+        'vVentaPedidos:editar',
+        'vVentaPedidos:entregarMercaderia',
         'vVentas:crear',
-        'vPrograma:crear', 'vPrograma:editar', 'vPrograma:salidaInsumos',
+        'vPrograma:crear',
+        'vPrograma:editar',
+        'vPrograma:salidaInsumos',
         // 'vProgramaGranel:crear', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
         // 'vProgramaLuxury:crear', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
         'vProduccionHistorial:salidaInsumos',
-        'vFormatosBpm:crear', 'vFormatosBpm:ver', 'vFormatosBpm:editar',
-        'vFormatosPhs:crear', 'vFormatosPhs:ver', 'vFormatosPhs:editar',
+        'vFormatosBpm:crear',
+        'vFormatosBpm:ver',
+        'vFormatosBpm:editar',
+        'vFormatosPhs:crear',
+        'vFormatosPhs:ver',
+        'vFormatosPhs:editar',
     ]),
-    controller.find
+    controller.find,
 )
 
 router.post(
     '/',
     verifyPermiso([
-        'vArticulos:crear', 'vArticulos:clonar',
-        'vProductosTerminados:crear', 'vProductosTerminados:clonar', 'vProductosTerminados:crearCombo',
+        'vArticulos:crear',
+        'vArticulos:clonar',
+        'vProductosTerminados:crear',
+        'vProductosTerminados:clonar',
+        'vProductosTerminados:crearCombo',
     ]),
-    controller.create
+    controller.create,
 )
 
 router.patch(
     '/:id',
-    verifyPermiso([
-        'vArticulos:editar',
-        'vProductosTerminados:editar',
-    ]),
-    controller.update
+    verifyPermiso(['vArticulos:editar', 'vProductosTerminados:editar']),
+    controller.update,
 )
 
 router.get(
     '/uno/:id',
     verifyPermiso([
-        'vArticulos:editar', 'vArticulos:clonar',
-        'vProductosTerminados:editar', 'vProductosTerminados:clonar',
+        'vArticulos:editar',
+        'vArticulos:clonar',
+        'vProductosTerminados:editar',
+        'vProductosTerminados:clonar',
     ]),
-    controller.findById
+    controller.findById,
 )
 
 router.delete(
     '/:id',
-    verifyPermiso([
-        'vArticulos:eliminar',
-        'vProductosTerminados:eliminar',
-    ]),
-    controller.delet
+    verifyPermiso(['vArticulos:eliminar', 'vProductosTerminados:eliminar']),
+    controller.delet,
 )
 
 router.post(
     '/bulk',
-    verifyPermiso([
-        'vArticulos:importar',
-        'vProductosTerminados:importar',
-    ]),
-    controller.createBulk
+    verifyPermiso(['vArticulos:importar', 'vProductosTerminados:importar']),
+    controller.createBulk,
 )
 
 router.patch(
     '/bulk/:id',
-    verifyPermiso([
-        'vArticulos:editarBulk',
-        'vProductosTerminados:editarBulk'
-    ]),
-    controller.updateBulk
+    verifyPermiso(['vArticulos:editarBulk', 'vProductosTerminados:editarBulk']),
+    controller.updateBulk,
 )
 
 router.delete(
     '/bulk/:id',
-    verifyPermiso([
-        'vArticulos:eliminarBulk',
-        'vProductosTerminados:eliminarBulk'
-    ]),
-    controller.deleteBulk
+    verifyPermiso(['vArticulos:eliminarBulk', 'vProductosTerminados:eliminarBulk']),
+    controller.deleteBulk,
 )
 
 router.patch(
     '/fotos/:id',
-    verifyPermiso([
-        'vProductos:actualizarFotos',
-    ]),
+    verifyPermiso(['vProductos:actualizarFotos']),
     uploadMem.array('archivos'),
-    controller.updateFotos
+    controller.updateFotos,
 )
 
 export default router

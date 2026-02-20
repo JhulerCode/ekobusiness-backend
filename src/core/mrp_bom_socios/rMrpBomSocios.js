@@ -1,15 +1,9 @@
-import { Router } from "express"
-import controller from "./cMrpBomSocios.js"
-import verifyPermiso from "#http/middlewares/verifyPermiso.js"
+import { Router } from 'express'
+import controller from './cMrpBomSocios.js'
+import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.get(
-    '/',
-    verifyPermiso([
-        'vReceta:listar',
-    ]),
-    controller.find
-)
+router.get('/', verifyPermiso(['vMrpBom:editar']), controller.find)
 
 export default router

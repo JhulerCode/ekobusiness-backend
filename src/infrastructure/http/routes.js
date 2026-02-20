@@ -31,7 +31,6 @@ import mrp_bom_socios from '#core/mrp_bom_socios/rMrpBomSocios.js'
 import precio_listas from '#core/precio_listas/rPrecioListas.js'
 import precio_lista_items from '#core/precio_lista_items/rPrecioListaItems.js'
 import produccion_ordenes from '#core/produccion_ordenes/rProduccionOrdenes.js'
-import receta_insumos from '#core/receta_insumos/rRecetaInsumos.js'
 import sessions from '#core/sessions/rSessions.js'
 import socio_pedidos from '#core/socio_pedidos/rSocioPedidos.js'
 import socio_pedido_items from '#core/socio_pedido_items/rSocioPedidoItems.js'
@@ -78,7 +77,6 @@ router.use('/api/mrp_bom_socios', mrp_bom_socios)
 router.use('/api/precio_listas', precio_listas)
 router.use('/api/precio_lista_items', precio_lista_items)
 router.use('/api/produccion_ordenes', produccion_ordenes)
-router.use('/api/receta_insumos', receta_insumos)
 router.use('/api/sessions', sessions)
 router.use('/api/socios', socios)
 router.use('/api/socio_pedidos', socio_pedidos)

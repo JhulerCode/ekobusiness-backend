@@ -6,12 +6,12 @@ const router = Router()
 
 router.get('/', controller.find)
 
-router.get('/uno/:id', verifyPermiso(['vReceta:editar']), controller.findById)
+router.get('/uno/:id', verifyPermiso(['vMrpBom:editar']), controller.findById)
 
-router.post('/', verifyPermiso(['vReceta:crear']), controller.create)
+router.post('/', verifyPermiso(['vMrpBom:crear']), controller.create)
 
-router.patch('/:id', verifyPermiso(['vReceta:editar']), controller.update)
+router.patch('/:id', verifyPermiso(['vMrpBom:editar']), controller.update)
 
-router.delete('/:id', verifyPermiso(['vReceta:eliminar']), controller.delet)
+router.delete('/:id', verifyPermiso(['vMrpBom:eliminar']), controller.delet)
 
 export default router
