@@ -26,8 +26,9 @@ const find = async (req, res) => {
 const findById = async (req, res) => {
     try {
         const { id } = req.params
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await repository.find({ id })
+        const data = await repository.find({ id, ...qry })
 
         res.json({ code: 0, data })
     } catch (error) {
@@ -40,9 +41,6 @@ const create = async (req, res) => {
         const { colaborador, empresa } = req.user
         const { nombre, descripcion, socio, articulo, estado, reclamo_fecha, reclamo_fuente } =
             req.body
-
-        //--- VERIFY SI EXISTE ---//
-        if ((await repository.existe({ fecha, moneda, empresa }, res, 'Ya existe')) == true) return
 
         //--- CREAR ---//
         const nuevo = await repository.create({
@@ -61,22 +59,16 @@ const create = async (req, res) => {
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     } catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const update = async (req, res) => {
     try {
-        const { colaborador, empresa } = req.user
+        const { colaborador } = req.user
         const { id } = req.params
         const { nombre, descripcion, socio, articulo, estado, reclamo_fecha, reclamo_fuente } =
             req.body
-
-        //--- VERIFY SI EXISTE ---//
-        if ((await repository.existe({ fecha, moneda, id, empresa }, res, 'Ya existe')) == true)
-            return
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update(
@@ -99,8 +91,6 @@ const update = async (req, res) => {
         const data = await loadOne(id)
         res.json({ code: 0, data })
     } catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -113,15 +103,13 @@ const delet = async (req, res) => {
 
         res.json({ code: 0 })
     } catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 //--- Helpers ---//
 async function loadOne(id) {
-    const data = await repository.find({ id })
+    const data = await repository.find({ id, incl: ['socio1', 'articulo1', 'createdBy1'] })
 
     return data
 }

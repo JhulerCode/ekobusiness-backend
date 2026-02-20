@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import controller from './cHelpdesk.js'
+import controller from './cHelpdeskTickets.js'
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
