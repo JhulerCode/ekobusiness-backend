@@ -20,6 +20,7 @@ import combo_componentes from '#core/combo_componentes/rComboComponentes.js'
 import documentos from '#core/documentos/rDocumentos.js'
 import formatos from '#core/formatos/rFormatos.js'
 import formato_values from '#core/formato_values/rFormatoValues.js'
+import helpdesk from '#core/helpdesks/rHelpdesk.js'
 import inspecciones from '#core/inspecciones/rInspecciones.js'
 import kardex from '#core/kardex/rKardex.js'
 import maquinas from '#core/maquinas/rMaquinas.js'
@@ -66,6 +67,7 @@ router.use('/api/combo_componentes', combo_componentes)
 router.use('/api/documentos', documentos)
 router.use('/api/formatos', formatos)
 router.use('/api/formato_values', formato_values)
+router.use('/api/helpdesk', helpdesk)
 router.use('/api/inspecciones', inspecciones)
 router.use('/api/kardex', kardex)
 router.use('/api/maquinas', maquinas)

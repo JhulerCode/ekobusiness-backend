@@ -13,6 +13,7 @@ import { ComboComponente } from './models/ComboComponente.js'
 import { DerechoArco } from '#db/models/DerechoArco.js'
 import { Documento } from '#db/models/Documento.js'
 import { FormatoValue } from '#db/models/FormatoValue.js'
+import { HelpdeskTicket } from '#db/models/HelpdeskTicket.js'
 import { Inspeccion } from '#db/models/Inspeccion.js'
 import { Kardex } from '#db/models/Kardex.js'
 import { LibroReclamo } from '#db/models/LibroReclamo.js'
@@ -49,6 +50,7 @@ export const models = {
     DerechoArco,
     Documento,
     FormatoValue,
+    HelpdeskTicket,
     Inspeccion,
     Kardex,
     LibroReclamo,
@@ -386,10 +388,6 @@ export class Repository {
         } else {
             findProps.where = {}
             findProps.order = [['createdAt', 'DESC']]
-            const pageSize = 100
-            const page = qry.page ?? 1
-            findProps.limit = pageSize
-            findProps.offset = pageSize * (page - 1)
 
             if (qry?.cols) {
                 if (qry.cols.exclude) {
@@ -424,6 +422,11 @@ export class Repository {
             }
 
             if (qry?.page) {
+                const pageSize = 100
+                // const page = qry.page ?? 1
+                findProps.limit = pageSize
+                findProps.offset = pageSize * (qry.page - 1)
+
                 const { count, rows } = await this.model.findAndCountAll(findProps)
 
                 const meta = {

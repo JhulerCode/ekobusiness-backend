@@ -339,7 +339,10 @@ const recalcularStock = async (req, res) => {
 //--- Inventario hasta fecha ---//
 const findInventario = async (req, res) => {
     try {
+        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
+
+        qry.fltr.empresa = { op: 'Es', val: empresa }
 
         const data = await ArticuloRep.find(qry)
 

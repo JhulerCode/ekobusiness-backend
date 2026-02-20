@@ -2,9 +2,7 @@ import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
-const repository = new Repository('TipoCambio')
-const TransaccionRepo = new Repository('Transaccion')
-const KardexRepo = new Repository('Kardex')
+const repository = new Repository('HelpdeskTicket')
 
 const find = async (req, res) => {
     try {
@@ -13,9 +11,13 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry)
+        const response = await repository.find(qry, true)
 
-        res.json({ code: 0, data })
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
+
+        res.json({ code: 0, data, meta })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -34,37 +36,26 @@ const findById = async (req, res) => {
 }
 
 const create = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
         const { colaborador, empresa } = req.user
-        const { fecha, compra, venta, moneda } = req.body
+        const { nombre, descripcion, socio, articulo, estado, reclamo_fecha, reclamo_fuente } =
+            req.body
 
         //--- VERIFY SI EXISTE ---//
         if ((await repository.existe({ fecha, moneda, empresa }, res, 'Ya existe')) == true) return
 
         //--- CREAR ---//
-        const nuevo = await repository.create(
-            {
-                fecha,
-                compra,
-                venta,
-                moneda,
-                empresa,
-                createdBy: colaborador,
-            },
-            transaction,
-        )
-
-        //--- Actualizar en transacciones y kardex ---//
-        await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: venta }, transaction)
-        await KardexRepo.update(
-            { fecha, moneda, is_lote_padre: true },
-            { tipo_cambio: venta },
-            transaction,
-        )
-
-        await transaction.commit()
+        const nuevo = await repository.create({
+            nombre,
+            descripcion,
+            socio,
+            articulo,
+            estado,
+            reclamo_fecha,
+            reclamo_fuente,
+            empresa,
+            createdBy: colaborador,
+        })
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
@@ -77,12 +68,11 @@ const create = async (req, res) => {
 }
 
 const update = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
         const { colaborador, empresa } = req.user
         const { id } = req.params
-        const { fecha, compra, venta, moneda } = req.body
+        const { nombre, descripcion, socio, articulo, estado, reclamo_fecha, reclamo_fuente } =
+            req.body
 
         //--- VERIFY SI EXISTE ---//
         if ((await repository.existe({ fecha, moneda, id, empresa }, res, 'Ya existe')) == true)
@@ -92,26 +82,18 @@ const update = async (req, res) => {
         const updated = await repository.update(
             { id },
             {
-                fecha,
-                compra,
-                venta,
-                moneda,
+                nombre,
+                descripcion,
+                socio,
+                articulo,
+                estado,
+                reclamo_fecha,
+                reclamo_fuente,
                 updatedBy: colaborador,
             },
-            transaction,
         )
 
         if (updated == false) return resUpdateFalse(res)
-
-        //--- Actualizar en transacciones y kardex ---//
-        await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: venta }, transaction)
-        await KardexRepo.update(
-            { fecha, moneda, is_lote_padre: true },
-            { tipo_cambio: venta },
-            transaction,
-        )
-
-        await transaction.commit()
 
         // ----- DEVOLVER ----- //
         const data = await loadOne(id)
@@ -124,23 +106,10 @@ const update = async (req, res) => {
 }
 
 const delet = async (req, res) => {
-    const transaction = await sequelize.transaction()
-
     try {
         const { id } = req.params
-        const { fecha, moneda } = req.body
 
-        if ((await repository.delete({ id }, transaction)) == false) return resDeleteFalse(res)
-
-        //--- Actualizar en transacciones y kardex ---//
-        await TransaccionRepo.update({ fecha, moneda }, { tipo_cambio: null }, transaction)
-        await KardexRepo.update(
-            { fecha, moneda, is_lote_padre: true },
-            { tipo_cambio: null },
-            transaction,
-        )
-
-        await transaction.commit()
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
     } catch (error) {

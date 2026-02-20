@@ -201,6 +201,11 @@ const sistemaData = {
         { id: 'service', nombre: 'SERVICIO' },
         { id: 'combo', nombre: 'COMBO' },
     ],
+
+    helpdesk_estados: [
+        { id: 1, nombre: 'ABIERTO' },
+        { id: 2, nombre: 'CERRADO' },
+    ],
 }
 
 function arrayMap(array) {
