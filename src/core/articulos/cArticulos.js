@@ -17,13 +17,9 @@ const find = async (req, res) => {
 
         const response = await repository.find(qry, true)
 
-        let data, meta
-        if (qry && qry.page) {
-            data = response.data
-            meta = response.meta
-        } else {
-            data = response
-        }
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
 
         if (data.length > 0) {
             const estadosMap = arrayMap('estados')

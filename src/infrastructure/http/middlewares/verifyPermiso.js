@@ -14,6 +14,7 @@ function verifyPermiso(requiredPermissions = []) {
                 body: req.body,
             },
             ip: req.ip,
+            empresa: req.user.empresa,
         }
 
         console.log(req.user.nombres, log.method, log.baseUrl, log.detail.params)
@@ -22,15 +23,14 @@ function verifyPermiso(requiredPermissions = []) {
 
         const userPermissions = req.user?.permisos || []
 
-        const hasPermission = requiredPermissions.some(perm =>
-            userPermissions.includes(perm)
-        )
+        const hasPermission = requiredPermissions.some((perm) => userPermissions.includes(perm))
 
         log.hasPermission = hasPermission
 
         if (log.method != 'GET') repository.create(log)
 
-        if (!hasPermission) return res.status(403).json({ msg: 'Acceso denegado: permisos insuficientes' })
+        if (!hasPermission)
+            return res.status(403).json({ msg: 'Acceso denegado: permisos insuficientes' })
 
         next()
     }

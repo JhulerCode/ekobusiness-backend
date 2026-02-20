@@ -12,11 +12,14 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry)
+        const response = await repository.find(qry, true)
 
-        res.json({ code: 0, data })
-    }
-    catch (error) {
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
+
+        res.json({ code: 0, data, meta })
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -25,22 +28,45 @@ const create = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const {
-            orden, articulo, nombre, unidad, has_fv,
-            cantidad, entregado,
-            pu, igv_afectacion, igv_porcentaje,
-            blend_datos, nota,
-            socio_pedido
+            orden,
+            articulo,
+            nombre,
+            unidad,
+            has_fv,
+            cantidad,
+            entregado,
+            pu,
+            igv_afectacion,
+            igv_porcentaje,
+            blend_datos,
+            nota,
+            socio_pedido,
         } = req.body
 
         //--- VERIFY SI EXISTE ---//
-        if (await repository.existe({ articulo, socio_pedido, empresa }, res, 'El artículo ya fue agregado') == true) return
+        if (
+            (await repository.existe(
+                { articulo, socio_pedido, empresa },
+                res,
+                'El artículo ya fue agregado',
+            )) == true
+        )
+            return
 
         //--- CREAR ---//
         const nuevo = await repository.create({
-            orden, articulo, nombre, unidad, has_fv,
-            cantidad, entregado,
-            pu, igv_afectacion, igv_porcentaje,
-            blend_datos, nota,
+            orden,
+            articulo,
+            nombre,
+            unidad,
+            has_fv,
+            cantidad,
+            entregado,
+            pu,
+            igv_afectacion,
+            igv_porcentaje,
+            blend_datos,
+            nota,
             socio_pedido,
             empresa,
             createdBy: colaborador,
@@ -49,8 +75,7 @@ const create = async (req, res) => {
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -60,30 +85,55 @@ const update = async (req, res) => {
         const { colaborador, empresa } = req.user
         const { id } = req.params
         const {
-            orden, articulo, nombre, unidad, has_fv,
-            cantidad, entregado,
-            pu, igv_afectacion, igv_porcentaje,
-            blend_datos, nota,
-            socio_pedido
+            orden,
+            articulo,
+            nombre,
+            unidad,
+            has_fv,
+            cantidad,
+            entregado,
+            pu,
+            igv_afectacion,
+            igv_porcentaje,
+            blend_datos,
+            nota,
+            socio_pedido,
         } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
-        if (await repository.existe({ articulo, socio_pedido, id, empresa }, res, 'El artículo ya fue agregado') == true) return
+        if (
+            (await repository.existe(
+                { articulo, socio_pedido, id, empresa },
+                res,
+                'El artículo ya fue agregado',
+            )) == true
+        )
+            return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id }, {
-            orden, articulo, nombre, unidad, has_fv,
-            cantidad, entregado,
-            pu, igv_afectacion, igv_porcentaje,
-            blend_datos, nota,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                orden,
+                articulo,
+                nombre,
+                unidad,
+                has_fv,
+                cantidad,
+                entregado,
+                pu,
+                igv_afectacion,
+                igv_porcentaje,
+                blend_datos,
+                nota,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -92,11 +142,10 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -124,7 +173,7 @@ const recalcularEntregados = async (req, res) => {
 
         const qry2 = {
             fltr: {
-                transaccion: { op: 'Es', val: transacciones.map(d => d.id) },
+                transaccion: { op: 'Es', val: transacciones.map((d) => d.id) },
             },
             cols: ['articulo', 'cantidad'],
         }
@@ -142,12 +191,10 @@ const recalcularEntregados = async (req, res) => {
         }
 
         res.json({ code: 0, socio_pedido_items, kardex, entregados })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {

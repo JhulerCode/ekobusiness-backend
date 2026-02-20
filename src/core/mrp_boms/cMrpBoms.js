@@ -14,9 +14,13 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await MrpBomRepository.find(qry)
+        const response = await MrpBomRepository.find(qry, true)
 
-        res.json({ code: 0, data })
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
+
+        res.json({ code: 0, data, meta })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }

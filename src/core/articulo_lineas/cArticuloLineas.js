@@ -1,6 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import { arrayMap } from '#store/system.js'
-import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
+import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('ArticuloLinea')
@@ -12,21 +12,26 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry, true)
+        const response = await repository.find(qry, true)
+
+        const hasPage = qry.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
 
         if (data.length > 0) {
             const estadosMap = arrayMap('estados')
 
             for (const a of data) {
                 if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry?.cols?.includes('is_destacado')) a.is_destacado1 = estadosMap[a.is_destacado]
-                if (qry?.cols?.includes('is_ecommerce')) a.is_ecommerce1 = estadosMap[a.is_ecommerce]
+                if (qry?.cols?.includes('is_destacado'))
+                    a.is_destacado1 = estadosMap[a.is_destacado]
+                if (qry?.cols?.includes('is_ecommerce'))
+                    a.is_ecommerce1 = estadosMap[a.is_ecommerce]
             }
         }
 
-        res.json({ code: 0, data })
-    }
-    catch (error) {
+        res.json({ code: 0, data, meta })
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -38,8 +43,7 @@ const findById = async (req, res) => {
         const data = await repository.find({ id })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -50,11 +54,14 @@ const create = async (req, res) => {
         const { nombre, activo, is_ecommerce, descripcion } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
-        if (await repository.existe({ nombre, empresa }, res) == true) return
+        if ((await repository.existe({ nombre, empresa }, res)) == true) return
 
         //--- CREAR ---//
         const nuevo = await repository.create({
-            nombre, activo, is_ecommerce, descripcion,
+            nombre,
+            activo,
+            is_ecommerce,
+            descripcion,
             empresa,
             createdBy: colaborador,
         })
@@ -62,8 +69,7 @@ const create = async (req, res) => {
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -75,21 +81,26 @@ const update = async (req, res) => {
         const { nombre, activo, is_ecommerce, descripcion } = req.body
 
         //---- VERIFY SI EXISTE NOMBRE ---//
-        if (await repository.existe({ nombre, id, empresa }, res) == true) return
+        if ((await repository.existe({ nombre, id, empresa }, res)) == true) return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id }, {
-            nombre, activo, is_ecommerce, descripcion,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                nombre,
+                activo,
+                is_ecommerce,
+                descripcion,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -99,13 +110,12 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { fotos } = req.body
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         for (const a of fotos) await minioRemoveObject(a.id)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -130,7 +140,7 @@ const updateFotos = async (req, res) => {
             // Buscar si hay un nuevo archivo con ese nombre
             // b.originalname = lo pone multer
             // a.name = viene en el array vigentes
-            const file = archivos.find(b => b.originalname === a.name)
+            const file = archivos.find((b) => b.originalname === a.name)
 
             const entry = file ? await minioPutObject(file) : a
 
@@ -138,10 +148,13 @@ const updateFotos = async (req, res) => {
         }
 
         //--- ACTUALIZAR EN BASE DE DATOS ---//
-        const updated = await repository.update({ id }, {
-            fotos: files,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                fotos: files,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
@@ -149,13 +162,11 @@ const updateFotos = async (req, res) => {
         for (const a of eliminados) await minioRemoveObject(a.id)
 
         res.json({ code: 0, data: files })
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error en updateFotos:', error)
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {
