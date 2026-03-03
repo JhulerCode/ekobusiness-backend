@@ -125,6 +125,11 @@ const include1 = {
         model: CajaMovimiento,
         as: 'caja_movimientos',
     },
+    combo_componentes: {
+        model: ComboComponente,
+        as: 'combo_componentes',
+        attributes: ['id', 'articulo', 'cantidad', 'orden'],
+    },
     currency_id1: {
         model: Moneda,
         as: 'currency_id1',
