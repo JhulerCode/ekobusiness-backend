@@ -40,9 +40,9 @@ function buildCondition({ op, val, val1 }) {
         case 'Termina con':
             return { [Op.like]: `%${val}` }
         case 'Está vacío':
-            return { [Op.is]: null }
+            return { [Op.or]: [{ [Op.is]: null }, { [Op.eq]: '' }] }
         case 'No está vacío':
-            return { [Op.not]: null }
+            return { [Op.and]: [{ [Op.not]: null }, { [Op.ne]: '' }] }
         case 'Es anterior a':
             return { [Op.lt]: val }
         case 'Es posterior a':
