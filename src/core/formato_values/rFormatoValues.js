@@ -1,17 +1,13 @@
-import { Router } from "express"
-import controller from "./cFormatoValues.js"
+import { Router } from 'express'
+import controller from './cFormatoValues.js'
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
 
 router.get(
     '/',
-    verifyPermiso([
-        'vFormatosBpm:listar',
-        'vFormatosPhs:listar',
-        'vFormatosHaccp:listar'
-    ]),
-    controller.find
+    verifyPermiso(['vFormatosBpm:listar', 'vFormatosPhs:listar', 'vFormatosHaccp:listar']),
+    controller.find,
 )
 
 router.post(
@@ -21,12 +17,12 @@ router.post(
         'vVentas:controlDespacho',
         'vProduccionHistorial:controlPesos',
         'vProduccionHistorial:controlPpc',
-        'vProductosCuarentena:liberar_lote',
+        'vPtsIngresos:liberar_lote',
         'vFormatosBpm:crear',
         'vFormatosPhs:crear',
-        'vFormatosHaccp:crear'
+        'vFormatosHaccp:crear',
     ]),
-    controller.create
+    controller.create,
 )
 
 router.get(
@@ -36,12 +32,15 @@ router.get(
         'vVentas:controlDespacho',
         'vProduccionHistorial:controlPesos',
         'vProduccionHistorial:controlPpc',
-        'vProductosCuarentena:liberar_lote',
-        'vFormatosBpm:ver', 'vFormatosBpm:editar',
-        'vFormatosPhs:ver', 'vFormatosPhs:editar',
-        'vFormatosHaccp:ver', 'vFormatosHaccp:editar',
+        'vPtsIngresos:liberar_lote',
+        'vFormatosBpm:ver',
+        'vFormatosBpm:editar',
+        'vFormatosPhs:ver',
+        'vFormatosPhs:editar',
+        'vFormatosHaccp:ver',
+        'vFormatosHaccp:editar',
     ]),
-    controller.findById
+    controller.findById,
 )
 
 router.patch(
@@ -51,23 +50,18 @@ router.patch(
         'vVentas:controlDespacho',
         'vProduccionHistorial:controlPesos',
         'vProduccionHistorial:controlPpc',
-        'vProductosCuarentena:liberar_lote',
+        'vPtsIngresos:liberar_lote',
         'vFormatosBpm:editar',
         'vFormatosPhs:editar',
-        'vFormatosHaccp:editar'
+        'vFormatosHaccp:editar',
     ]),
-    controller.update
+    controller.update,
 )
 
 router.delete(
     '/:id',
-    verifyPermiso([
-        'vFormatosBpm:eliminar',
-        'vFormatosPhs:eliminar',
-        'vFormatosHaccp:eliminar'
-    ]),
-    controller.delet
+    verifyPermiso(['vFormatosBpm:eliminar', 'vFormatosPhs:eliminar', 'vFormatosHaccp:eliminar']),
+    controller.delet,
 )
-
 
 export default router
