@@ -264,7 +264,7 @@ const findTrazabilidad = async (req, res) => {
 
         const kardexes = await KardexRep.find(
             {
-                cols: ['tipo', 'articulo', 'cantidad'],
+                cols: ['tipo', 'articulo', 'cantidad', 'lote', 'fv'],
                 incl: ['articulo1', 'lote_padre1'],
                 fltr: {
                     produccion_orden: { op: 'Es', val: id },

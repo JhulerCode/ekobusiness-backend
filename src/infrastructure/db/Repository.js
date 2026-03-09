@@ -114,12 +114,12 @@ const include1 = {
     colaborador1: {
         model: Colaborador,
         as: 'colaborador1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
+        attributes: ['id', 'nombres'],
     },
     createdBy1: {
         model: Colaborador,
         as: 'createdBy1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
+        attributes: ['id', 'nombres'],
     },
     caja_movimientos: {
         model: CajaMovimiento,
@@ -215,12 +215,12 @@ const include1 = {
     responsable1: {
         model: Colaborador,
         as: 'responsable1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos', 'produccion_codigo'],
+        attributes: ['id', 'nombres', 'produccion_codigo'],
     },
     socio1: {
         model: Socio,
         as: 'socio1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos'],
+        attributes: ['id', 'nombres'],
     },
     socio_pedido1: {
         model: SocioPedido,

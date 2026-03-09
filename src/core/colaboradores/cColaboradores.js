@@ -58,7 +58,6 @@ const create = async (req, res) => {
         const { colaborador, empresa } = req.user
         const {
             nombres,
-            apellidos,
             doc_tipo,
             doc_numero,
             fecha_nacimiento,
@@ -79,7 +78,7 @@ const create = async (req, res) => {
         let { usuario, contrasena } = req.body
 
         // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if ((await repository.existe({ nombres, apellidos, empresa }, res)) == true) return
+        if ((await repository.existe({ nombres, empresa }, res)) == true) return
 
         if (has_signin) {
             if ((await repository.existe({ usuario }, res)) == true) return
@@ -92,7 +91,6 @@ const create = async (req, res) => {
         // ----- CREAR ----- //
         const nuevo = await repository.create({
             nombres,
-            apellidos,
             doc_tipo,
             doc_numero,
             fecha_nacimiento,
@@ -128,7 +126,6 @@ const update = async (req, res) => {
         const { id } = req.params
         const {
             nombres,
-            apellidos,
             doc_tipo,
             doc_numero,
             fecha_nacimiento,
@@ -149,7 +146,7 @@ const update = async (req, res) => {
         let { usuario, contrasena } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
-        if ((await repository.existe({ nombres, apellidos, id, empresa }, res)) == true) return
+        if ((await repository.existe({ nombres, id, empresa }, res)) == true) return
 
         if (has_signin) {
             if (
@@ -170,7 +167,6 @@ const update = async (req, res) => {
             { id },
             {
                 nombres,
-                apellidos,
                 doc_tipo,
                 doc_numero,
                 fecha_nacimiento,

@@ -5,7 +5,6 @@ import { Empresa } from './Empresa.js'
 export const Colaborador = sequelize.define('colaboradores', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     nombres: { type: DataTypes.STRING }, //required
-    apellidos: { type: DataTypes.STRING }, //required
 
     doc_tipo: { type: DataTypes.STRING }, //required
     doc_numero: { type: DataTypes.STRING }, //required
@@ -44,19 +43,18 @@ export const Colaborador = sequelize.define('colaboradores', {
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
-
-    nombres_apellidos: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            const nombres = this.nombres || ''
-            const apellidos = this.apellidos || ''
-            return `${nombres} ${apellidos}`.trim()
-        }
-    }
 })
 
 Empresa.hasMany(Colaborador, { foreignKey: 'empresa', as: 'colaboradores', onDelete: 'RESTRICT' })
 Colaborador.belongsTo(Empresa, { foreignKey: 'empresa', as: 'empresa1' })
 
-Colaborador.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1', onDelete: 'RESTRICT' })
-Colaborador.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1', onDelete: 'RESTRICT' })
+Colaborador.belongsTo(Colaborador, {
+    foreignKey: 'createdBy',
+    as: 'createdBy1',
+    onDelete: 'RESTRICT',
+})
+Colaborador.belongsTo(Colaborador, {
+    foreignKey: 'updatedBy',
+    as: 'updatedBy1',
+    onDelete: 'RESTRICT',
+})

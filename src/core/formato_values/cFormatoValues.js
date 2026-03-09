@@ -23,16 +23,16 @@ const includes = {
                     {
                         model: Socio,
                         as: 'socio1',
-                        attributes: ['nombres', 'apellidos', 'nombres_apellidos']
-                    }
-                ]
+                        attributes: ['nombres'],
+                    },
+                ],
             },
             {
                 model: Articulo,
                 as: 'articulo1',
-                attributes: ['id', 'nombre', 'unidad']
+                attributes: ['id', 'nombre', 'unidad'],
             },
-        ]
+        ],
     },
     produccion_orden1: {
         model: ProduccionOrden,
@@ -42,14 +42,14 @@ const includes = {
             {
                 model: Articulo,
                 as: 'articulo1',
-                attributes: ['nombre', 'unidad']
+                attributes: ['nombre', 'unidad'],
             },
             {
                 model: Maquina,
                 as: 'maquina1',
-                attributes: ['nombre']
-            }
-        ]
+                attributes: ['nombre'],
+            },
+        ],
     },
     transaccion1: {
         model: Transaccion,
@@ -59,9 +59,9 @@ const includes = {
             {
                 model: Socio,
                 as: 'socio1',
-                attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-            }
-        ]
+                attributes: ['id', 'nombres'],
+            },
+        ],
     },
     // cuarentena_producto1: {
     //     model: CuarentenaProducto,
@@ -88,42 +88,63 @@ const includes = {
     maquina1: {
         model: Maquina,
         as: 'maquina1',
-        attributes: ['id', 'nombre']
+        attributes: ['id', 'nombre'],
     },
     articulo1: {
         model: Articulo,
         as: 'articulo1',
-        attributes: ['id', 'nombre', 'unidad']
+        attributes: ['id', 'nombre', 'unidad'],
     },
     colaborador1: {
         model: Colaborador,
         as: 'colaborador1',
-        attributes: ['id', 'nombres', 'apellidos', 'nombres_apellidos']
-    }
+        attributes: ['id', 'nombres'],
+    },
 }
 
 const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
-        const { codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador } = req.body
+        const {
+            codigo,
+            values,
+            transaccion_item,
+            produccion_orden,
+            transaccion,
+            cuarentena_producto,
+            maquina,
+            articulo,
+            colaborador,
+        } = req.body
 
         // ----- CREAR ----- //
-        const nuevo = await FormatoValue.create({
-            codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador,
-            createdBy: req.user.colaborador
-        }, { transaction })
+        const nuevo = await FormatoValue.create(
+            {
+                codigo,
+                values,
+                transaccion_item,
+                produccion_orden,
+                transaccion,
+                cuarentena_producto,
+                maquina,
+                articulo,
+                colaborador,
+                createdBy: req.user.colaborador,
+            },
+            { transaction },
+        )
 
         if (transaccion_item) {
             await TransaccionItem.update(
                 {
                     calidad_revisado: nuevo.id,
-                    updatedBy: colaborador
+                    updatedBy: colaborador,
                 },
                 {
                     where: { id: transaccion_item },
-                    transaction
-                }
+                    transaction,
+                },
             )
         }
 
@@ -131,12 +152,12 @@ const create = async (req, res) => {
             await ProduccionOrden.update(
                 {
                     calidad_revisado: nuevo.id,
-                    updatedBy: colaborador
+                    updatedBy: colaborador,
                 },
                 {
                     where: { id: produccion_orden },
-                    transaction
-                }
+                    transaction,
+                },
             )
         }
 
@@ -144,12 +165,12 @@ const create = async (req, res) => {
             await ProduccionOrden.update(
                 {
                     cf_ppc: nuevo.id,
-                    updatedBy: colaborador
+                    updatedBy: colaborador,
                 },
                 {
                     where: { id: produccion_orden },
-                    transaction
-                }
+                    transaction,
+                },
             )
         }
 
@@ -157,12 +178,12 @@ const create = async (req, res) => {
             await Transaccion.update(
                 {
                     calidad_revisado_despacho: nuevo.id,
-                    updatedBy: colaborador
+                    updatedBy: colaborador,
                 },
                 {
                     where: { id: transaccion },
-                    transaction
-                }
+                    transaction,
+                },
             )
         }
 
@@ -181,10 +202,18 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        const data = await loadOne(nuevo.id, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador)
+        const data = await loadOne(
+            nuevo.id,
+            transaccion_item,
+            produccion_orden,
+            transaccion,
+            cuarentena_producto,
+            maquina,
+            articulo,
+            colaborador,
+        )
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -194,31 +223,66 @@ const update = async (req, res) => {
 
     try {
         const { id } = req.params
-        const { codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador } = req.body
+        const {
+            codigo,
+            values,
+            transaccion_item,
+            produccion_orden,
+            transaccion,
+            cuarentena_producto,
+            maquina,
+            articulo,
+            colaborador,
+        } = req.body
 
         // ----- ACTUALIZAR ----- //
         await FormatoValue.update(
             {
-                codigo, values, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador,
-                updatedBy: req.user.colaborador
+                codigo,
+                values,
+                transaccion_item,
+                produccion_orden,
+                transaccion,
+                cuarentena_producto,
+                maquina,
+                articulo,
+                colaborador,
+                updatedBy: req.user.colaborador,
             },
             {
                 where: { id },
-                transaction
-            }
+                transaction,
+            },
         )
 
         await transaction.commit()
 
-        const data = await loadOne(id, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador)
+        const data = await loadOne(
+            id,
+            transaccion_item,
+            produccion_orden,
+            transaccion,
+            cuarentena_producto,
+            maquina,
+            articulo,
+            colaborador,
+        )
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
-async function loadOne(id, transaccion_item, produccion_orden, transaccion, cuarentena_producto, maquina, articulo, colaborador) {
+async function loadOne(
+    id,
+    transaccion_item,
+    produccion_orden,
+    transaccion,
+    cuarentena_producto,
+    maquina,
+    articulo,
+    colaborador,
+) {
     const include = []
 
     if (transaccion_item) include.push(includes.transaccion_item1)
@@ -230,7 +294,7 @@ async function loadOne(id, transaccion_item, produccion_orden, transaccion, cuar
     if (colaborador) include.push(includes.colaborador1)
 
     let data = await FormatoValue.findByPk(id, {
-        include
+        include,
     })
 
     if (data) {
@@ -292,8 +356,10 @@ const find = async (req, res) => {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
 
                 // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
-                if (qry.cols.includes('transaccion_item')) findProps.include.push(includes.transaccion_item1)
-                if (qry.cols.includes('produccion_orden')) findProps.include.push(includes.produccion_orden1)
+                if (qry.cols.includes('transaccion_item'))
+                    findProps.include.push(includes.transaccion_item1)
+                if (qry.cols.includes('produccion_orden'))
+                    findProps.include.push(includes.produccion_orden1)
                 if (qry.cols.includes('transaccion')) findProps.include.push(includes.transaccion1)
                 // if (qry.cols.includes('cuarentena_producto')) findProps.include.push(includes.cuarentena_producto1)
                 if (qry.cols.includes('maquina')) findProps.include.push(includes.maquina1)
@@ -305,7 +371,7 @@ const find = async (req, res) => {
         let data = await FormatoValue.findAll(findProps)
 
         if (data.length > 0) {
-            data = data.map(a => a.toJSON())
+            data = data.map((a) => a.toJSON())
 
             const conformidad_estadosMap = arrayMap('conformidad_estados')
             const cf_re_bpm_20_coloresMap = arrayMap('cf_re_bpm_20_colores')
@@ -343,8 +409,7 @@ const find = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -362,7 +427,7 @@ const findById = async (req, res) => {
                 includes.maquina1,
                 includes.articulo1,
                 includes.colaborador1,
-            ]
+            ],
         })
 
         if (data) {
@@ -376,8 +441,7 @@ const findById = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -388,11 +452,11 @@ const delet = async (req, res) => {
 
         const deletedCount = await FormatoValue.destroy({ where: { id } })
 
-        const send = deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
+        const send =
+            deletedCount > 0 ? { code: 0 } : { code: 1, msg: 'No se eliminó ningún registro' }
 
         res.json(send)
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

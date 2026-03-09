@@ -10,7 +10,6 @@ export const Socio = sequelize.define('socios', {
     doc_tipo: { type: DataTypes.STRING }, //required
     doc_numero: { type: DataTypes.STRING }, //required
     nombres: { type: DataTypes.STRING }, //required
-    apellidos: { type: DataTypes.STRING }, //required
 
     correo: { type: DataTypes.STRING },
     telefono1: { type: DataTypes.STRING },
@@ -38,15 +37,6 @@ export const Socio = sequelize.define('socios', {
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
-
-    nombres_apellidos: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            const nombres = this.nombres || ''
-            const apellidos = this.apellidos || ''
-            return `${nombres} ${apellidos}`.trim()
-        }
-    }
 })
 
 PrecioLista.hasMany(Socio, { foreignKey: 'precio_lista', as: 'socios', onDelete: 'RESTRICT' })

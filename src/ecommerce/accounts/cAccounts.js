@@ -25,8 +25,7 @@ const update = async (req, res) => {
         const { colaborador, empresa } = req.user
         const { id } = req.params
         const {
-            tipo, doc_tipo, doc_numero, nombres, apellidos,
-            telefono1, telefono2, correo, web, activo,
+            tipo, doc_tipo, doc_numero, nombres, telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
             precio_lista, pago_condicion, bancos, pago_metodos,
@@ -45,8 +44,7 @@ const update = async (req, res) => {
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update({ id }, {
-            tipo, doc_tipo, doc_numero, nombres, apellidos,
-            telefono1, telefono2, correo, web, activo,
+            tipo, doc_tipo, doc_numero, nombres, telefono1, telefono2, correo, web, activo,
             direcciones,
             contactos,
             precio_lista, pago_condicion, bancos, pago_metodos,
