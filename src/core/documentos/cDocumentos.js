@@ -1,6 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import { arrayMap } from '#store/system.js'
-import { minioPutObject, minioRemoveObject } from "#infrastructure/minioClient.js"
+import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
 const repository = new Repository('Documento')
@@ -12,7 +12,11 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry, true)
+        const response = await repository.find(qry, true)
+
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
 
         if (data.length > 0) {
             const estadosMap = arrayMap('documentos_estados')
@@ -22,9 +26,8 @@ const find = async (req, res) => {
             }
         }
 
-        res.json({ code: 0, data })
-    }
-    catch (error) {
+        res.json({ code: 0, data, meta })
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -41,8 +44,7 @@ const findById = async (req, res) => {
         }
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -52,14 +54,20 @@ const create = async (req, res) => {
         const { colaborador, empresa } = req.user
         if (req.body.datos) req.body = { ...JSON.parse(req.body.datos) }
         const {
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
+            tipo,
+            nombre,
+            descripcion,
+            denominacion_legal,
+            denominacion_comercial,
+            registro_sanitario,
+            fecha_emision,
+            fecha_vencimiento,
+            recordar_dias,
         } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
         if (nombre) {
-            if (await repository.existe({ tipo, nombre, empresa }, res) == true) return
+            if ((await repository.existe({ tipo, nombre, empresa }, res)) == true) return
         }
 
         //--- Upload file ---//
@@ -75,19 +83,24 @@ const create = async (req, res) => {
 
         // ----- CREAR ----- //
         const nuevo = await repository.create({
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
+            tipo,
+            nombre,
+            descripcion,
+            denominacion_legal,
+            denominacion_comercial,
+            registro_sanitario,
+            fecha_emision,
+            fecha_vencimiento,
+            recordar_dias,
             file,
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -98,15 +111,21 @@ const update = async (req, res) => {
         const { id } = req.params
         if (req.body.datos) req.body = { ...JSON.parse(req.body.datos) }
         const {
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
+            tipo,
+            nombre,
+            descripcion,
+            denominacion_legal,
+            denominacion_comercial,
+            registro_sanitario,
+            fecha_emision,
+            fecha_vencimiento,
+            recordar_dias,
             file,
         } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
         if (nombre) {
-            if (await repository.existe({ tipo, nombre, empresa, id }, res) == true) return
+            if ((await repository.existe({ tipo, nombre, empresa, id }, res)) == true) return
         }
 
         //--- Subir archivo ---//
@@ -121,13 +140,22 @@ const update = async (req, res) => {
         }
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update({ id }, {
-            tipo, nombre, descripcion,
-            denominacion_legal, denominacion_comercial, registro_sanitario,
-            fecha_emision, fecha_vencimiento, recordar_dias,
-            file: newFile,
-            createdBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                tipo,
+                nombre,
+                descripcion,
+                denominacion_legal,
+                denominacion_comercial,
+                registro_sanitario,
+                fecha_emision,
+                fecha_vencimiento,
+                recordar_dias,
+                file: newFile,
+                createdBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
@@ -137,8 +165,7 @@ const update = async (req, res) => {
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -148,17 +175,15 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { file } = req.body
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         if (file) await minioRemoveObject(file.id)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {

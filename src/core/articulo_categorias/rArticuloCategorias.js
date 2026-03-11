@@ -55,7 +55,7 @@ router.delete(
 router.patch(
     '/fotos/:id',
     verifyPermiso([
-        'vProductos:actualizarFotos',
+        'vArticuloCategorias:actualizarFotos',
     ]),
     uploadMem.array('archivos'),
     controller.updateFotos

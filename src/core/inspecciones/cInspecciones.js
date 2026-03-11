@@ -10,11 +10,14 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry)
+        const response = await repository.find(qry, true)
 
-        res.json({ code: 0, data })
-    }
-    catch (error) {
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
+
+        res.json({ code: 0, data, meta })
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -26,8 +29,7 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, incl: ['socio1'] })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -38,16 +40,19 @@ const create = async (req, res) => {
         const { fecha, socio, puntuacion, puntuacion_maxima, correcciones } = req.body
 
         const nuevo = await repository.create({
-            fecha, socio, puntuacion, puntuacion_maxima, correcciones,
+            fecha,
+            socio,
+            puntuacion,
+            puntuacion_maxima,
+            correcciones,
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -59,18 +64,24 @@ const update = async (req, res) => {
         const { fecha, socio, puntuacion, puntuacion_maxima, correcciones } = req.body
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update({ id }, {
-            fecha, socio, puntuacion, puntuacion_maxima, correcciones,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                fecha,
+                socio,
+                puntuacion,
+                puntuacion_maxima,
+                correcciones,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -79,15 +90,13 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {
