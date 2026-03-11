@@ -13,7 +13,11 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const data = await repository.find(qry, true)
+        const response = await repository.find(qry, true)
+
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
 
         if (data.length > 0) {
             const generosMap = arrayMap('generos')
@@ -29,7 +33,7 @@ const find = async (req, res) => {
             }
         }
 
-        res.json({ code: 0, data })
+        res.json({ code: 0, data, meta })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
