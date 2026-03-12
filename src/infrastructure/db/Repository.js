@@ -430,9 +430,10 @@ export class Repository {
                 findProps.order = qry.ordr
             }
 
+            if (qry?.limt) findProps.limit = qry.limt
+
             if (qry?.page) {
-                const pageSize = 100
-                // const page = qry.page ?? 1
+                const pageSize = findProps.limit ?? 100
                 findProps.limit = pageSize
                 findProps.offset = pageSize * (qry.page - 1)
 
