@@ -418,6 +418,10 @@ export class Repository {
                     )
             }
 
+            if (qry?.sqls || qry?.grop) {
+                findProps.subQuery = false
+            }
+
             if (qry?.grop) {
                 findProps.group = qry.grop
             }
@@ -432,7 +436,11 @@ export class Repository {
                 findProps.limit = pageSize
                 findProps.offset = pageSize * (qry.page - 1)
 
-                const { count, rows } = await this.model.findAndCountAll(findProps)
+                let { count, rows } = await this.model.findAndCountAll(findProps)
+
+                if (Array.isArray(count)) {
+                    count = count.length
+                }
 
                 const meta = {
                     per_page: pageSize,
