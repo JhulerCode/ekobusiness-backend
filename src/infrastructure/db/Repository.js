@@ -410,9 +410,9 @@ export class Repository {
                 )
                 Object.assign(findProps.where, applyFilters(fltr1))
 
-                // Filtros de relaciones
+                // Filtros de relaciones ($Relacion.Campo$)
                 Object.entries(qry.fltr)
-                    .filter(([k]) => Object.keys(include1).some((pref) => k.startsWith(pref)))
+                    .filter(([k]) => k.includes('.') && Object.keys(include1).includes(k.split('.')[0]))
                     .forEach(([k, v]) =>
                         Object.assign(findProps.where, applyFilters({ [`$${k}$`]: v })),
                     )
