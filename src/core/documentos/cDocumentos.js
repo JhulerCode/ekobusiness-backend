@@ -12,7 +12,7 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const virtuals = ['estado']
+        const virtuals = ['estado', 'fecha_emision', 'fecha_vencimiento']
 
         virtuals.forEach((v) => {
             if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
@@ -23,13 +23,6 @@ const find = async (req, res) => {
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
-
-        for (const a of data) {
-            if (qry?.cols.includes('fecha_emision'))
-                a.fecha_emision_format = formatDate(a.fecha_emision, req.user.format_date)
-            if (qry?.cols.includes('fecha_vencimiento'))
-                a.fecha_vencimiento_format = formatDate(a.fecha_vencimiento, req.user.format_date)
-        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {

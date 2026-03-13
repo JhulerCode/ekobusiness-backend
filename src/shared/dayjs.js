@@ -8,6 +8,7 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault('America/Lima')
 
 export function formatDate(data, format = 'DD-MM-YYYY') {
+    if (!data) return null
     return dayjs(data).format(format)
 }
 

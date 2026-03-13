@@ -29,6 +29,8 @@ const find = async (req, res) => {
             'pago_condicion',
             'pago_metodo',
             'comprobante_tipo',
+            'fecha',
+            'fecha_entrega',
         ]
 
         virtuals.forEach((v) => {
@@ -40,13 +42,6 @@ const find = async (req, res) => {
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
-
-        for (const a of data) {
-            if (qry?.cols.includes('fecha'))
-                a.fecha_format = formatDate(a.fecha, req.user.format_date)
-            if (qry?.cols.includes('fecha_entrega'))
-                a.fecha_entrega_format = formatDate(a.fecha_entrega, req.user.format_date)
-        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {

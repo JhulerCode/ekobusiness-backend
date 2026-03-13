@@ -3,6 +3,7 @@ import sequelize from '../sequelize.js'
 import { CajaApertura } from './CajaApertura.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const systemMaps = {
     comprobante_tipos: arrayMap('comprobante_tipos'),
@@ -11,6 +12,12 @@ const systemMaps = {
 export const CajaMovimiento = sequelize.define('caja_movimientos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha: { type: DataTypes.DATEONLY }, //required
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
     tipo: { type: DataTypes.STRING }, //required
     comprobante_tipo: { type: DataTypes.STRING },
     comprobante_tipo1: {

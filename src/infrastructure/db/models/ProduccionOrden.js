@@ -6,6 +6,7 @@ import { ArticuloLinea } from './ArticuloLinea.js'
 import { Maquina } from './Maquina.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const systemMaps = {
     produccion_orden_estados: arrayMap('produccion_orden_estados'),
@@ -15,6 +16,12 @@ const systemMaps = {
 export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha: { type: DataTypes.DATEONLY },
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
     articulo: { type: DataTypes.STRING }, //required //linked
     cantidad: { type: DataTypes.DOUBLE },
     mrp_bom: { type: DataTypes.STRING },

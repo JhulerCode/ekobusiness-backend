@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
+import { formatDate } from '#shared/dayjs.js'
 
 export const DerechoArco = sequelize.define('derecho_arcos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -7,7 +8,19 @@ export const DerechoArco = sequelize.define('derecho_arcos', {
     codigo: { type: DataTypes.STRING },
     estado: { type: DataTypes.STRING },
     fecha_recepcion: { type: DataTypes.DATEONLY },
+    fecha_recepcion1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_recepcion'))
+        },
+    },
     fecha_respuesta: { type: DataTypes.DATEONLY },
+    fecha_respuesta1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_respuesta'))
+        },
+    },
     observaciones: { type: DataTypes.TEXT },
 
     nombres: { type: DataTypes.STRING },

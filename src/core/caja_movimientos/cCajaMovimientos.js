@@ -11,18 +11,13 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const virtuals = ['comprobante_tipo']
+        const virtuals = ['fecha', 'comprobante_tipo']
 
         virtuals.forEach((v) => {
             if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
         })
 
         const data = await repository.find(qry, true)
-
-        for (const a of data) {
-            if (qry?.cols.includes('fecha'))
-                a.fecha_format = formatDate(a.fecha, req.user.format_date)
-        }
 
         res.json({ code: 0, data })
     } catch (error) {

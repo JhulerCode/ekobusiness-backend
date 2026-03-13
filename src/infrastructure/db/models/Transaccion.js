@@ -8,6 +8,7 @@ import { SocioPedido } from './SocioPedido.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { arrayMap } from '#store/system.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const systemMaps = {
     pago_condiciones: arrayMap('pago_condiciones'),
@@ -18,6 +19,12 @@ export const Transaccion = sequelize.define('transacciones', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.STRING }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
 
     socio_pedido: { type: DataTypes.STRING }, //required //linked
     socio: { type: DataTypes.STRING }, //required //linked
@@ -84,6 +91,12 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
 
     lote: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
+    fv1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fv'))
+        },
+    },
 
     observacion: { type: DataTypes.STRING },
     calidad_revisado: { type: DataTypes.STRING },

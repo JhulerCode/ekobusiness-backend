@@ -3,6 +3,7 @@ import sequelize from '../sequelize.js'
 import { Colaborador } from './Colaborador.js'
 import { tzDate } from '@formkit/tempo'
 import { arrayMap } from '#store/system.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const systemMaps = {
     documentos_estados: arrayMap('documentos_estados'),
@@ -19,7 +20,19 @@ export const Documento = sequelize.define('documentos', {
     registro_sanitario: { type: DataTypes.STRING },
 
     fecha_emision: { type: DataTypes.DATEONLY }, //required
+    fecha_emision1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_emision'))
+        },
+    },
     fecha_vencimiento: { type: DataTypes.DATEONLY }, //required
+    fecha_vencimiento1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_vencimiento'))
+        },
+    },
     recordar_dias: { type: DataTypes.INTEGER }, //required
 
     file: { type: DataTypes.JSON, defaultValue: {} },

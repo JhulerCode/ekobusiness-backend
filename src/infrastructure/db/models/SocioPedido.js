@@ -5,6 +5,7 @@ import { Moneda } from './Moneda.js'
 import { Articulo } from './Articulo.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const systemMaps = {
     pedido_estados: arrayMap('pedido_estados'),
@@ -20,6 +21,13 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     tipo: { type: DataTypes.SMALLINT }, //required
     origin: { type: DataTypes.STRING }, //required
     fecha: { type: DataTypes.DATEONLY }, //required
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
+
     codigo: { type: DataTypes.STRING }, //required
     is_maquila: { type: DataTypes.BOOLEAN }, //required
 
@@ -69,6 +77,12 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
         },
     },
     fecha_entrega: { type: DataTypes.DATEONLY }, //required
+    fecha_entrega1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_entrega'))
+        },
+    },
     entrega_ubigeo: { type: DataTypes.STRING }, //required
     direccion_entrega: { type: DataTypes.STRING }, //required
     entrega_direccion_datos: { type: DataTypes.JSON, defaultValue: {} }, //required

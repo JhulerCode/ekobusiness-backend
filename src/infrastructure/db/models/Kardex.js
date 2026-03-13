@@ -6,11 +6,18 @@ import { Transaccion, TransaccionItem } from './Transaccion.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { Moneda } from './Moneda.js'
+import { formatDate } from '#shared/dayjs.js'
 
 export const Kardex = sequelize.define('kardexes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.STRING },
     fecha: { type: DataTypes.DATEONLY },
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
 
     articulo: { type: DataTypes.STRING },
     cantidad: { type: DataTypes.DECIMAL(10, 2) },
@@ -23,6 +30,12 @@ export const Kardex = sequelize.define('kardexes', {
 
     lote: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
+    fv1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fv'))
+        },
+    },
 
     is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked
     stock: { type: DataTypes.DECIMAL(10, 2) }, //required

@@ -225,7 +225,7 @@ const include1 = {
     socio_pedido1: {
         model: SocioPedido,
         as: 'socio_pedido1',
-        attributes: ['id', 'fecha', 'socio', 'codigo'],
+        attributes: ['id', 'fecha', 'fecha1', 'socio', 'codigo'],
     },
     socio_pedido_items: {
         model: SocioPedidoItem,
@@ -234,7 +234,7 @@ const include1 = {
     transaccion1: {
         model: Transaccion,
         as: 'transaccion1',
-        attributes: ['id', 'fecha', 'socio', 'guia', 'factura'],
+        attributes: ['id', 'fecha', 'fecha1', 'socio', 'guia', 'factura'],
         required: false,
     },
     transaccion_items: {

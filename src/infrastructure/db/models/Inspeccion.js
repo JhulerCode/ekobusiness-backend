@@ -2,10 +2,17 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Socio } from './Socio.js'
 import { Colaborador } from './Colaborador.js'
+import { formatDate } from '#shared/dayjs.js'
 
 export const Inspeccion = sequelize.define('inspecciones', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha: { type: DataTypes.DATEONLY }, //required
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
     socio: { type: DataTypes.STRING }, //required
     puntuacion: { type: DataTypes.STRING },
     puntuacion_maxima: { type: DataTypes.STRING },

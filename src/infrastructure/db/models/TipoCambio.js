@@ -2,10 +2,17 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Moneda } from './Moneda.js'
 import { Colaborador } from './Colaborador.js'
+import { formatDate } from '#shared/dayjs.js'
 
 export const TipoCambio = sequelize.define('tipo_cambios', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha: { type: DataTypes.DATEONLY }, //required
+    fecha1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha'))
+        },
+    },
     compra: { type: DataTypes.DOUBLE }, //required
     venta: { type: DataTypes.DOUBLE }, //required
 

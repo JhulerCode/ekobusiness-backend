@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const systemMaps = {
     caja_apertura_estados: arrayMap('caja_apertura_estados'),
@@ -10,7 +11,19 @@ const systemMaps = {
 export const CajaApertura = sequelize.define('cajas_aperturas', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     fecha_apertura: { type: DataTypes.DATEONLY }, //required
+    fecha_apertura1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_apertura'))
+        },
+    },
     fecha_cierre: { type: DataTypes.DATEONLY }, //required
+    fecha_cierre1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_cierre'))
+        },
+    },
     monto_apertura: { type: DataTypes.DOUBLE }, //required
     monto_cierre: { type: DataTypes.DOUBLE }, //required
     estado: { type: DataTypes.STRING }, //required
