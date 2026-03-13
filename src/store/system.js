@@ -66,9 +66,9 @@ const sistemaData = {
         { id: 'KGM', nombre: 'Kilogramo', nombre_completo: 'Kilogramo (KGM)' },
     ],
     pedido_estados: [
-        { id: '0', nombre: 'ANULADO' },
-        { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' },
+        { id: '0', nombre: 'ANULADO', color: 'rojo' },
+        { id: '1', nombre: 'ABIERTO', color: 'amarillo' },
+        { id: '2', nombre: 'CERRADO', color: 'verde' },
     ],
     socio_pedidos_etapas: [
         {
@@ -98,15 +98,14 @@ const sistemaData = {
         { id: '6', nombre: 'AJUSTE ENTRADA', operacion: 1 },
         { id: '7', nombre: 'AJUSTE SALIDA', operacion: -1 },
         { id: 'abastacer_maquila', nombre: 'ABASTECER MAQUILA', operacion: -1 },
-        // { id: '9', nombre: 'MAQUILA ENTRADA', operacion: 1 },
         { id: '10', nombre: 'ASIGNACIÓN A MÁQUINA', operacion: 1 },
         { id: '11', nombre: 'DEVOLUCIÓN DE MÁQUINA', operacion: 1 },
         { id: '12', nombre: 'DESCARTADO', operacion: 0 },
     ],
     transaccion_estados: [
-        { id: '0', nombre: 'ANULADO' },
-        { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' },
+        { id: '0', nombre: 'ANULADO', color: 'rojo' },
+        { id: '1', nombre: 'ABIERTO', color: 'amarillo' },
+        { id: '2', nombre: 'CERRADO', color: 'verde' },
     ],
     igv_afectaciones: [
         { id: '10', nombre: 'Gravado - Operación Onerosa' },
@@ -115,41 +114,40 @@ const sistemaData = {
     ],
 
     produccion_orden_estados: [
-        { id: '0', nombre: 'ANULADO' },
-        { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' },
+        { id: '0', nombre: 'ANULADO', color: 'rojo' },
+        { id: '1', nombre: 'ABIERTO', color: 'amarillo' },
+        { id: '2', nombre: 'CERRADO', color: 'verde' },
     ],
     documentos_estados: [
-        { id: '0', nombre: 'VENCIDO' },
-        { id: '0.1', nombre: 'VENCE HOY' },
-        { id: '1', nombre: 'POR VENCER' },
-        { id: '2', nombre: 'VIGENTE' },
+        { id: '0', nombre: 'VENCIDO', color: 'rojo' },
+        { id: '0.1', nombre: 'VENCE HOY', color: 'amarillo' },
+        { id: '1', nombre: 'POR VENCER', color: 'amarillo' },
+        { id: '2', nombre: 'VIGENTE', color: 'verde' },
     ],
     estados: [
-        { id: true, nombre: 'SI' },
-        { id: false, nombre: 'NO' },
+        { id: true, nombre: 'SI', color: 'verde' },
+        { id: false, nombre: 'NO', color: 'rojo' },
     ],
     generos: [
         { id: 'M', nombre: 'MASCULINO' },
         { id: 'F', nombre: 'FEMENINO' },
     ],
     caja_apertura_estados: [
-        { id: '1', nombre: 'ABIERTO' },
-        { id: '2', nombre: 'CERRADO' },
+        { id: '1', nombre: 'ABIERTO', color: 'amarillo' },
+        { id: '2', nombre: 'CERRADO', color: 'verde' },
     ],
     cuarentena_productos_estados: [
-        // { id: '0', nombre: 'ANULADO' },
-        { id: '1', nombre: 'PENDIENTE' },
-        { id: '2', nombre: 'ACEPTADO' },
+        { id: '1', nombre: 'PENDIENTE', color: 'amarillo' },
+        { id: '2', nombre: 'ACEPTADO', color: 'verde' },
     ],
     cumplidado_estados: [
-        { id: 1, nombre: 'PENDIENTE' },
-        { id: 2, nombre: 'COMPLETADO' },
+        { id: 1, nombre: 'PENDIENTE', color: 'amarillo' },
+        { id: 2, nombre: 'COMPLETADO', color: 'verde' },
     ],
 
     conformidad_estados: [
-        { id: '1', nombre: 'CONFORME' },
-        { id: '2', nombre: 'NO CONFORME' },
+        { id: '1', nombre: 'CONFORME', color: 'verde' },
+        { id: '2', nombre: 'NO CONFORME', color: 'rojo' },
     ],
     cf_re_bpm_20_colores: [
         { id: '1', nombre: 'BLANCO' },
