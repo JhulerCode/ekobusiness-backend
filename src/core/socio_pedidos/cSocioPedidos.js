@@ -7,7 +7,7 @@ import { resUpdateFalse } from '#http/helpers.js'
 import config from '../../config.js'
 import { nodeMailer } from '#mail/nodeMailer.js'
 import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
-import dayjs from '#shared/dayjs.js'
+import dayjs, { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('SocioPedido')
 const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
@@ -21,6 +21,21 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = [
+            'estado',
+            'pagado',
+            'listo',
+            'entregado',
+            'entrega_tipo',
+            'pago_condicion',
+            'pago_metodo',
+            'comprobante_tipo',
+        ]
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
@@ -28,25 +43,11 @@ const find = async (req, res) => {
         const meta = hasPage ? response.meta : null
 
         if (data.length > 0) {
-            const pedido_estadosMap = arrayMap('pedido_estados')
-            const estadoMap = arrayMap('estados')
-            const entrega_tiposMap = arrayMap('entrega_tipos')
-            const pago_condicionesMap = arrayMap('pago_condiciones')
-            const pago_metodosMap = arrayMap('pago_metodos')
-
             for (const a of data) {
-                if (qry?.cols?.includes('estado')) a.estado1 = pedido_estadosMap[a.estado]
-                if (qry?.cols?.includes('pagado')) a.pagado1 = estadoMap[a.pagado]
-                if (qry?.cols?.includes('listo')) a.listo1 = estadoMap[a.listo]
-                if (qry?.cols?.includes('entregado')) a.entregado1 = estadoMap[a.entregado]
-
-                if (qry?.cols?.includes('entrega_tipo'))
-                    a.entrega_tipo1 = entrega_tiposMap[a.entrega_tipo]
-
-                if (qry?.cols?.includes('pago_condicion'))
-                    a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
-                if (qry?.cols?.includes('pago_metodo'))
-                    a.pago_metodo1 = pago_metodosMap[a.pago_metodo]
+                if (qry?.cols.includes('fecha'))
+                    a.fecha_format = formatDate(a.fecha, req.user.format_date)
+                if (qry?.cols.includes('fecha_entrega'))
+                    a.fecha_entrega_format = formatDate(a.fecha_entrega, req.user.format_date)
             }
         }
 
@@ -64,22 +65,7 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, ...qry }, true)
 
         if (data) {
-            const pedido_estadosMap = arrayMap('pedido_estados')
-            const estadoMap = arrayMap('estados')
-            const entrega_tiposMap = arrayMap('entrega_tipos')
-            const pago_condicionesMap = arrayMap('pago_condiciones')
-            const pago_metodosMap = arrayMap('pago_metodos')
-            const comprobante_tiposMap = arrayMap('comprobante_tipos')
             const documentos_identidadMap = arrayMap('documentos_identidad')
-
-            data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
-
-            data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
-            data.pagado1 = estadoMap[data.pagado]
-            data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
-            data.comprobante_tipo1 = comprobante_tiposMap[data.comprobante_tipo]
-
-            data.estado1 = pedido_estadosMap[data.estado]
 
             if (data.socio_datos.doc_tipo) {
                 data.socio_datos.doc_tipo1 = documentos_identidadMap[data.socio_datos.doc_tipo]
@@ -624,24 +610,6 @@ const findPendientes = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'createdBy1'] }, true)
-
-    if (data) {
-        const pedido_estadosMap = arrayMap('pedido_estados')
-        const estadoMap = arrayMap('estados')
-        const entrega_tiposMap = arrayMap('entrega_tipos')
-        const pago_condicionesMap = arrayMap('pago_condiciones')
-        const pago_metodosMap = arrayMap('pago_metodos')
-
-        data.estado1 = pedido_estadosMap[data.estado]
-        data.pagado1 = estadoMap[data.pagado]
-        data.listo1 = estadoMap[data.listo]
-        data.entregado1 = estadoMap[data.entregado]
-
-        data.entrega_tipo1 = entrega_tiposMap[data.entrega_tipo]
-
-        data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
-        data.pago_metodo1 = pago_metodosMap[data.pago_metodo]
-    }
 
     return data
 }
