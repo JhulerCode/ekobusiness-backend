@@ -1,16 +1,35 @@
 import sequelize from '../sequelize.js'
 import { DataTypes } from 'sequelize'
 import { Empresa } from './Empresa.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    generos: arrayMap('generos'),
+    documentos_identidad: arrayMap('documentos_identidad'),
+    estados: arrayMap('estados'),
+}
 
 export const Colaborador = sequelize.define('colaboradores', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     nombres: { type: DataTypes.STRING }, //required
 
     doc_tipo: { type: DataTypes.STRING }, //required
+    doc_tipo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.documentos_identidad[this.getDataValue('doc_tipo')]
+        },
+    },
     doc_numero: { type: DataTypes.STRING }, //required
 
     fecha_nacimiento: { type: DataTypes.DATE },
     sexo: { type: DataTypes.STRING },
+    sexo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.generos[this.getDataValue('sexo')]
+        },
+    },
 
     correo: { type: DataTypes.STRING },
     telefono: { type: DataTypes.STRING },
@@ -20,10 +39,22 @@ export const Colaborador = sequelize.define('colaboradores', {
     cargo: { type: DataTypes.STRING }, //required
     sueldo: { type: DataTypes.DOUBLE },
     activo: { type: DataTypes.BOOLEAN },
+    activo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('activo')]
+        },
+    },
 
     produccion_codigo: { type: DataTypes.STRING },
 
     has_signin: { type: DataTypes.BOOLEAN }, //required
+    has_signin1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('has_signin')]
+        },
+    },
     usuario: { type: DataTypes.STRING }, //required
     contrasena: { type: DataTypes.STRING }, //required
     permisos: { type: DataTypes.JSON }, //required

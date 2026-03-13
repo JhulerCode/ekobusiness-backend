@@ -1,12 +1,11 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
-import { arrayMap } from '#store/system.js'
 import { resUpdateFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('Transaccion')
 const TransaccionItemRepo = new Repository('TransaccionItem')
 const KardexRepo = new Repository('Kardex')
-// const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
 
 const find = async (req, res) => {
     try {
@@ -15,21 +14,21 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['pago_condicion', 'estado']
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-        if (data.length > 0) {
-            const pago_condicionesMap = arrayMap('pago_condiciones')
-            const transaccion_estadosMap = arrayMap('transaccion_estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('pago_condicion'))
-                    a.pago_condicion1 = pago_condicionesMap[a.pago_condicion]
-                if (qry?.cols?.includes('estado')) a.estado1 = transaccion_estadosMap[a.estado]
-            }
+        for (const a of data) {
+            if (qry?.cols.includes('fecha'))
+                a.fecha_format = formatDate(a.fecha, req.user.format_date)
         }
 
         res.json({ code: 0, data, meta })
@@ -338,14 +337,6 @@ const delet = async (req, res) => {
 // --- Helpers --- //
 async function loadOne(id) {
     const data = await repository.find({ id, incl: ['socio1', 'moneda1', 'socio_pedido1'] }, true)
-
-    if (data) {
-        const pago_condicionesMap = arrayMap('pago_condiciones')
-        const transaccion_estadosMap = arrayMap('transaccion_estados')
-
-        data.pago_condicion1 = pago_condicionesMap[data.pago_condicion]
-        data.estado1 = transaccion_estadosMap[data.estado]
-    }
 
     return data
 }

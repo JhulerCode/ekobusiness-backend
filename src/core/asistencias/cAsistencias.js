@@ -1,5 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('Asistencia')
 
@@ -16,9 +17,15 @@ const find = async (req, res) => {
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
+        for (const a of data) {
+            if (qry?.cols.includes('fecha_entrada'))
+                a.fecha_entrada_format = formatDate(a.fecha_entrada, req.user.format_date)
+            if (qry?.cols.includes('fecha_salida'))
+                a.fecha_salida_format = formatDate(a.fecha_salida, req.user.format_date)
+        }
+
         res.json({ code: 0, data, meta })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -30,8 +37,7 @@ const findById = async (req, res) => {
         const data = await repository.find({ id })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -43,16 +49,19 @@ const create = async (req, res) => {
 
         // ----- CREAR ----- //
         const nuevo = await repository.create({
-            colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
+            colaborador,
+            fecha_entrada,
+            fecha_salida,
+            hora_entrada,
+            hora_salida,
             empresa,
-            createdBy: req.user.colaborador
+            createdBy: req.user.colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -63,18 +72,24 @@ const update = async (req, res) => {
         const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
 
         // ----- ACTUALIZAR -----//
-        const updated = await repository.update({ id }, {
-            colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida,
-            updatedBy: req.user.colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                colaborador,
+                fecha_entrada,
+                fecha_salida,
+                hora_entrada,
+                hora_salida,
+                updatedBy: req.user.colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -83,15 +98,13 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {
@@ -99,8 +112,6 @@ async function loadOne(id) {
 
     return data
 }
-
-
 
 export default {
     find,

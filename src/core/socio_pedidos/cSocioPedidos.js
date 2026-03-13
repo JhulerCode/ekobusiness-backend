@@ -3,7 +3,6 @@ import sequelize from '#db/sequelize.js'
 import { sistemaData } from '#store/system.js'
 import { arrayMap } from '#store/system.js'
 import { resUpdateFalse } from '#http/helpers.js'
-
 import config from '../../config.js'
 import { nodeMailer } from '#mail/nodeMailer.js'
 import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
@@ -42,13 +41,11 @@ const find = async (req, res) => {
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-        if (data.length > 0) {
-            for (const a of data) {
-                if (qry?.cols.includes('fecha'))
-                    a.fecha_format = formatDate(a.fecha, req.user.format_date)
-                if (qry?.cols.includes('fecha_entrega'))
-                    a.fecha_entrega_format = formatDate(a.fecha_entrega, req.user.format_date)
-            }
+        for (const a of data) {
+            if (qry?.cols.includes('fecha'))
+                a.fecha_format = formatDate(a.fecha, req.user.format_date)
+            if (qry?.cols.includes('fecha_entrega'))
+                a.fecha_entrega_format = formatDate(a.fecha_entrega, req.user.format_date)
         }
 
         res.json({ code: 0, data, meta })

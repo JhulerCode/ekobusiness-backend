@@ -7,6 +7,12 @@ import { Moneda } from './Moneda.js'
 import { SocioPedido } from './SocioPedido.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    pago_condiciones: arrayMap('pago_condiciones'),
+    transaccion_estados: arrayMap('transaccion_estados'),
+}
 
 export const Transaccion = sequelize.define('transacciones', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -19,12 +25,24 @@ export const Transaccion = sequelize.define('transacciones', {
     factura: { type: DataTypes.STRING }, //required
 
     pago_condicion: { type: DataTypes.STRING }, //required
+    pago_condicion1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.pago_condiciones[this.getDataValue('pago_condicion')]
+        },
+    },
     moneda: { type: DataTypes.STRING }, //required //linked
     tipo_cambio: { type: DataTypes.STRING }, //required
     monto: { type: DataTypes.DOUBLE }, //required
 
     observacion: { type: DataTypes.STRING },
     estado: { type: DataTypes.STRING },
+    estado1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.transaccion_estados[this.getDataValue('estado')]
+        },
+    },
 
     calidad_revisado_despacho: { type: DataTypes.STRING },
     // produccion_orden: { type: DataTypes.STRING }, //required

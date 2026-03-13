@@ -2,6 +2,11 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Colaborador } from './Colaborador.js'
 import { tzDate } from '@formkit/tempo'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    documentos_estados: arrayMap('documentos_estados'),
+}
 
 export const Documento = sequelize.define('documentos', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -52,7 +57,14 @@ export const Documento = sequelize.define('documentos', {
                 return 2
             }
         }
-    }
+    },
+
+    estado1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.documentos_estados[this.estado]
+        },
+    },
 })
 
 Colaborador.hasMany(Documento, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })

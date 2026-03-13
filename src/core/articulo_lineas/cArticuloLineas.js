@@ -1,5 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
@@ -12,23 +11,18 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['activo', 'is_ecommerce']
+// is_destacado no existe en el modelo ArticuloLinea, se remueve.
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
-
-        if (data.length > 0) {
-            const estadosMap = arrayMap('estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry?.cols?.includes('is_destacado'))
-                    a.is_destacado1 = estadosMap[a.is_destacado]
-                if (qry?.cols?.includes('is_ecommerce'))
-                    a.is_ecommerce1 = estadosMap[a.is_ecommerce]
-            }
-        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {
@@ -171,14 +165,6 @@ const updateFotos = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     const data = await repository.find({ id }, true)
-
-    if (data) {
-        const estadosMap = arrayMap('estados')
-
-        data.activo1 = estadosMap[data.activo]
-        data.is_destacado1 = estadosMap[data.is_destacado]
-        data.is_ecommerce1 = estadosMap[data.is_ecommerce]
-    }
 
     return data
 }

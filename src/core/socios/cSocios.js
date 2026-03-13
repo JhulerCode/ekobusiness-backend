@@ -1,5 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import { actualizarSesion } from '#store/sessions.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
@@ -12,22 +11,17 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['doc_tipo', 'activo']
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
-
-        if (data.length > 0) {
-            const documentos_identidadMap = arrayMap('documentos_identidad')
-            const estadosMap = arrayMap('estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('doc_tipo'))
-                    a.doc_tipo1 = documentos_identidadMap[a.doc_tipo]
-                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
-            }
-        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {
@@ -251,14 +245,6 @@ const updateBulk = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     const data = await repository.find({ id }, true)
-
-    if (data) {
-        const documentos_identidadMap = arrayMap('documentos_identidad')
-        const estadosMap = arrayMap('estados')
-
-        data.doc_tipo1 = documentos_identidadMap[data.doc_tipo]
-        data.activo1 = estadosMap[data.activo]
-    }
 
     return data
 }

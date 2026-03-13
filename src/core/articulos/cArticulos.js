@@ -1,6 +1,5 @@
 import sequelize from '#db/sequelize.js'
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 
@@ -15,31 +14,26 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = [
+            'activo',
+            'has_fv',
+            'igv_afectacion',
+            'is_ecommerce',
+            'purchase_ok',
+            'sale_ok',
+            'produce_ok',
+        ]
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-        if (data.length > 0) {
-            const estadosMap = arrayMap('estados')
-            const igv_afectacionesMap = arrayMap('igv_afectaciones')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('has_fv')) a.has_fv1 = estadosMap[a.has_fv]
-                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry?.cols?.includes('igv_afectacion'))
-                    a.igv_afectacion1 = igv_afectacionesMap[a.igv_afectacion]
-                if (qry?.cols?.includes('is_ecommerce'))
-                    a.is_ecommerce1 = estadosMap[a.is_ecommerce]
-
-                if (qry?.cols?.includes('purchase_ok')) a.purchase_ok1 = estadosMap[a.purchase_ok]
-
-                if (qry?.cols?.includes('sale_ok')) a.sale_ok1 = estadosMap[a.sale_ok]
-
-                if (qry?.cols?.includes('produce_ok')) a.produce_ok1 = estadosMap[a.produce_ok]
-            }
-        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {
@@ -504,20 +498,6 @@ const updateBulk = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     const data = await repository.find({ id, incl: ['categoria1', 'linea1'] }, true)
-
-    if (data) {
-        const estadosMap = arrayMap('estados')
-        const igv_afectacionesMap = arrayMap('igv_afectaciones')
-
-        data.has_fv1 = estadosMap[data.has_fv]
-        data.activo1 = estadosMap[data.activo]
-        data.igv_afectacion1 = igv_afectacionesMap[data.igv_afectacion]
-        data.is_ecommerce1 = estadosMap[data.is_ecommerce]
-        data.purchase_ok1 = estadosMap[data.purchase_ok]
-        data.sale_ok1 = estadosMap[data.sale_ok]
-        data.produce_ok1 = estadosMap[data.produce_ok]
-    }
-
     return data
 }
 

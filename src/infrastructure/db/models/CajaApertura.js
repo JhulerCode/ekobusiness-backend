@@ -1,6 +1,11 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Colaborador } from './Colaborador.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    caja_apertura_estados: arrayMap('caja_apertura_estados'),
+}
 
 export const CajaApertura = sequelize.define('cajas_aperturas', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -9,6 +14,12 @@ export const CajaApertura = sequelize.define('cajas_aperturas', {
     monto_apertura: { type: DataTypes.DOUBLE }, //required
     monto_cierre: { type: DataTypes.DOUBLE }, //required
     estado: { type: DataTypes.STRING }, //required
+    estado1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.caja_apertura_estados[this.getDataValue('estado')]
+        },
+    },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },

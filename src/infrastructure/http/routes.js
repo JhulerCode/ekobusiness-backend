@@ -28,8 +28,8 @@ import monedas from '#core/monedas/rMonedas.js'
 import mrp_boms from '#core/mrp_boms/rMrpBoms.js'
 import mrp_bom_lines from '#core/mrp_bom_lines/rMrpBomLines.js'
 import mrp_bom_socios from '#core/mrp_bom_socios/rMrpBomSocios.js'
-import precio_listas from '#core/precio_listas/rPrecioListas.js'
-import precio_lista_items from '#core/precio_lista_items/rPrecioListaItems.js'
+// import precio_listas from '#core/precio_listas/rPrecioListas.js'
+// import precio_lista_items from '#core/precio_lista_items/rPrecioListaItems.js'
 import produccion_ordenes from '#core/produccion_ordenes/rProduccionOrdenes.js'
 import sessions from '#core/sessions/rSessions.js'
 import socio_pedidos from '#core/socio_pedidos/rSocioPedidos.js'
@@ -74,8 +74,8 @@ router.use('/api/monedas', monedas)
 router.use('/api/mrp_boms', mrp_boms)
 router.use('/api/mrp_bom_lines', mrp_bom_lines)
 router.use('/api/mrp_bom_socios', mrp_bom_socios)
-router.use('/api/precio_listas', precio_listas)
-router.use('/api/precio_lista_items', precio_lista_items)
+// router.use('/api/precio_listas', precio_listas)
+// router.use('/api/precio_lista_items', precio_lista_items)
 router.use('/api/produccion_ordenes', produccion_ordenes)
 router.use('/api/sessions', sessions)
 router.use('/api/socios', socios)

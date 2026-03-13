@@ -1,5 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import bcrypt from 'bcrypt'
 import { borrarSesion, actualizarSesion } from '#store/sessions.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
@@ -13,25 +12,17 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['sexo', 'doc_tipo', 'activo', 'has_signin']
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
-
-        if (data.length > 0) {
-            const generosMap = arrayMap('generos')
-            const documentos_identidadMap = arrayMap('documentos_identidad')
-            const estadosMap = arrayMap('estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('sexo')) a.sexo1 = generosMap[a.sexo]
-                if (qry?.cols?.includes('doc_tipo'))
-                    a.doc_tipo1 = documentos_identidadMap[a.doc_tipo]
-                if (qry?.cols?.includes('activo')) a.activo1 = estadosMap[a.activo]
-                if (qry?.cols?.includes('has_signin')) a.has_signin1 = estadosMap[a.has_signin]
-            }
-        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {
@@ -287,17 +278,6 @@ const avances = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     let data = await repository.find({ id }, true)
-
-    if (data) {
-        const generosMap = arrayMap('generos')
-        const documentos_identidadMap = arrayMap('documentos_identidad')
-        const estadosMap = arrayMap('estados')
-
-        data.sexo1 = generosMap[data.sexo]
-        data.doc_tipo1 = documentos_identidadMap[data.doc_tipo]
-        data.activo1 = estadosMap[data.activo]
-        data.has_signin1 = estadosMap[data.has_signin]
-    }
 
     return data
 }

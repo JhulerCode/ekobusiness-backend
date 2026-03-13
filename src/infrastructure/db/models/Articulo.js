@@ -3,6 +3,12 @@ import sequelize from '../sequelize.js'
 import { ArticuloLinea } from './ArticuloLinea.js'
 import { ArticuloCategoria } from './ArticuloCategoria.js'
 import { Colaborador } from './Colaborador.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    estados: arrayMap('estados'),
+    igv_afectaciones: arrayMap('igv_afectaciones'),
+}
 
 export const Articulo = sequelize.define('articulos', {
     //--- IDENTIFICACIÓN ---//
@@ -12,9 +18,33 @@ export const Articulo = sequelize.define('articulos', {
     codigo_barra: { type: DataTypes.STRING },
     type: { type: DataTypes.STRING }, //required
     purchase_ok: { type: DataTypes.BOOLEAN }, //required
+    purchase_ok1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('purchase_ok')]
+        },
+    },
     sale_ok: { type: DataTypes.BOOLEAN }, //required
+    sale_ok1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('sale_ok')]
+        },
+    },
     produce_ok: { type: DataTypes.BOOLEAN }, //required
+    produce_ok1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('produce_ok')]
+        },
+    },
     activo: { type: DataTypes.BOOLEAN, defaultValue: true }, //required
+    activo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('activo')]
+        },
+    },
 
     //--- CARACTERISTICAS ---//
     unidad: { type: DataTypes.STRING }, //required
@@ -34,6 +64,12 @@ export const Articulo = sequelize.define('articulos', {
 
     //--- ECOMMERCE ---//
     is_ecommerce: { type: DataTypes.BOOLEAN, defaultValue: false },
+    is_ecommerce1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('is_ecommerce')]
+        },
+    },
     descripcion: { type: DataTypes.TEXT },
     precio: { type: DataTypes.DOUBLE },
     precio_anterior: { type: DataTypes.DOUBLE },
@@ -54,7 +90,19 @@ export const Articulo = sequelize.define('articulos', {
     tipo: { type: DataTypes.STRING },
     mp_tipo: { type: DataTypes.STRING },
     has_fv: { type: DataTypes.BOOLEAN },
+    has_fv1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('has_fv')]
+        },
+    },
     igv_afectacion: { type: DataTypes.STRING },
+    igv_afectacion1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.igv_afectaciones[this.getDataValue('igv_afectacion')]
+        },
+    },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },

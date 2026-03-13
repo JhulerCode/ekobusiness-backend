@@ -5,6 +5,12 @@ import { MrpBom } from './MrpBom.js'
 import { ArticuloLinea } from './ArticuloLinea.js'
 import { Maquina } from './Maquina.js'
 import { Colaborador } from './Colaborador.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    produccion_orden_estados: arrayMap('produccion_orden_estados'),
+    cumplidado_estados: arrayMap('cumplidado_estados'),
+}
 
 export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -24,6 +30,12 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
 
     observacion: { type: DataTypes.TEXT },
     estado: { type: DataTypes.STRING },
+    estado1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.produccion_orden_estados[this.getDataValue('estado')]
+        },
+    },
 
     calidad_revisado: { type: DataTypes.STRING },
     cf_ppc: { type: DataTypes.STRING },
@@ -38,11 +50,23 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
             return this.calidad_revisado ? 2 : 1
         },
     },
+    estado_calidad_revisado1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.cumplidado_estados[this.estado_calidad_revisado]
+        },
+    },
 
     estado_cf_ppc: {
         type: DataTypes.VIRTUAL,
         get() {
             return this.cf_ppc ? 2 : 1
+        },
+    },
+    estado_cf_ppc1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.cumplidado_estados[this.estado_cf_ppc]
         },
     },
 

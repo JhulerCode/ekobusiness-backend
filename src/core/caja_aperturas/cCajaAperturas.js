@@ -1,7 +1,7 @@
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import dayjs from '#shared/dayjs.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('CajaApertura')
 
@@ -12,23 +12,27 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['estado']
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-        if (data.length > 0) {
-            const estadosMap = arrayMap('caja_apertura_estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('estado')) a.estado1 = estadosMap[a.estado]
-            }
+        for (const a of data) {
+            if (qry?.cols.includes('fecha_apertura'))
+                a.fecha_apertura_format = formatDate(a.fecha_apertura, req.user.format_date)
+            if (qry?.cols.includes('fecha_cierre'))
+                a.fecha_cierre_format = formatDate(a.fecha_cierre, req.user.format_date)
         }
 
         res.json({ code: 0, data, meta })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -41,8 +45,7 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, ...qry })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -54,16 +57,17 @@ const create = async (req, res) => {
 
         // ----- CREAR ----- //
         const nuevo = await repository.create({
-            fecha_apertura, monto_apertura, estado,
+            fecha_apertura,
+            monto_apertura,
+            estado,
             empresa,
-            createdBy: colaborador
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -72,11 +76,10 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -87,18 +90,21 @@ const cerrar = async (req, res) => {
         const { id } = req.params
 
         // ----- ACTUALIZAR ----- //
-        const updated = await repository.update({ id }, {
-            fecha_cierre: dayjs(), estado: 2,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                fecha_cierre: dayjs(),
+                estado: 2,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -106,12 +112,6 @@ const cerrar = async (req, res) => {
 //--- Helpers ---//
 async function loadOne(id) {
     let data = await repository.find({ id }, true)
-
-    if (data) {
-        const estadosMap = arrayMap('caja_apertura_estados')
-
-        data.estado1 = estadosMap[data.estado]
-    }
 
     return data
 }
@@ -121,5 +121,5 @@ export default {
     findById,
     create,
     delet,
-    cerrar
+    cerrar,
 }

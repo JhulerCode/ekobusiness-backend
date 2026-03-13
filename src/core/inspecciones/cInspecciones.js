@@ -1,5 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('Inspeccion')
 
@@ -15,6 +16,11 @@ const find = async (req, res) => {
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
+
+        for (const a of data) {
+            if (qry?.cols.includes('fecha'))
+                a.fecha_format = formatDate(a.fecha, req.user.format_date)
+        }
 
         res.json({ code: 0, data, meta })
     } catch (error) {

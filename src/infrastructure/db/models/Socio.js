@@ -2,12 +2,24 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { PrecioLista } from './PrecioLista.js'
 import { Colaborador } from './Colaborador.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    documentos_identidad: arrayMap('documentos_identidad'),
+    estados: arrayMap('estados'),
+}
 
 export const Socio = sequelize.define('socios', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.SMALLINT }, //required
 
     doc_tipo: { type: DataTypes.STRING }, //required
+    doc_tipo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.documentos_identidad[this.getDataValue('doc_tipo')]
+        },
+    },
     doc_numero: { type: DataTypes.STRING }, //required
     nombres: { type: DataTypes.STRING }, //required
 
@@ -16,6 +28,12 @@ export const Socio = sequelize.define('socios', {
     telefono2: { type: DataTypes.STRING },
     web: { type: DataTypes.STRING },
     activo: { type: DataTypes.BOOLEAN, defaultValue: true }, //required
+    activo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.estados[this.getDataValue('activo')]
+        },
+    },
 
     direcciones: { type: DataTypes.JSON, defaultValue: [] },
 

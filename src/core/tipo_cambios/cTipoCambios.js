@@ -1,6 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('TipoCambio')
 const TransaccionRepo = new Repository('Transaccion')
@@ -14,6 +15,11 @@ const find = async (req, res) => {
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
         const data = await repository.find(qry)
+
+        for (const a of data) {
+            if (qry?.cols.includes('fecha'))
+                a.fecha_format = formatDate(a.fecha, req.user.format_date)
+        }
 
         res.json({ code: 0, data })
     } catch (error) {

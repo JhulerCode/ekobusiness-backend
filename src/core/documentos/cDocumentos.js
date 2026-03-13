@@ -1,7 +1,7 @@
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import { minioPutObject, minioRemoveObject } from '#infrastructure/minioClient.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('Documento')
 
@@ -12,18 +12,23 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['estado']
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-        if (data.length > 0) {
-            const estadosMap = arrayMap('documentos_estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('estado')) a.estado1 = estadosMap[a.estado]
-            }
+        for (const a of data) {
+            if (qry?.cols.includes('fecha_emision'))
+                a.fecha_emision_format = formatDate(a.fecha_emision, req.user.format_date)
+            if (qry?.cols.includes('fecha_vencimiento'))
+                a.fecha_vencimiento_format = formatDate(a.fecha_vencimiento, req.user.format_date)
         }
 
         res.json({ code: 0, data, meta })
@@ -190,9 +195,6 @@ async function loadOne(id) {
     let data = await repository.find({ id }, true)
 
     if (data) {
-        const estadosMap = arrayMap('documentos_estados')
-
-        data.estado1 = estadosMap[data.estado]
         data.file_name = data.file.name
     }
 

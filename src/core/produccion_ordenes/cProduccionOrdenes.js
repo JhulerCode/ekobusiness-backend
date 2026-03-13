@@ -1,6 +1,6 @@
 import { Repository } from '#db/Repository.js'
-import { arrayMap } from '#store/system.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('ProduccionOrden')
 const KardexRep = new Repository('Kardex')
@@ -12,22 +12,22 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
+        const virtuals = ['estado', 'estado_calidad_revisado', 'estado_cf_ppc']
+
+        virtuals.forEach((v) => {
+            if (qry?.cols?.includes(v) || qry?.cols?.includes(v.replace('estado_', '')))
+                qry.cols.push(`${v}1`)
+        })
+
         const response = await repository.find(qry, true)
 
         const hasPage = qry?.page
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-        if (data.length > 0) {
-            const produccion_orden_estadosMap = arrayMap('produccion_orden_estados')
-            const cumplidado_estadosMap = arrayMap('cumplidado_estados')
-
-            for (const a of data) {
-                if (qry?.cols?.includes('estado')) a.estado1 = produccion_orden_estadosMap[a.estado]
-                if (a.estado_calidad_revisado)
-                    a.estado_calidad_revisado1 = cumplidado_estadosMap[a.estado_calidad_revisado]
-                if (a.estado_cf_ppc) a.estado_cf_ppc1 = cumplidado_estadosMap[a.estado_cf_ppc]
-            }
+        for (const a of data) {
+            if (qry?.cols.includes('fecha'))
+                a.fecha_format = formatDate(a.fecha, req.user.format_date)
         }
 
         res.json({ code: 0, data, meta })
@@ -311,12 +311,6 @@ async function loadOne(id) {
         { id, incl: ['articulo1', 'maquina1', 'responsable1', 'linea1'] },
         true,
     )
-
-    if (data) {
-        const produccion_orden_estadosMap = arrayMap('produccion_orden_estados')
-
-        data.estado1 = produccion_orden_estadosMap[data.estado]
-    }
 
     return data
 }
