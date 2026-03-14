@@ -159,7 +159,7 @@ const create = async (req, res) => {
 
             if (tipo == 4) {
                 const cuarentena_productos_estadosMap = arrayMap('cuarentena_productos_estados')
-                data.producto_estado = 1
+                data.producto_estado = data.is_lote_padre ? 2 : 1
                 data.producto_estado1 = cuarentena_productos_estadosMap[data.producto_estado]
             }
         }
