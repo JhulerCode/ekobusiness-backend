@@ -1,6 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 import { formatDate } from '#shared/dayjs.js'
+import { arrayMap } from '#store/system.js'
 
 const repository = new Repository('ProduccionOrden')
 const KardexRep = new Repository('Kardex')
@@ -164,7 +165,7 @@ const delet = async (req, res) => {
 const terminar = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { id } = req.params
+        const { id } = req.body
 
         //--- CERRAR ---//
         const updated = await repository.update(
@@ -177,7 +178,13 @@ const terminar = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
+        const estados = arrayMap('produccion_orden_estados')
+        const data = {
+            id,
+            estado1: estados['2'],
+        }
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -186,7 +193,7 @@ const terminar = async (req, res) => {
 const abrir = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { id } = req.params
+        const { id } = req.body
 
         // ----- ABRIR ----- //
         const updated = await repository.update(
@@ -199,7 +206,13 @@ const abrir = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
+        const estados = arrayMap('produccion_orden_estados')
+        const data = {
+            id,
+            estado1: estados['1'],
+        }
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
