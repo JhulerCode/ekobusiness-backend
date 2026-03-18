@@ -13,7 +13,9 @@ const find = async (req, res) => {
         const virtuals = ['date_start', 'date_end']
 
         virtuals.forEach((v) => {
-            if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+            if (!qry?.cols?.exclude) {
+                if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
+            }
         })
 
         const response = await repository.find(qry, true)
