@@ -50,7 +50,7 @@ const findById = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        const { colaborador, empresa } = req.user
+        const { colaborador } = req.user
         const {
             plan_nombre,
             periodo,
@@ -65,6 +65,7 @@ const create = async (req, res) => {
             autorenovar,
             observaciones,
             metadata,
+            empresa,
         } = req.body
 
         //--- CREAR ---//
@@ -113,6 +114,7 @@ const update = async (req, res) => {
             autorenovar,
             observaciones,
             metadata,
+            empresa,
         } = req.body
 
         //--- ACTUALIZAR ---//
@@ -132,6 +134,7 @@ const update = async (req, res) => {
                 autorenovar,
                 observaciones,
                 metadata,
+                empresa,
                 updatedBy: colaborador,
             },
         )

@@ -4,6 +4,7 @@ import { Colaborador } from './Colaborador.js'
 import { tzDate } from '@formkit/tempo'
 import { arrayMap } from '#store/system.js'
 import { formatDate } from '#shared/dayjs.js'
+import dayjs from '#shared/dayjs.js'
 
 const systemMaps = {
     documentos_estados: arrayMap('documentos_estados'),
@@ -47,31 +48,18 @@ export const Documento = sequelize.define('documentos', {
             const fechaVencimiento = this.getDataValue('fecha_vencimiento')
             const recordarDias = this.getDataValue('recordar_dias')
 
-            if (!fechaVencimiento || recordarDias == null) return null
+            if (!fechaVencimiento || recordarDias == null) return 'VENCIDO'
 
-            const hoy = tzDate(new Date(), 'America/Lima')
-            hoy.setHours(10, 0, 0, 0)
+            const hoy = dayjs().startOf('day')
+            const vencimiento = dayjs(fechaVencimiento).startOf('day')
+            const diff = vencimiento.diff(hoy, 'day')
 
-            const vencimiento = new Date(`${fechaVencimiento} 10:00:00`)
-            const fechaRecordatorio = new Date(vencimiento)
-            fechaRecordatorio.setDate(vencimiento.getDate() - recordarDias)
-
-            if (hoy > vencimiento) {
-                return 0
-            } else if (
-                hoy.getFullYear() === vencimiento.getFullYear() &&
-                hoy.getMonth() === vencimiento.getMonth() &&
-                hoy.getDate() === vencimiento.getDate()
-            ) {
-                return 0.1
-            } else if (hoy >= fechaRecordatorio) {
-                return 1
-            } else {
-                return 2
-            }
-        }
+            if (diff < 0) return 'VENCIDO'
+            if (diff == 0) return 'VENCE HOY'
+            if (diff <= recordarDias) return 'POR VENCER'
+            return 'VIGENTE'
+        },
     },
-
     estado1: {
         type: DataTypes.VIRTUAL,
         get() {

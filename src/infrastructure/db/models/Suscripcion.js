@@ -5,6 +5,7 @@ import { Colaborador } from './Colaborador.js'
 import { Moneda } from './Moneda.js'
 import { formatDate } from '#shared/dayjs.js'
 import { arrayMap } from '#store/system.js'
+import dayjs from '#shared/dayjs.js'
 
 const systemMaps = {
     suscripcion_estados: arrayMap('suscripcion_estados'),
@@ -32,24 +33,38 @@ export const Suscripcion = sequelize.define('suscripciones', {
             return formatDate(this.getDataValue('fecha_vencimiento'))
         },
     },
-    fecha_ultimo_pago: { type: DataTypes.DATEONLY },
-    prox_fecha_pago: { type: DataTypes.DATEONLY },
-    prox_fecha_pago1: {
+    // fecha_ultimo_pago: { type: DataTypes.DATEONLY },
+    // prox_fecha_pago: { type: DataTypes.DATEONLY },
+    // prox_fecha_pago1: {
+    //     type: DataTypes.VIRTUAL,
+    //     get() {
+    //         return formatDate(this.getDataValue('prox_fecha_pago'))
+    //     },
+    // },
+    estado: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('prox_fecha_pago'))
+            const fechaVencimiento = this.getDataValue('fecha_vencimiento')
+            if (!fechaVencimiento) return 'VENCIDO'
+
+            const hoy = dayjs().startOf('day')
+            const vencimiento = dayjs(fechaVencimiento).startOf('day')
+            const diff = vencimiento.diff(hoy, 'day')
+
+            if (diff < 0) return 'VENCIDO'
+            if (diff <= 10) return 'POR VENCER'
+            return 'ACTIVO'
         },
     },
-    estado: { type: DataTypes.STRING, defaultValue: 'ACTIVO' },
     estado1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return systemMaps.suscripcion_estados[this.getDataValue('estado')]
+            return systemMaps.suscripcion_estados[this.estado]
         },
     },
-    autorenovar: { type: DataTypes.BOOLEAN, defaultValue: true },
     observaciones: { type: DataTypes.TEXT },
-    metadata: { type: DataTypes.JSON, defaultValue: {} },
+    // autorenovar: { type: DataTypes.BOOLEAN, defaultValue: true },
+    // metadata: { type: DataTypes.JSON, defaultValue: {} },
 
     empresa: { type: DataTypes.STRING, allowNull: false },
     createdBy: { type: DataTypes.STRING },

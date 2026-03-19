@@ -119,10 +119,10 @@ const sistemaData = {
         { id: '2', nombre: 'CERRADO', color: 'verde' },
     ],
     documentos_estados: [
-        { id: '0', nombre: 'VENCIDO', color: 'rojo' },
-        { id: '0.1', nombre: 'VENCE HOY', color: 'amarillo' },
-        { id: '1', nombre: 'POR VENCER', color: 'amarillo' },
-        { id: '2', nombre: 'VIGENTE', color: 'verde' },
+        { id: 'VENCIDO', nombre: 'VENCIDO', color: 'rojo' },
+        { id: 'VENCE HOY', nombre: 'VENCE HOY', color: 'amarillo' },
+        { id: 'POR VENCER', nombre: 'POR VENCER', color: 'amarillo' },
+        { id: 'VIGENTE', nombre: 'VIGENTE', color: 'verde' },
     ],
     estados: [
         { id: true, nombre: 'SI', color: 'verde' },
@@ -206,9 +206,8 @@ const sistemaData = {
     ],
     suscripcion_estados: [
         { id: 'ACTIVO', nombre: 'ACTIVO', color: 'verde' },
-        { id: 'PENDIENTE', nombre: 'PENDIENTE', color: 'amarillo' },
+        { id: 'POR VENCER', nombre: 'POR VENCER', color: 'amarillo' },
         { id: 'VENCIDO', nombre: 'VENCIDO', color: 'rojo' },
-        { id: 'CANCELADO', nombre: 'CANCELADO', color: 'gris' },
     ],
 }
 
