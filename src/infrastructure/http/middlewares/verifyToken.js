@@ -1,15 +1,16 @@
-import jat from "#shared/jat.js"
-import config from "../../../config.js"
-import { obtenerSesion } from "#store/sessions.js"
-import { obtenerEmpresa } from "#store/empresas.js"
+import jat from '#shared/jat.js'
+import config from '../../../config.js'
+import { obtenerSesion } from '#store/sessions.js'
+import { obtenerEmpresa } from '#store/empresas.js'
 
 async function verifyToken(req, res, next) {
     const authorization = req.headers['authorization']
-    const xEmpresa = req.headers["x-empresa"]
+    // const xEmpresa = req.headers['x-empresa']
 
     if (!authorization) return res.status(401).json({ msg: 'Token faltante' })
 
-    if (!authorization.toLowerCase().startsWith('bearer')) return res.status(401).json({ msg: 'Token no válido' })
+    if (!authorization.toLowerCase().startsWith('bearer'))
+        return res.status(401).json({ msg: 'Token no válido' })
 
     const token = authorization.substring(7)
 
@@ -23,17 +24,16 @@ async function verifyToken(req, res, next) {
 
         req.user = {
             colaborador: session.id,
-            ...session
+            ...session,
         }
 
-        const empresa = obtenerEmpresa(xEmpresa)
+        const empresa = obtenerEmpresa(session.empresa)
         req.empresa = {
-            ...empresa
+            ...empresa,
         }
 
         next()
-    }
-    catch (error) {
+    } catch (error) {
         return res.status(401).json({ msg: 'Token inválido o expirado' })
     }
 }

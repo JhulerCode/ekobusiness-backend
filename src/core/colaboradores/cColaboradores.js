@@ -209,7 +209,7 @@ const delet = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        res.json({ code: 0, data: { ...req.user } })
+        res.json({ code: 0, data: req.user, empresa: req.empresa })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -220,7 +220,8 @@ const reloadUsuario = async (req, res) => {
         const { id } = req.user
         const data = await loadOne(id)
         actualizarSesion(id, data)
-        res.json({ code: 0, data })
+
+        res.json({ code: 0, data, empresa: req.empresa })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
