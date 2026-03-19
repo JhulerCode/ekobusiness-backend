@@ -34,7 +34,6 @@ const find = async (req, res) => {
         const data = hasPage ? response.data : response
         const meta = hasPage ? response.meta : null
 
-
         res.json({ code: 0, data, meta })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })

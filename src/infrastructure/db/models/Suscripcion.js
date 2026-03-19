@@ -1,0 +1,69 @@
+import { DataTypes } from 'sequelize'
+import sequelize from '../sequelize.js'
+import { Empresa } from './Empresa.js'
+import { Colaborador } from './Colaborador.js'
+import { Moneda } from './Moneda.js'
+import { formatDate } from '#shared/dayjs.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    suscripcion_estados: arrayMap('suscripcion_estados'),
+}
+
+export const Suscripcion = sequelize.define('suscripciones', {
+    id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+
+    plan_nombre: { type: DataTypes.STRING, allowNull: false },
+    periodo: { type: DataTypes.STRING, defaultValue: 'mensual' },
+    limite_usuarios: { type: DataTypes.INTEGER, defaultValue: 1 },
+    precio: { type: DataTypes.DOUBLE, defaultValue: 0 },
+    moneda: { type: DataTypes.STRING },
+    fecha_inicio: { type: DataTypes.DATEONLY },
+    fecha_inicio1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_inicio'))
+        },
+    },
+    fecha_vencimiento: { type: DataTypes.DATEONLY },
+    fecha_vencimiento1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fecha_vencimiento'))
+        },
+    },
+    fecha_ultimo_pago: { type: DataTypes.DATEONLY },
+    prox_fecha_pago: { type: DataTypes.DATEONLY },
+    prox_fecha_pago1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('prox_fecha_pago'))
+        },
+    },
+    estado: { type: DataTypes.STRING, defaultValue: 'ACTIVO' },
+    estado1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.suscripcion_estados[this.getDataValue('estado')]
+        },
+    },
+    autorenovar: { type: DataTypes.BOOLEAN, defaultValue: true },
+    observaciones: { type: DataTypes.TEXT },
+    metadata: { type: DataTypes.JSON, defaultValue: {} },
+
+    empresa: { type: DataTypes.STRING, allowNull: false },
+    createdBy: { type: DataTypes.STRING },
+    updatedBy: { type: DataTypes.STRING },
+})
+
+Moneda.hasMany(Suscripcion, { foreignKey: 'moneda', as: 'suscripciones', onDelete: 'RESTRICT' })
+Suscripcion.belongsTo(Moneda, { foreignKey: 'moneda', as: 'moneda1' })
+
+Empresa.hasMany(Suscripcion, { foreignKey: 'empresa', as: 'suscripciones', onDelete: 'RESTRICT' })
+Suscripcion.belongsTo(Empresa, { foreignKey: 'empresa', as: 'empresa1' })
+
+Colaborador.hasMany(Suscripcion, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+Suscripcion.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+
+Colaborador.hasMany(Suscripcion, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+Suscripcion.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

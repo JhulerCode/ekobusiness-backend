@@ -30,6 +30,7 @@ import { Socio } from '#db/models/Socio.js'
 import { SocioPedido, SocioPedidoItem } from '#db/models/SocioPedido.js'
 import { TipoCambio } from '#db/models/TipoCambio.js'
 import { Transaccion, TransaccionItem } from '#db/models/Transaccion.js'
+import { Suscripcion } from '#db/models/Suscripcion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
 
 import { applyFilters } from '#db/helpers.js'
@@ -69,6 +70,7 @@ export const models = {
     TipoCambio,
     Transaccion,
     TransaccionItem,
+    Suscripcion,
     Ubigeo,
 }
 
@@ -111,6 +113,11 @@ const include1 = {
             'sequence',
         ],
     },
+    empresa1: {
+        model: Empresa,
+        as: 'empresa1',
+        attributes: ['id', 'razon_social'],
+    },
     colaborador1: {
         model: Colaborador,
         as: 'colaborador1',
@@ -119,6 +126,11 @@ const include1 = {
     createdBy1: {
         model: Colaborador,
         as: 'createdBy1',
+        attributes: ['id', 'nombres'],
+    },
+    updatedBy1: {
+        model: Colaborador,
+        as: 'updatedBy1',
         attributes: ['id', 'nombres'],
     },
     caja_movimientos: {

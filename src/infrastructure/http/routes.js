@@ -34,6 +34,7 @@ import produccion_ordenes from '#core/produccion_ordenes/rProduccionOrdenes.js'
 import sessions from '#core/sessions/rSessions.js'
 import socio_pedidos from '#core/socio_pedidos/rSocioPedidos.js'
 import socio_pedido_items from '#core/socio_pedido_items/rSocioPedidoItems.js'
+import suscripciones from '#core/suscripciones/rSuscripciones.js'
 import socios from '#core/socios/rSocios.js'
 import tipo_cambios from '#core/tipo_cambios/rTipoCambios.js'
 import transacciones from '#core/transacciones/rTransacciones.js'
@@ -81,6 +82,7 @@ router.use('/api/sessions', sessions)
 router.use('/api/socios', socios)
 router.use('/api/socio_pedidos', socio_pedidos)
 router.use('/api/socio_pedido_items', socio_pedido_items)
+router.use('/api/suscripciones', suscripciones)
 router.use('/api/tipo_cambios', tipo_cambios)
 router.use('/api/transacciones', transacciones)
 router.use('/api/transaccion_items', transaccion_items)

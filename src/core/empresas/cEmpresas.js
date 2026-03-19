@@ -5,11 +5,77 @@ import { actualizarEmpresa } from '#store/empresas.js'
 
 const repository = new Repository('Empresa')
 
+const find = async (req, res) => {
+    try {
+        const qry = req.query.qry ? JSON.parse(req.query.qry) : { fltr: {} }
+
+        const response = await repository.find(qry, true)
+
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
+
+        res.json({ code: 0, data, meta })
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 const findById = async (req, res) => {
     try {
-        const data = req.empresa
+        const { id } = req.params
+        const data = await repository.find({ id })
 
         res.json({ code: 0, data })
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
+const create = async (req, res) => {
+    try {
+        const { colaborador } = req.user
+        const {
+            ruc,
+            razon_social,
+            nombre_comercial,
+            telefono,
+            correo,
+            subdominio,
+            igv_porcentaje,
+            logo,
+            direcciones,
+            bancos,
+            ecommerce_url,
+            facebook_url,
+            instagram_url,
+            whatsapp_ventas,
+            whatsapp_ventas_url
+        } = req.body
+
+        //--- VERIFICAR SI EXISTE SUBDOMINIO ---//
+        if (await repository.existe({ subdominio }, res, 'El subdominio ya está en uso') == true) return
+
+        //--- CREAR EMPRESA ---//
+        const nuevo = await repository.create({
+            ruc,
+            razon_social,
+            nombre_comercial,
+            telefono,
+            correo,
+            subdominio,
+            igv_porcentaje,
+            logo,
+            direcciones,
+            bancos,
+            ecommerce_url,
+            facebook_url,
+            instagram_url,
+            whatsapp_ventas,
+            whatsapp_ventas_url,
+        })
+
+        res.json({ code: 0, data: nuevo })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -90,7 +156,22 @@ const update = async (req, res) => {
     }
 }
 
+const delet = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
+
+        res.json({ code: 0 })
+    } catch (error) {
+        res.status(500).json({ code: -1, msg: error.message, error })
+    }
+}
+
 export default {
+    find,
     findById,
+    create,
     update,
+    delet,
 }

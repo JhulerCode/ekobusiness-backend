@@ -41,7 +41,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -53,7 +53,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -65,7 +65,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -77,7 +77,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -89,7 +89,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -105,7 +105,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -117,7 +117,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -133,7 +133,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -142,7 +142,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -154,7 +154,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -187,7 +187,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -196,7 +196,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -205,7 +205,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -214,7 +214,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -223,7 +223,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -232,7 +232,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -241,7 +241,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -250,7 +250,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -259,7 +259,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -278,7 +278,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -290,7 +290,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -302,7 +302,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -314,7 +314,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -326,7 +326,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -338,7 +338,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -350,7 +350,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -362,7 +362,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -371,7 +371,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -380,7 +380,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -389,7 +389,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -422,7 +422,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -431,7 +431,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -440,7 +440,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -449,7 +449,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -458,7 +458,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -467,7 +467,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -476,7 +476,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -485,7 +485,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -494,7 +494,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -513,7 +513,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -525,7 +525,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -537,7 +537,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -549,7 +549,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -561,7 +561,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -573,7 +573,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -585,7 +585,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -597,7 +597,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -606,7 +606,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -615,7 +615,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -624,7 +624,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -657,7 +657,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -666,7 +666,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -675,7 +675,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -684,7 +684,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -693,7 +693,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -702,7 +702,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -721,7 +721,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -733,7 +733,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -745,7 +745,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -757,7 +757,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -769,7 +769,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -781,7 +781,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -790,7 +790,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -799,7 +799,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -818,7 +818,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -827,7 +827,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -836,7 +836,7 @@ const calidad_formatos = [
                 type: 'lontext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -845,7 +845,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -854,7 +854,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -863,7 +863,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -872,7 +872,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -881,7 +881,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -893,7 +893,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -912,7 +912,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -921,7 +921,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -930,7 +930,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -946,7 +946,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -962,7 +962,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -971,7 +971,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -980,7 +980,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -989,7 +989,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1001,7 +1001,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1020,7 +1020,7 @@ const calidad_formatos = [
                 relacion_tipo: [1, 2],
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1029,7 +1029,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1038,7 +1038,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1047,7 +1047,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1056,7 +1056,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1065,7 +1065,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1074,7 +1074,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: false,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1083,7 +1083,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1092,7 +1092,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1104,7 +1104,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1125,7 +1125,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1134,7 +1134,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1143,7 +1143,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1159,7 +1159,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1171,7 +1171,7 @@ const calidad_formatos = [
                 relacion: 'cf_re_bpm_20_colores',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1183,7 +1183,7 @@ const calidad_formatos = [
                 relacion: 'cf_re_bpm_20_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1192,7 +1192,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1208,7 +1208,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1217,7 +1217,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1226,7 +1226,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1235,7 +1235,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1244,7 +1244,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1253,7 +1253,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1262,7 +1262,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1271,7 +1271,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1280,7 +1280,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1289,7 +1289,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1305,7 +1305,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1314,7 +1314,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1323,7 +1323,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1332,7 +1332,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -1353,7 +1353,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1362,7 +1362,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1371,7 +1371,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1380,7 +1380,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1389,7 +1389,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1398,7 +1398,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1410,7 +1410,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1426,7 +1426,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1438,7 +1438,7 @@ const calidad_formatos = [
                 relacion_tipo: 1,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1450,7 +1450,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1462,7 +1462,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1471,7 +1471,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1480,7 +1480,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1492,7 +1492,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1508,7 +1508,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1517,7 +1517,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1526,7 +1526,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1535,7 +1535,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1544,7 +1544,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1553,7 +1553,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1562,7 +1562,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1571,7 +1571,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1580,7 +1580,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1589,7 +1589,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1598,7 +1598,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1607,7 +1607,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1616,7 +1616,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1625,7 +1625,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1634,7 +1634,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1646,7 +1646,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1675,7 +1675,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1684,7 +1684,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1693,7 +1693,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1712,7 +1712,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1724,7 +1724,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1736,7 +1736,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1748,7 +1748,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1767,7 +1767,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1779,7 +1779,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1791,7 +1791,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1810,7 +1810,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1822,7 +1822,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1841,7 +1841,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1850,7 +1850,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1859,7 +1859,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1875,7 +1875,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1884,7 +1884,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1893,7 +1893,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1902,7 +1902,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1911,7 +1911,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1920,7 +1920,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1929,7 +1929,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1941,7 +1941,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -1975,7 +1975,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1987,7 +1987,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -1999,7 +1999,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2010,7 +2010,7 @@ const calidad_formatos = [
                 lista: sistemaData.conformidad_estados,
                 relacion: 'conformidad_estados',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2021,7 +2021,7 @@ const calidad_formatos = [
                 lista: sistemaData.conformidad_estados,
                 relacion: 'conformidad_estados',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2032,7 +2032,7 @@ const calidad_formatos = [
                 lista: sistemaData.conformidad_estados,
                 relacion: 'conformidad_estados',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2043,7 +2043,7 @@ const calidad_formatos = [
                 lista: sistemaData.estados,
                 relacion: 'estados',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2052,7 +2052,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2061,7 +2061,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -2077,7 +2077,7 @@ const calidad_formatos = [
     //             type: 'date',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2086,7 +2086,7 @@ const calidad_formatos = [
     //             type: 'text',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2095,7 +2095,7 @@ const calidad_formatos = [
     //             type: 'text',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2104,7 +2104,7 @@ const calidad_formatos = [
     //             type: 'text',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2113,7 +2113,7 @@ const calidad_formatos = [
     //             type: 'date',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2122,7 +2122,7 @@ const calidad_formatos = [
     //             type: 'date',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2131,7 +2131,7 @@ const calidad_formatos = [
     //             type: 'date',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2140,7 +2140,7 @@ const calidad_formatos = [
     //             type: 'text',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //     ]
@@ -2156,7 +2156,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2168,7 +2168,7 @@ const calidad_formatos = [
                 relacion_tipo: [1, 2],
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2177,7 +2177,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2186,7 +2186,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2195,7 +2195,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2204,7 +2204,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -2220,7 +2220,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2229,7 +2229,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2238,7 +2238,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2250,7 +2250,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2259,7 +2259,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2268,7 +2268,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2277,7 +2277,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2286,7 +2286,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2295,7 +2295,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2304,7 +2304,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2313,7 +2313,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2322,7 +2322,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -2349,7 +2349,7 @@ const calidad_formatos = [
                 relacion: 'cf_re_bpm_31_tipos',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2358,7 +2358,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2367,7 +2367,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2376,7 +2376,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2388,7 +2388,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2397,7 +2397,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2406,7 +2406,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2415,7 +2415,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2424,7 +2424,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2433,7 +2433,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2442,7 +2442,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2451,7 +2451,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2460,7 +2460,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2469,7 +2469,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -2485,7 +2485,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2497,7 +2497,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2506,7 +2506,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2515,7 +2515,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2524,7 +2524,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2533,7 +2533,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2542,7 +2542,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2551,7 +2551,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2560,7 +2560,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2569,7 +2569,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2581,7 +2581,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -2597,7 +2597,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2609,7 +2609,7 @@ const calidad_formatos = [
                 mostrar: 'nombres',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2618,7 +2618,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2627,7 +2627,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -2636,7 +2636,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -2659,7 +2659,7 @@ const calidad_formatos = [
     //             type: 'date',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -2679,7 +2679,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2691,7 +2691,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2703,7 +2703,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2715,7 +2715,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2727,7 +2727,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -2747,7 +2747,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2759,7 +2759,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2771,7 +2771,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2783,7 +2783,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2795,7 +2795,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -2815,7 +2815,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2827,7 +2827,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2839,7 +2839,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2851,7 +2851,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2863,7 +2863,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -2883,7 +2883,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2895,7 +2895,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2907,7 +2907,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2919,7 +2919,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -2939,7 +2939,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2951,7 +2951,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -2971,7 +2971,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2983,7 +2983,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -2995,7 +2995,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3007,7 +3007,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3027,7 +3027,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3039,7 +3039,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3051,7 +3051,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3063,7 +3063,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3083,7 +3083,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3095,7 +3095,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3107,7 +3107,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3119,7 +3119,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3139,7 +3139,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3151,7 +3151,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3163,7 +3163,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3175,7 +3175,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3195,7 +3195,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3207,7 +3207,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3219,7 +3219,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3239,7 +3239,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3251,7 +3251,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3263,7 +3263,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3275,7 +3275,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3287,7 +3287,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3307,7 +3307,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3319,7 +3319,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3331,7 +3331,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3343,7 +3343,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3360,7 +3360,7 @@ const calidad_formatos = [
     //             type: 'longtext',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3369,7 +3369,7 @@ const calidad_formatos = [
     //             type: 'longtext',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //     ]
@@ -3391,7 +3391,7 @@ const calidad_formatos = [
     //             type: 'date',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3411,7 +3411,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3423,7 +3423,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3435,7 +3435,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3447,7 +3447,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3459,7 +3459,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3471,7 +3471,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3483,7 +3483,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3495,7 +3495,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3507,7 +3507,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3519,7 +3519,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3531,7 +3531,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3551,7 +3551,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3563,7 +3563,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3575,7 +3575,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3587,7 +3587,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3599,7 +3599,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3611,7 +3611,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3623,7 +3623,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3635,7 +3635,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3647,7 +3647,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3659,7 +3659,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3679,7 +3679,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3691,7 +3691,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3703,7 +3703,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3715,7 +3715,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3727,7 +3727,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3739,7 +3739,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3751,7 +3751,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3763,7 +3763,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3775,7 +3775,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3787,7 +3787,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3807,7 +3807,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3819,7 +3819,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3831,7 +3831,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3843,7 +3843,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3855,7 +3855,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3867,7 +3867,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3879,7 +3879,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3891,7 +3891,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3911,7 +3911,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3923,7 +3923,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3935,7 +3935,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3947,7 +3947,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -3967,7 +3967,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3979,7 +3979,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -3991,7 +3991,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4003,7 +4003,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4015,7 +4015,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4027,7 +4027,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4039,7 +4039,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4059,7 +4059,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4071,7 +4071,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4083,7 +4083,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4095,7 +4095,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4107,7 +4107,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4119,7 +4119,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4131,7 +4131,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4151,7 +4151,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4163,7 +4163,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4175,7 +4175,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4187,7 +4187,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4199,7 +4199,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4211,7 +4211,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4223,7 +4223,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4243,7 +4243,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4255,7 +4255,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4267,7 +4267,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4279,7 +4279,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4291,7 +4291,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4303,7 +4303,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4315,7 +4315,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4335,7 +4335,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4347,7 +4347,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4359,7 +4359,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4371,7 +4371,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4383,7 +4383,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4395,7 +4395,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4407,7 +4407,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4428,7 +4428,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4440,7 +4440,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4452,7 +4452,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4464,7 +4464,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4476,7 +4476,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4488,7 +4488,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4500,7 +4500,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4512,7 +4512,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4532,7 +4532,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4544,7 +4544,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4556,7 +4556,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4568,7 +4568,7 @@ const calidad_formatos = [
     //             relacion: 'conformidad_estados',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
 
@@ -4585,7 +4585,7 @@ const calidad_formatos = [
     //             type: 'longtext',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //         {
@@ -4594,7 +4594,7 @@ const calidad_formatos = [
     //             type: 'longtext',
     //             width: '8rem',
     //             show: true,
-    //             seek: true,
+    //
     //             sort: true,
     //         },
     //     ]
@@ -4614,7 +4614,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4623,7 +4623,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4635,7 +4635,7 @@ const calidad_formatos = [
                 relacion_tipo: 1,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4644,7 +4644,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4656,7 +4656,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4668,7 +4668,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4680,7 +4680,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4692,7 +4692,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4704,7 +4704,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4713,7 +4713,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4725,7 +4725,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -4749,7 +4749,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -4769,7 +4769,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4781,7 +4781,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4793,7 +4793,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4805,7 +4805,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4817,7 +4817,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4826,7 +4826,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4835,7 +4835,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -4855,7 +4855,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4867,7 +4867,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4879,7 +4879,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4891,7 +4891,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4903,7 +4903,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4912,7 +4912,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4921,7 +4921,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -4938,7 +4938,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4947,7 +4947,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4959,7 +4959,7 @@ const calidad_formatos = [
                 mostrar: 'nombres',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -4979,7 +4979,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4988,7 +4988,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -4997,7 +4997,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5006,7 +5006,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5026,7 +5026,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5035,7 +5035,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5044,7 +5044,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5053,7 +5053,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5073,7 +5073,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5082,7 +5082,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5091,7 +5091,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5100,7 +5100,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5120,7 +5120,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5129,7 +5129,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5138,7 +5138,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5147,7 +5147,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5167,7 +5167,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5176,7 +5176,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5185,7 +5185,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5194,7 +5194,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5214,7 +5214,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5223,7 +5223,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5232,7 +5232,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5241,7 +5241,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5261,7 +5261,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5270,7 +5270,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5279,7 +5279,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5288,7 +5288,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5308,7 +5308,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5317,7 +5317,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5326,7 +5326,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5335,7 +5335,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5355,7 +5355,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5364,7 +5364,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5373,7 +5373,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5382,7 +5382,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5402,7 +5402,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5411,7 +5411,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5420,7 +5420,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5429,7 +5429,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5449,7 +5449,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5458,7 +5458,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5467,7 +5467,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5476,7 +5476,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ],
@@ -5493,7 +5493,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5510,7 +5510,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5519,7 +5519,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5528,7 +5528,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5537,7 +5537,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5546,7 +5546,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5555,7 +5555,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5564,7 +5564,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5576,7 +5576,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5593,7 +5593,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5602,7 +5602,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5611,7 +5611,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5620,7 +5620,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5629,7 +5629,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5638,7 +5638,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5647,7 +5647,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5659,7 +5659,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5676,7 +5676,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5685,7 +5685,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5694,7 +5694,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5703,7 +5703,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5712,7 +5712,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5721,7 +5721,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5730,7 +5730,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5742,7 +5742,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -5759,7 +5759,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5768,7 +5768,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5777,7 +5777,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5794,7 +5794,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5803,7 +5803,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5820,7 +5820,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5829,7 +5829,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5846,7 +5846,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5855,7 +5855,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5872,7 +5872,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5881,7 +5881,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -5898,7 +5898,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5907,7 +5907,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5919,7 +5919,7 @@ const calidad_formatos = [
                 mostrar: 'nombres',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -5939,7 +5939,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5948,7 +5948,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5957,7 +5957,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5966,7 +5966,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5975,7 +5975,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5987,7 +5987,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -5999,7 +5999,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6011,7 +6011,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6023,7 +6023,7 @@ const calidad_formatos = [
                 relacion: 'estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6032,7 +6032,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6041,7 +6041,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -6061,7 +6061,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6073,7 +6073,7 @@ const calidad_formatos = [
                 mostrar: 'nombres',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6085,7 +6085,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6097,7 +6097,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6106,7 +6106,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6115,7 +6115,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6127,7 +6127,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -6144,7 +6144,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6156,7 +6156,7 @@ const calidad_formatos = [
                 mostrar: 'nombres',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6165,7 +6165,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6174,7 +6174,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6183,7 +6183,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -6203,7 +6203,7 @@ const calidad_formatos = [
                 mostrar: 'nombres',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6212,7 +6212,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6221,7 +6221,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6238,7 +6238,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6247,7 +6247,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6256,7 +6256,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6273,7 +6273,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6282,7 +6282,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6291,7 +6291,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6308,7 +6308,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6317,7 +6317,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6326,7 +6326,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6343,7 +6343,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6352,7 +6352,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6361,7 +6361,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6378,7 +6378,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6387,7 +6387,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6396,7 +6396,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6414,7 +6414,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6423,7 +6423,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6432,7 +6432,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6449,7 +6449,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6458,7 +6458,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6467,7 +6467,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6484,7 +6484,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6493,7 +6493,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6502,7 +6502,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6519,7 +6519,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6528,7 +6528,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6537,7 +6537,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
 
@@ -6554,7 +6554,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6563,7 +6563,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6572,7 +6572,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]
@@ -6589,7 +6589,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6598,7 +6598,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6607,7 +6607,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6619,7 +6619,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6628,7 +6628,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6637,7 +6637,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -6654,7 +6654,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6663,7 +6663,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6672,7 +6672,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6681,7 +6681,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6690,7 +6690,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6699,7 +6699,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6708,7 +6708,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6717,7 +6717,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -6734,7 +6734,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6743,7 +6743,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6755,7 +6755,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6767,7 +6767,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6779,7 +6779,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6791,7 +6791,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6803,7 +6803,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6815,7 +6815,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6827,7 +6827,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6836,7 +6836,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6845,7 +6845,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -6875,7 +6875,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6887,7 +6887,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6899,7 +6899,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6911,7 +6911,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6923,7 +6923,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6935,7 +6935,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6947,7 +6947,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6959,7 +6959,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6971,7 +6971,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6983,7 +6983,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -6995,7 +6995,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7007,7 +7007,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7019,7 +7019,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7028,7 +7028,7 @@ const calidad_formatos = [
                 type: 'number',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7037,7 +7037,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7046,7 +7046,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -7062,7 +7062,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7071,7 +7071,7 @@ const calidad_formatos = [
                 type: 'time',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7083,7 +7083,7 @@ const calidad_formatos = [
                 relacion_tipo: 2,
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7092,7 +7092,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7101,7 +7101,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7110,7 +7110,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7119,7 +7119,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7131,7 +7131,7 @@ const calidad_formatos = [
                 relacion: 'conformidad_estados',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             }
         ]
@@ -7147,7 +7147,7 @@ const calidad_formatos = [
                 type: 'date',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7156,7 +7156,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7165,7 +7165,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7174,7 +7174,7 @@ const calidad_formatos = [
                 type: 'longtext',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
             {
@@ -7183,7 +7183,7 @@ const calidad_formatos = [
                 type: 'text',
                 width: '8rem',
                 show: true,
-                seek: true,
+
                 sort: true,
             },
         ]

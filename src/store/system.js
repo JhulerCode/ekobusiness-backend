@@ -204,6 +204,12 @@ const sistemaData = {
         { id: 1, nombre: 'ABIERTO' },
         { id: 2, nombre: 'CERRADO' },
     ],
+    suscripcion_estados: [
+        { id: 'ACTIVO', nombre: 'ACTIVO', color: 'verde' },
+        { id: 'PENDIENTE', nombre: 'PENDIENTE', color: 'amarillo' },
+        { id: 'VENCIDO', nombre: 'VENCIDO', color: 'rojo' },
+        { id: 'CANCELADO', nombre: 'CANCELADO', color: 'gris' },
+    ],
 }
 
 function arrayMap(array) {
