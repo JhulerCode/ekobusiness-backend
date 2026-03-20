@@ -10,12 +10,11 @@ export const Moneda = sequelize.define('monedas', {
     plural: { type: DataTypes.STRING }, //required
     estandar: { type: DataTypes.BOOLEAN }, //required
 
-    empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
 })
 
-Colaborador.hasMany(Moneda, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-Moneda.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(Moneda, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-Moneda.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(Moneda, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+Moneda.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(Moneda, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+Moneda.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

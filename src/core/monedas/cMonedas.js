@@ -5,10 +5,7 @@ const repository = new Repository('Moneda')
 
 const find = async (req, res) => {
     try {
-        const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
-
-        qry.fltr.empresa = { op: 'Es', val: empresa }
 
         const response = await repository.find(qry, true)
 
@@ -17,8 +14,7 @@ const find = async (req, res) => {
         const meta = hasPage ? response.meta : null
 
         res.json({ code: 0, data, meta })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -30,58 +26,65 @@ const findById = async (req, res) => {
         const data = await repository.find({ id })
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const create = async (req, res) => {
     try {
-        const { colaborador, empresa } = req.user
+        const { colaborador } = req.user
         const { nombre, codigo, simbolo, plural, estandar } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
-        if (await repository.existe({ nombre, empresa }, res) == true) return
+        if ((await repository.existe({ nombre }, res)) == true) return
 
         //--- CREAR ---//
         const nuevo = await repository.create({
-            nombre, codigo, simbolo, plural, estandar,
-            empresa,
-            createdBy: colaborador
+            nombre,
+            codigo,
+            simbolo,
+            plural,
+            estandar,
+            createdBy: colaborador,
         })
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const update = async (req, res) => {
     try {
-        const { colaborador, empresa } = req.user
+        const { colaborador } = req.user
         const { id } = req.params
         const { nombre, codigo, simbolo, plural, estandar } = req.body
 
         //--- VERIFY SI EXISTE NOMBRE ---//
-        if (await repository.existe({ nombre, id, empresa }, res) == true) return
+        if ((await repository.existe({ nombre, id }, res)) == true) return
 
         //--- ACTUALIZAR ---//
-        const updated = await repository.update({ id }, {
-            nombre, codigo, simbolo, plural, estandar,
-            updatedBy: colaborador
-        })
+        const updated = await repository.update(
+            { id },
+            {
+                nombre,
+                codigo,
+                simbolo,
+                plural,
+                estandar,
+                updatedBy: colaborador,
+            },
+        )
 
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -90,15 +93,13 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
 
-        if (await repository.delete({ id }) == false) return resDeleteFalse(res)
+        if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
         res.json({ code: 0 })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
 
 //--- Helpers ---//
 async function loadOne(id) {
