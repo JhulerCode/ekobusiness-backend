@@ -41,29 +41,6 @@ const create = async (req, res) => {
             nombre_comercial,
             telefono,
             correo,
-            subdominio,
-            igv_porcentaje,
-            logo,
-            direcciones,
-            bancos,
-            ecommerce_url,
-            facebook_url,
-            instagram_url,
-            whatsapp_ventas,
-            whatsapp_ventas_url
-        } = req.body
-
-        //--- VERIFICAR SI EXISTE SUBDOMINIO ---//
-        if (await repository.existe({ subdominio }, res, 'El subdominio ya está en uso') == true) return
-
-        //--- CREAR EMPRESA ---//
-        const nuevo = await repository.create({
-            ruc,
-            razon_social,
-            nombre_comercial,
-            telefono,
-            correo,
-            subdominio,
             igv_porcentaje,
             logo,
             direcciones,
@@ -73,6 +50,32 @@ const create = async (req, res) => {
             instagram_url,
             whatsapp_ventas,
             whatsapp_ventas_url,
+            subdominio,
+            modulos,
+        } = req.body
+
+        //--- VERIFICAR SI EXISTE SUBDOMINIO ---//
+        if ((await repository.existe({ subdominio }, res, 'El subdominio ya está en uso')) == true)
+            return
+
+        //--- CREAR EMPRESA ---//
+        const nuevo = await repository.create({
+            ruc,
+            razon_social,
+            nombre_comercial,
+            telefono,
+            correo,
+            igv_porcentaje,
+            logo,
+            direcciones,
+            bancos,
+            ecommerce_url,
+            facebook_url,
+            instagram_url,
+            whatsapp_ventas,
+            whatsapp_ventas_url,
+            subdominio,
+            modulos,
         })
 
         res.json({ code: 0, data: nuevo })
@@ -108,6 +111,7 @@ const update = async (req, res) => {
             whatsapp_ventas,
             whatsapp_ventas_url,
             subdominio,
+            modulos,
         } = req.body
 
         //--- Subir archivo ---//
@@ -138,6 +142,7 @@ const update = async (req, res) => {
             whatsapp_ventas,
             whatsapp_ventas_url,
             subdominio,
+            modulos,
             updatedBy: colaborador,
         }
 
