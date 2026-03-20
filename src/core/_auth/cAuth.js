@@ -2,7 +2,12 @@ import bcrypt from 'bcrypt'
 import dayjs from '#shared/dayjs.js'
 import config from '../../config.js'
 import jat from '#shared/jat.js'
-import { guardarEmpresa, actualizarEmpresa, empresasStore } from '#store/empresas.js'
+import {
+    guardarEmpresa,
+    actualizarEmpresa,
+    empresasStore,
+    buscarEmpresaPorSubdominio,
+} from '#store/empresas.js'
 import { guardarSesion, borrarSesion, sessionStore } from '#store/sessions.js'
 import { Repository } from '#db/Repository.js'
 
@@ -15,13 +20,7 @@ const signin = async (req, res) => {
 
         // --- VERIFICAR EMPRESA --- //
         const xEmpresa = req.headers['x-empresa']
-        let empresa
-        for (const a of empresasStore.values()) {
-            if (a.subdominio === xEmpresa) {
-                empresa = a
-                break
-            }
-        }
+        let empresa = buscarEmpresaPorSubdominio(xEmpresa)
 
         if (!empresa) {
             const qry = {

@@ -23,4 +23,13 @@ function actualizarEmpresa(id, values) {
     })
 }
 
-export { empresasStore, obtenerEmpresa, guardarEmpresa, borrarEmpresa, actualizarEmpresa }
+function buscarEmpresaPorSubdominio(subdominio) {
+    for (const [id, empresa] of empresasStore.entries()) {
+        if (empresa.subdominio === subdominio) {
+            return empresa;
+        }
+    }
+    return null;
+}
+
+export { empresasStore, obtenerEmpresa, guardarEmpresa, borrarEmpresa, actualizarEmpresa, buscarEmpresaPorSubdominio }

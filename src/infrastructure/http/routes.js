@@ -5,6 +5,7 @@ import verifyToken from '#http/middlewares/verifyToken.js'
 import verifySuscripcion from '#http/middlewares/verifySuscripcion.js'
 
 import auth from '#core/_auth/rAuth.js'
+import publicRoutes from '#core/_public/rPublic.js'
 import sistema from '#core/_sistema/rSistema.js'
 import empresas from '#core/empresas/rEmpresas.js'
 
@@ -49,6 +50,7 @@ router.get('/', (req, res) => {
 })
 
 router.use('/api', verifyVersion)
+router.use('/api/public', publicRoutes)
 router.use('/api/auth', auth)
 
 router.use('/api', verifyToken)
