@@ -1,5 +1,6 @@
 import { buscarEmpresaPorSubdominio, guardarEmpresa } from '#store/empresas.js'
 import { Repository } from '#db/Repository.js'
+import dayjs from '#shared/dayjs.js'
 
 const getInfoEmpresa = async (req, res) => {
     try {
@@ -15,8 +16,39 @@ const getInfoEmpresa = async (req, res) => {
                 cols: { exclude: [] },
             }
             const empresas = await EmpresaRepository.find(qry, true)
+
             if (empresas.length > 0) {
                 empresa = empresas[0]
+
+                // --- OBTENER SUSCRIPCIONES --- //
+                if (empresa.subdominio !== 'admin') {
+                    const SuscripcionRepository = new Repository('Suscripcion')
+                    const qrySub = {
+                        fltr: {
+                            empresa: { op: 'Es', val: empresa.id },
+                            fecha_vencimiento: {
+                                op: 'Es igual o posterior a',
+                                val: dayjs().format('YYYY-MM-DD'),
+                            },
+                        },
+                        cols: ['fecha_vencimiento', 'limite_usuarios'],
+                        sort: [['fecha_vencimiento', 'DESC']],
+                    }
+
+                    const suscripciones = await SuscripcionRepository.find(qrySub)
+                    if (suscripciones.length === 0) {
+                        return res.json({
+                            code: 1,
+                            msg: 'La empresa no cuenta con una suscripción activa',
+                        })
+                    }
+
+                    empresa.suscripciones = suscripciones.map((s) => ({
+                        fecha_vencimiento: s.fecha_vencimiento,
+                        limite_usuarios: s.limite_usuarios || 0,
+                    }))
+                }
+
                 guardarEmpresa(empresa.id, empresa)
             }
         }
