@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt'
+import dayjs from '#shared/dayjs.js'
 import config from '../../config.js'
 import jat from '#shared/jat.js'
-import { guardarEmpresa, empresasStore } from '#store/empresas.js'
+import { guardarEmpresa, actualizarEmpresa, empresasStore } from '#store/empresas.js'
 import { guardarSesion, borrarSesion, sessionStore } from '#store/sessions.js'
 import { Repository } from '#db/Repository.js'
 
@@ -32,12 +33,41 @@ const signin = async (req, res) => {
 
             const empresas = await EmpresaRepository.find(qry, true)
             if (empresas.length == 0) return res.json({ code: 1, msg: 'Empresa no encontrada' })
-
             empresa = empresas[0]
+
+            // --- OBTENER SUSCRIPCIONES --- //
+            if (empresa.subdominio !== 'admin') {
+                const SuscripcionRepository = new Repository('Suscripcion')
+                const qrySub = {
+                    fltr: {
+                        empresa: { op: 'Es', val: empresa.id },
+                        fecha_vencimiento: {
+                            op: 'Es igual o posterior a',
+                            val: dayjs().format('YYYY-MM-DD'),
+                        },
+                    },
+                    cols: ['fecha_vencimiento', 'limite_usuarios'],
+                    sort: [['fecha_vencimiento', 'DESC']],
+                }
+
+                const suscripciones = await SuscripcionRepository.find(qrySub)
+                if (suscripciones.length === 0) {
+                    return res.json({
+                        code: 1,
+                        msg: 'La empresa no cuenta con una suscripción activa',
+                    })
+                }
+
+                empresa.suscripciones = suscripciones.map((s) => ({
+                    fecha_vencimiento: s.fecha_vencimiento,
+                    limite_usuarios: s.limite_usuarios || 0,
+                }))
+            }
+
             guardarEmpresa(empresa.id, empresa)
         }
 
-        //--- VERIFICAR COLABORADOR --- //
+        // --- VERIFICAR COLABORADOR --- //
         const qry1 = {
             fltr: {
                 usuario: { op: 'Es', val: usuario },
@@ -48,19 +78,42 @@ const signin = async (req, res) => {
         }
 
         const colaboradores = await ColaboradorRepository.find(qry1, true)
-        if (colaboradores.length == 0)
+        if (colaboradores.length == 0) {
             return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
+        }
 
         const colaborador = colaboradores[0]
+
+        // --- VERIFICAR CUPOS DE USUARIOS --- //
+        if (empresa.subdominio !== 'admin') {
+            const hoy = dayjs().startOf('day')
+            const totalCupos = empresa.suscripciones.reduce((sum, sub) => {
+                const vencimiento = dayjs(sub.fecha_vencimiento).startOf('day')
+                if (!vencimiento.isBefore(hoy)) return sum + sub.limite_usuarios
+                return sum
+            }, 0)
+
+            let sesionesActivas = 0
+            for (const s of sessionStore.values()) {
+                if (s.empresa === empresa.id) sesionesActivas++
+            }
+
+            const isRecuperandoSesion = sessionStore.has(colaborador.id)
+            if (!isRecuperandoSesion && sesionesActivas >= totalCupos) {
+                return res.json({
+                    code: 1,
+                    msg: 'Ha alcanzado el límite de usuarios concurrentes.',
+                })
+            }
+        }
 
         const correct = await bcrypt.compare(contrasena, colaborador.contrasena)
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
-        //--- GUARDAR SESSION ---//
+        // --- GUARDAR SESSION --- //
         const token = jat.encrypt({ id: colaborador.id }, config.tokenMyApi)
-
         delete colaborador.contrasena
-        guardarSesion(colaborador.id, { token, ...colaborador })
+        guardarSesion(colaborador.id, { token, loginAt: dayjs(), ...colaborador })
 
         res.json({ code: 0, token })
     } catch (error) {

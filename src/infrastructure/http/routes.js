@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 import verifyVersion from '#http/middlewares/verifyVersion.js'
 import verifyToken from '#http/middlewares/verifyToken.js'
+import verifySuscripcion from '#http/middlewares/verifySuscripcion.js'
 
 import auth from '#core/_auth/rAuth.js'
 import sistema from '#core/_sistema/rSistema.js'
@@ -51,6 +52,7 @@ router.use('/api', verifyVersion)
 router.use('/api/auth', auth)
 
 router.use('/api', verifyToken)
+router.use('/api', verifySuscripcion)
 router.use('/api/sistema', sistema)
 router.use('/api/empresas', empresas)
 

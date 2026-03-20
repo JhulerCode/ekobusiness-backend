@@ -1,7 +1,7 @@
 const empresasStore = new Map()
 
 function obtenerEmpresa(id) {
-    return empresasStore.get(id);
+    return empresasStore.get(id)
 }
 
 function guardarEmpresa(id, values) {
@@ -13,21 +13,14 @@ function borrarEmpresa(id) {
 }
 
 function actualizarEmpresa(id, values) {
-    const sesion = obtenerEmpresa(id)
-    if (!sesion || !values) return
+    const empresa = obtenerEmpresa(id)
+    if (!empresa || !values) return
 
     Object.entries(values).forEach(([key, value]) => {
-        // Evita asignar undefined (por ejemplo, si no se pasó la propiedad)
         if (value !== undefined) {
-            sesion[key] = value
+            empresa[key] = value
         }
     })
 }
 
-export {
-    empresasStore,
-    obtenerEmpresa,
-    guardarEmpresa,
-    borrarEmpresa,
-    actualizarEmpresa,
-}
+export { empresasStore, obtenerEmpresa, guardarEmpresa, borrarEmpresa, actualizarEmpresa }
