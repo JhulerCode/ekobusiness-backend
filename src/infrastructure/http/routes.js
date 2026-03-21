@@ -49,7 +49,7 @@ router.get('/', (req, res) => {
     res.send(`Eko Business's server is running`)
 })
 
-// router.use('/api', verifyVersion)
+router.use('/api', verifyVersion)
 router.use('/api/public', publicRoutes)
 router.use('/api/auth', auth)
 
