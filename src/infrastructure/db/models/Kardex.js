@@ -7,10 +7,21 @@ import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { Moneda } from './Moneda.js'
 import { formatDate } from '#shared/dayjs.js'
+import { arrayMap } from '#store/system.js'
+
+const systemMaps = {
+    kardex_operaciones: arrayMap('kardex_operaciones'),
+}
 
 export const Kardex = sequelize.define('kardexes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     tipo: { type: DataTypes.STRING },
+    tipo1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.kardex_operaciones[this.getDataValue('tipo')]
+        },
+    },
     fecha: { type: DataTypes.DATEONLY },
     fecha1: {
         type: DataTypes.VIRTUAL,

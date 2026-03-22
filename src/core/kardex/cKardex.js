@@ -3,6 +3,7 @@ import { arrayMap } from '#store/system.js'
 import sequelize from '#db/sequelize.js'
 import { cleanFloat } from '#shared/mine.js'
 import { resUpdateFalse } from '#http/helpers.js'
+import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('Kardex')
 const ProduccionOrdenRep = new Repository('ProduccionOrden')
@@ -16,7 +17,7 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const virtuals = ['fecha', 'fv']
+        const virtuals = ['tipo', 'fecha', 'fv']
 
         virtuals.forEach((v) => {
             if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
@@ -29,18 +30,15 @@ const find = async (req, res) => {
         const meta = hasPage ? response.meta : null
 
         if (data.length > 0) {
-            const transaccion_tiposMap = arrayMap('kardex_operaciones')
             const cuarentena_productos_estadosMap = arrayMap('cuarentena_productos_estados')
             const estadosMap = arrayMap('estados')
 
             for (const a of data) {
                 //--- Datos del lote padre ---//
                 if (a.tipo) {
-                    const tipoInfo = transaccion_tiposMap[a.tipo]
-                    const loteFuente = a.is_lote_padre ? a : a.lote_padre1 || {}
+                    a.cantidad *= a.tipo1.operacion
 
-                    a.tipo1 = tipoInfo
-                    a.cantidad *= tipoInfo.operacion
+                    const loteFuente = a.is_lote_padre ? a : a.lote_padre1 || {}
 
                     a.vu = loteFuente.pu
                     a.tipo_cambio = loteFuente.tipo_cambio
@@ -48,6 +46,7 @@ const find = async (req, res) => {
                     a.igv_porcentaje = loteFuente.igv_porcentaje
                     a.lote = loteFuente.lote
                     a.fv = loteFuente.fv
+                    a.fv1 = formatDate(a.fv)
 
                     a.vu_real =
                         a.tipo_cambio == null ? 'error' : cleanFloat((a.vu || 0) * a.tipo_cambio)
