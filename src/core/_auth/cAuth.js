@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt'
 import dayjs from '#shared/dayjs.js'
 import config from '../../config.js'
-import jat from '#shared/jat.js'
+// import jat from '#shared/jat.js'
+import jwt from 'jsonwebtoken'
 import {
     guardarEmpresa,
     actualizarEmpresa,
@@ -110,7 +111,8 @@ const signin = async (req, res) => {
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
         // --- GUARDAR SESSION --- //
-        const token = jat.encrypt({ id: colaborador.id }, config.tokenMyApi)
+        // const token = jat.encrypt({ id: colaborador.id }, config.tokenMyApi)
+        const token = jwt.sign({ id: colaborador.id }, config.tokenMyApi, { expiresIn: '7d' })
         delete colaborador.contrasena
         guardarSesion(colaborador.id, { token, loginAt: dayjs(), ...colaborador })
 

@@ -58,93 +58,15 @@ const create = async (req, res) => {
 
     try {
         const { colaborador, empresa } = req.user
-        const {
-            nombre,
-            code,
-            codigo_barra,
-            type,
-            purchase_ok,
-            sale_ok,
-            produce_ok,
-            activo,
+        const body = req.body
 
-            unidad,
-            categoria,
-            marca,
+        //--- VERIFY SI EXISTE NOMBRE ---//
+        if ((await repository.existe({ nombre: body.nombre, empresa }, res)) == true) return
 
-            tracking,
-
-            list_price,
-
-            is_ecommerce,
-            descripcion,
-            precio,
-            precio_anterior,
-            contenido_neto,
-            dimenciones,
-            envase_tipo,
-            is_destacado,
-            fotos,
-            ingredientes,
-            beneficios,
-
-            linea,
-            filtrantes,
-
-            combo_articulos,
-            tipo,
-            mp_tipo,
-            has_fv,
-            igv_afectacion,
-
-            articulo_suppliers,
-            combo_componentes,
-        } = req.body
-
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if ((await repository.existe({ nombre, empresa }, res)) == true) return
-
-        // ----- CREAR ----- //
+        //--- CREAR ---//
         const nuevo = await repository.create(
             {
-                nombre,
-                code,
-                codigo_barra,
-                type,
-                purchase_ok,
-                sale_ok,
-                produce_ok,
-                activo,
-
-                unidad,
-                categoria,
-                marca,
-
-                tracking,
-
-                list_price,
-
-                is_ecommerce,
-                descripcion,
-                precio,
-                precio_anterior,
-                contenido_neto,
-                dimenciones,
-                envase_tipo,
-                is_destacado,
-                fotos,
-                ingredientes,
-                beneficios,
-
-                linea,
-                filtrantes,
-
-                combo_articulos,
-                tipo,
-                mp_tipo,
-                has_fv,
-                igv_afectacion,
-
+                ...body,
                 empresa,
                 createdBy: colaborador,
             },
@@ -152,25 +74,23 @@ const create = async (req, res) => {
         )
 
         //--- CREAR SUPLIERS ---//
-        const send_articulo_suppliers = articulo_suppliers.map((a) => ({
+        const send_articulo_suppliers = body.articulo_suppliers.map((a) => ({
             ...a,
-            id: undefined,
             articulo: nuevo.id,
-            empresa: empresa,
+            empresa,
             createdBy: colaborador,
             updatedBy: colaborador,
         }))
         await ArticuloSupplierRepository.createBulk(send_articulo_suppliers, transaction)
 
         //--- CREAR COMBO COMPONENTES ---//
-        if (type == 'combo') {
-            const send_combo_componentes = combo_componentes.map((a) => ({
+        if (body.type == 'combo') {
+            const send_combo_componentes = body.combo_componentes.map((a) => ({
+                ...a,
                 articulo_principal: nuevo.id,
-                articulo: a.articulo,
-                cantidad: a.cantidad,
-                orden: a.orden,
                 empresa,
                 createdBy: colaborador,
+                updatedBy: colaborador,
             }))
 
             await ComboComponenteRepository.createBulk(send_combo_componentes, transaction)
@@ -194,147 +114,53 @@ const update = async (req, res) => {
     try {
         const { colaborador, empresa } = req.user
         const { id } = req.params
-        const {
-            nombre,
-            code,
-            codigo_barra,
-            type,
-            purchase_ok,
-            sale_ok,
-            produce_ok,
-            activo,
+        const body = req.body
 
-            unidad,
-            categoria,
-            marca,
+        // 1️⃣ Obtener el artículo actual
+        const currentArticulo = await repository.find({ id }, true)
+        if (!currentArticulo) {
+            await transaction.rollback()
+            return res.status(404).json({ code: -1, msg: 'Artículo no encontrado' })
+        }
 
-            tracking,
+        // 2️⃣ Verificar si el nuevo nombre ya existe (si cambió)
+        if (body.nombre && body.nombre !== currentArticulo.nombre) {
+            if ((await repository.existe({ nombre: body.nombre, id, empresa }, res)) == true) {
+                await transaction.rollback()
+                return
+            }
+        }
 
-            list_price,
+        // 3️⃣ Detectar columnas modificadas
+        const diff = repository.getDiff(currentArticulo, body)
+        if (diff) {
+            diff.updatedBy = colaborador
+            await repository.update({ id }, diff, transaction)
+        }
 
-            is_ecommerce,
-            descripcion,
-            precio,
-            precio_anterior,
-            contenido_neto,
-            dimenciones,
-            envase_tipo,
-            is_destacado,
-            fotos,
-            ingredientes,
-            beneficios,
-
-            linea,
-            filtrantes,
-
-            combo_articulos,
-            tipo,
-            mp_tipo,
-            has_fv,
-            igv_afectacion,
-
-            articulo_suppliers,
-            combo_componentes,
-        } = req.body
-
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
-        if ((await repository.existe({ nombre, id, empresa }, res)) == true) return
-
-        // ----- ACTUALIZAR ----- //
-        const updated = await repository.update(
-            { id },
-            {
-                nombre,
-                code,
-                codigo_barra,
-                type,
-                purchase_ok,
-                sale_ok,
-                produce_ok,
-                activo,
-
-                unidad,
-                categoria,
-                marca,
-
-                tracking,
-
-                list_price,
-
-                is_ecommerce,
-                descripcion,
-                precio,
-                precio_anterior,
-                contenido_neto,
-                dimenciones,
-                envase_tipo,
-                is_destacado,
-                fotos,
-                ingredientes,
-                beneficios,
-
-                linea,
-                filtrantes,
-
-                combo_articulos,
-                tipo,
-                mp_tipo,
-                has_fv,
-                igv_afectacion,
-
-                updatedBy: colaborador,
-            },
-            transaction,
-        )
-
-        if (updated == false) return resUpdateFalse(res)
-
-        //--- UPDATE SUPPLIERS ---//
-        if (articulo_suppliers) {
-            const send_articulo_suppliers = articulo_suppliers.map((a) => ({
-                ...a,
-                empresa,
-                createdBy: colaborador,
-                updatedBy: colaborador,
-            }))
+        // 4️⃣ Actualizar Relaciones (Proveedores)
+        if (body.articulo_suppliers) {
             await repository.syncHasMany(
                 {
                     model: 'ArticuloSupplier',
                     foreignKey: 'articulo',
                     parentId: id,
-                    newData: send_articulo_suppliers,
-                    updateFields: [
-                        'socio',
-                        'min_qty',
-                        'price',
-                        'currency_id',
-                        'delay',
-                        'date_start',
-                        'date_end',
-                        'product_code',
-                        'product_name',
-                        'sequence',
-                        'updatedBy',
-                    ],
+                    newData: body.articulo_suppliers,
+                    empresa,
+                    colaborador,
                 },
                 transaction,
             )
         }
 
-        //--- UPDATE COMBO COMPONENTES ---//
-        if (combo_componentes) {
-            const send_combo_componentes = combo_componentes.map((a) => ({
-                ...a,
-                empresa,
-                createdBy: colaborador,
-                createdBy: colaborador,
-            }))
+        // // 5️⃣ Actualizar Relaciones (Componentes de Combo)
+        if (body.combo_componentes) {
             await repository.syncHasMany(
                 {
                     model: 'ComboComponente',
                     foreignKey: 'articulo_principal',
                     parentId: id,
-                    newData: send_combo_componentes,
+                    newData: body.combo_componentes,
                     updateFields: ['articulo', 'cantidad', 'orden', 'updatedBy'],
                 },
                 transaction,
@@ -343,12 +169,10 @@ const update = async (req, res) => {
 
         await transaction.commit()
 
-        const data = await loadOne(id)
-
-        res.json({ code: 0, data })
+        // const data = await loadOne(id)
+        res.json({ code: 0 })
     } catch (error) {
-        await transaction.rollback()
-
+        if (transaction) await transaction.rollback()
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

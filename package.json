@@ -32,6 +32,7 @@
     "dayjs": "^1.11.18",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
     "minio": "^8.0.6",
     "multer": "^2.0.2",
     "mysql2": "^3.14.1",

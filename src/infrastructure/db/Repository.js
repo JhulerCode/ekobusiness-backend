@@ -543,43 +543,92 @@ export class Repository {
     }
 
     async syncHasMany(props, transaction) {
-        const { model, foreignKey, parentId, newData, updateFields } = props
+        const { model, foreignKey, parentId, newData, empresa, colaborador } = props
 
         const modelRel = models[model]
 
-        // 1️⃣ Obtener ids entrantes (solo los que ya existen)
-        const incomingIds = newData.filter((a) => a.id).map((a) => a.id)
+        //--- 0. Obtener campos para update automáticamente ---
+        const fields = Object.keys(modelRel.getAttributes())
 
-        // 2️⃣ DELETE
-        if (incomingIds.length > 0) {
+        // 1️⃣ Obtener registros actualmente en la BD para este padre
+        const currentRows = await modelRel.findAll({
+            where: { [foreignKey]: parentId },
+            attributes: ['id'],
+            transaction,
+        })
+        const currentIds = currentRows.map((r) => r.id)
+
+        // 2️⃣ Clasificar datos entrantes: Update vs Create
+        const toUpdate = []
+        const toCreate = []
+        const incomingMatchedIds = []
+
+        newData.forEach((item) => {
+            if (item.id && currentIds.includes(item.id)) {
+                //--- UPDATE: Solo inyectamos updatedBy ---
+                if (colaborador) item.updatedBy = colaborador
+                toUpdate.push(item)
+                incomingMatchedIds.push(item.id)
+            } else {
+                //--- CREATE: Inyectamos todo ---
+                const newItem = { ...item, [foreignKey]: parentId }
+                if (empresa) newItem.empresa = empresa
+                if (colaborador) newItem.createdBy = colaborador
+                if (colaborador) newItem.updatedBy = colaborador
+                toCreate.push(newItem)
+            }
+        })
+
+        // 3️⃣ Identificar registros a eliminar (Están en BD pero no llegaron en newData)
+        const toDelete = currentIds.filter((id) => !incomingMatchedIds.includes(id))
+
+        // 4️⃣ Operaciones en BD
+        if (toDelete.length > 0) {
             await modelRel.destroy({
-                where: {
-                    [foreignKey]: parentId,
-                    id: {
-                        [Op.notIn]: incomingIds,
-                    },
-                },
-                transaction,
-            })
-        } else {
-            // Si no viene ningún id existente → borrar todo
-            await modelRel.destroy({
-                where: { [foreignKey]: parentId },
+                where: { id: { [Op.in]: toDelete } },
                 transaction,
             })
         }
 
-        // 3️⃣ Preparar datos para UPSERT
-        const rows = newData.map((item) => ({
-            ...item,
-            [foreignKey]: parentId,
-        }))
-
-        if (rows.length > 0) {
-            await modelRel.bulkCreate(rows, {
-                updateOnDuplicate: updateFields,
+        if (toUpdate.length > 0) {
+            // Usamos bulkCreate con updateOnDuplicate para eficiencia
+            await modelRel.bulkCreate(toUpdate, {
+                updateOnDuplicate: fields,
                 transaction,
             })
         }
+
+        if (toCreate.length > 0) {
+            await modelRel.bulkCreate(toCreate, { transaction })
+        }
+
+        return {
+            created: toCreate.length,
+            updated: toUpdate.length,
+            deleted: toDelete.length,
+        }
+    }
+
+    getDiff(original, updated) {
+        const attributes = this.model.getAttributes()
+        const diff = {}
+        let changed = false
+        Object.keys(attributes).forEach((f) => {
+            //--- Omitir campo ID y campos de sistema
+            if (['id', 'createdAt', 'updatedAt', 'deletedAt'].includes(f)) return
+            //--- Omitir campos VIRTUALES (los que terminan en 1 en tu sistema)
+            if (attributes[f].type.constructor.name === 'VIRTUAL') return
+            const v1 = original[f] ?? null
+            const v2 = updated[f] ?? null
+            //--- Comparación inteligente (especial para objetos/JSON)
+            const isObject = typeof v1 === 'object' && v1 !== null
+            const isDifferent = isObject ? JSON.stringify(v1) !== JSON.stringify(v2) : v1 !== v2
+            if (isDifferent) {
+                diff[f] = updated[f]
+                changed = true
+            }
+        })
+
+        return changed ? diff : null
     }
 }

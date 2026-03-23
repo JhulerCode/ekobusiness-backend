@@ -165,11 +165,11 @@ const delet = async (req, res) => {
 const terminar = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { id } = req.body
+        const { ids } = req.body
 
         //--- CERRAR ---//
         const updated = await repository.update(
-            { id },
+            { id: ids },
             {
                 estado: 2,
                 updatedBy: colaborador,
@@ -180,7 +180,7 @@ const terminar = async (req, res) => {
 
         const estados = arrayMap('produccion_orden_estados')
         const data = {
-            id,
+            id: ids,
             estado1: estados['2'],
         }
 
@@ -193,11 +193,11 @@ const terminar = async (req, res) => {
 const abrir = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { id } = req.body
+        const { ids } = req.body
 
         // ----- ABRIR ----- //
         const updated = await repository.update(
-            { id },
+            { id: ids },
             {
                 estado: 1,
                 updatedBy: colaborador,
@@ -208,7 +208,7 @@ const abrir = async (req, res) => {
 
         const estados = arrayMap('produccion_orden_estados')
         const data = {
-            id,
+            id: ids,
             estado1: estados['1'],
         }
 
