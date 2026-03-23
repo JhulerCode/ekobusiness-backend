@@ -11,6 +11,7 @@ export const Empresa = sequelize.define('empresas', {
     correo: { type: DataTypes.STRING },
     igv_porcentaje: { type: DataTypes.FLOAT, defaultValue: 18 },
     logo: { type: DataTypes.JSON, defaultValue: {} },
+    moneda: { type: DataTypes.STRING },
 
     direcciones: { type: DataTypes.JSON },
     bancos: { type: DataTypes.JSON },
