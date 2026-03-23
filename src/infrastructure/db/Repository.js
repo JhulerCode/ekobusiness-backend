@@ -16,6 +16,7 @@ import { FormatoValue } from '#db/models/FormatoValue.js'
 import { HelpdeskTicket } from '#db/models/HelpdeskTicket.js'
 import { Inspeccion } from '#db/models/Inspeccion.js'
 import { Kardex } from '#db/models/Kardex.js'
+import { Lote } from '#infrastructure/db/models/Lote.js'
 import { LibroReclamo } from '#db/models/LibroReclamo.js'
 import { Maquina } from '#db/models/Maquina.js'
 import { Moneda } from '#db/models/Moneda.js'
@@ -32,6 +33,7 @@ import { TipoCambio } from '#db/models/TipoCambio.js'
 import { Transaccion, TransaccionItem } from '#db/models/Transaccion.js'
 import { Suscripcion } from '#db/models/Suscripcion.js'
 import { Ubigeo } from '#db/models/Ubigeo.js'
+import { Ubicacion } from '#infrastructure/db/models/Ubicacion.js'
 
 import { applyFilters } from '#db/helpers.js'
 import { sistemaData } from '#store/system.js'
@@ -54,6 +56,7 @@ export const models = {
     HelpdeskTicket,
     Inspeccion,
     Kardex,
+    Lote,
     LibroReclamo,
     Maquina,
     Moneda,
@@ -72,6 +75,7 @@ export const models = {
     TransaccionItem,
     Suscripcion,
     Ubigeo,
+    Ubicacion,
 }
 
 const include1 = {
@@ -152,6 +156,11 @@ const include1 = {
         as: 'kardexes',
         attributes: [],
         required: false,
+    },
+    lote1: {
+        model: Lote,
+        as: 'lote1',
+        attributes: ['id', 'numero', 'fv', 'pu_compra', 'stock', 'almacen'],
     },
     lote_padre_items: {
         model: Kardex,
@@ -252,6 +261,21 @@ const include1 = {
     transaccion_items: {
         model: TransaccionItem,
         as: 'transaccion_items',
+    },
+    ubicacion1: {
+        model: Ubicacion,
+        as: 'ubicacion1',
+        attributes: ['id', 'nombre', 'tipo'],
+    },
+    origen1: {
+        model: Ubicacion,
+        as: 'origen1',
+        attributes: ['id', 'nombre'],
+    },
+    destino1: {
+        model: Ubicacion,
+        as: 'destino1',
+        attributes: ['id', 'nombre'],
     },
 }
 

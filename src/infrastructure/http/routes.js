@@ -25,6 +25,7 @@ import formato_values from '#core/formato_values/rFormatoValues.js'
 import helpdesk_tickets from '#core/helpdesk_tickets/rHelpdeskTickets.js'
 import inspecciones from '#core/inspecciones/rInspecciones.js'
 import kardex from '#core/kardex/rKardex.js'
+import lotes from '#core/lotes/rLotes.js'
 import maquinas from '#core/maquinas/rMaquinas.js'
 import monedas from '#core/monedas/rMonedas.js'
 import mrp_boms from '#core/mrp_boms/rMrpBoms.js'
@@ -42,6 +43,7 @@ import tipo_cambios from '#core/tipo_cambios/rTipoCambios.js'
 import transacciones from '#core/transacciones/rTransacciones.js'
 import transaccion_items from '#core/transaccion_items/rTransaccionItems.js'
 import ubigeos from '#core/ubigeos/rUbigeos.js'
+import ubicaciones from '#core/ubicaciones/rUbicaciones.js'
 
 const router = Router()
 
@@ -74,6 +76,7 @@ router.use('/api/formato_values', formato_values)
 router.use('/api/helpdesk_tickets', helpdesk_tickets)
 router.use('/api/inspecciones', inspecciones)
 router.use('/api/kardex', kardex)
+router.use('/api/lotes', lotes)
 router.use('/api/maquinas', maquinas)
 router.use('/api/monedas', monedas)
 router.use('/api/mrp_boms', mrp_boms)
@@ -91,5 +94,6 @@ router.use('/api/tipo_cambios', tipo_cambios)
 router.use('/api/transacciones', transacciones)
 router.use('/api/transaccion_items', transaccion_items)
 router.use('/api/ubigeos', ubigeos)
+router.use('/api/ubicaciones', ubicaciones)
 
 export default router

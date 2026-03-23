@@ -6,6 +6,8 @@ import { Transaccion, TransaccionItem } from './Transaccion.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { Moneda } from './Moneda.js'
+import { Lote } from './Lote.js'
+import { Ubicacion } from './Ubicacion.js'
 import { formatDate } from '#shared/dayjs.js'
 import { arrayMap } from '#store/system.js'
 
@@ -33,12 +35,16 @@ export const Kardex = sequelize.define('kardexes', {
     articulo: { type: DataTypes.STRING },
     cantidad: { type: DataTypes.DECIMAL(10, 2) },
 
+    lote_id: { type: DataTypes.STRING }, // required //linked
+    origen: { type: DataTypes.STRING }, // required //linked
+    destino: { type: DataTypes.STRING }, // required //linked
+
+    /* --- DEPRECADO: MANTENIENDO PARA MIGRACIÓN --- */
     pu: { type: DataTypes.DOUBLE }, //required
     igv_afectacion: { type: DataTypes.STRING }, //required
     igv_porcentaje: { type: DataTypes.DOUBLE }, //required
     moneda: { type: DataTypes.STRING }, //required //linked
     tipo_cambio: { type: DataTypes.DOUBLE }, //required
-
     lote: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
     fv1: {
@@ -47,13 +53,12 @@ export const Kardex = sequelize.define('kardexes', {
             return formatDate(this.getDataValue('fv'))
         },
     },
-
     is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked
     stock: { type: DataTypes.DECIMAL(10, 2) }, //required
     lote_padre: { type: DataTypes.STRING }, //required //linked
+    /* --- DEPRECADO: MANTENIENDO PARA MIGRACIÓN --- */
 
     observacion: { type: DataTypes.TEXT },
-
     transaccion: { type: DataTypes.STRING }, //linked
     transaccion_item: { type: DataTypes.STRING }, //linked
     produccion_orden: { type: DataTypes.STRING }, //linked
@@ -114,3 +119,12 @@ Colaborador.hasMany(Kardex, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
 Kardex.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
 Colaborador.hasMany(Kardex, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
 Kardex.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })
+
+Lote.hasMany(Kardex, { foreignKey: 'lote_id', as: 'kardexes', onDelete: 'RESTRICT' })
+Kardex.belongsTo(Lote, { foreignKey: 'lote_id', as: 'lote1' })
+
+Ubicacion.hasMany(Kardex, { foreignKey: 'origen', as: 'kardex_salidas', onDelete: 'RESTRICT' })
+Kardex.belongsTo(Ubicacion, { foreignKey: 'origen', as: 'origen1' })
+
+Ubicacion.hasMany(Kardex, { foreignKey: 'destino', as: 'kardex_entradas', onDelete: 'RESTRICT' })
+Kardex.belongsTo(Ubicacion, { foreignKey: 'destino', as: 'destino1' })
