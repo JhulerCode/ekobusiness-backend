@@ -1,5 +1,5 @@
-import { Router } from "express"
-import controller from "./cKardex.js"
+import { Router } from 'express'
+import controller from './cKardex.js'
 import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
@@ -17,7 +17,7 @@ router.get(
 
     //     'vProduccionHistorial:salidaInsumos',
     // ]),
-    controller.find
+    controller.find,
 )
 
 router.post(
@@ -38,7 +38,7 @@ router.post(
 
         'vPrograma:salidaInsumosCompartidos',
     ]),
-    controller.create
+    controller.create,
 )
 
 router.patch(
@@ -49,7 +49,7 @@ router.patch(
         // 'vProgramaLuxury:productosTerminados',
         // 'vProduccionHistorial:productosTerminados',
     ]),
-    controller.update
+    controller.update,
 )
 
 router.delete(
@@ -67,44 +67,23 @@ router.delete(
 
         'vPrograma:salidaInsumosCompartidos',
     ]),
-    controller.delet
+    controller.delet,
 )
-
-
 
 ///// ----- PARA PRODUCCION PRODUCTOS ----- /////
 router.post(
     '/produccion-productos-terminados',
-    verifyPermiso([
-        'vPtsIngresos:listar'
-    ]),
-    controller.ingresarProduccionProductos
+    verifyPermiso(['vPtsIngresos:listar']),
+    controller.ingresarProduccionProductos,
 )
-
-
 
 ///// ----- PARA PRODUCCIÓN ----- /////
-router.get(
-    '/produccion/:linea&:f1&:f2',
-    controller.findReporteProduccion
-)
-
+router.get('/produccion/:linea&:f1&:f2', controller.findReporteProduccion)
 
 //--- Inventario hasta fecha ---///
-router.get(
-    '/inventario',
-    verifyPermiso([
-        'vInventarioArticulos:listar',
-        'vInventarioProductos:listar',
-    ]),
-    controller.findInventario
-)
-
+router.get('/inventario', verifyPermiso(['vStock:listar']), controller.findInventario)
 
 //--- PONER BIEN EL STOCK EN LOTES PADRE ---//
-router.post(
-    '/recalcular-stock',
-    controller.recalcularStock
-)
+router.post('/recalcular-stock', controller.recalcularStock)
 
 export default router
