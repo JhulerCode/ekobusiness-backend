@@ -242,7 +242,15 @@ const confirmarPago = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
+        const estados = arrayMap('estados')
+        const data = {
+            id,
+            pagado: true,
+            pagado1: estados[true],
+            etapas,
+        }
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -268,7 +276,15 @@ const confirmarListo = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
+        const estados = arrayMap('estados')
+        const data = {
+            id,
+            listo: true,
+            listo1: estados[true],
+            etapas,
+        }
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -295,7 +311,17 @@ const confirmarEntrega = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
+        const estados = arrayMap('estados')
+        const data = {
+            id,
+            entregado: true,
+            entregado1: estados[true],
+            etapas,
+            estado: 2,
+            estado1: estados[2],
+        }
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -319,6 +345,7 @@ const abrirCerrar = async (req, res) => {
         const estados = arrayMap('pedido_estados')
         const data = {
             id: ids,
+            estado,
             estado1: estados[estado],
         }
 
@@ -327,27 +354,6 @@ const abrirCerrar = async (req, res) => {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
-
-// const terminar = async (req, res) => {
-//     try {
-//         const { colaborador } = req.user
-//         const { ids } = req.boby
-
-//         const updated = await repository.update(
-//             { id },
-//             {
-//                 estado: 2,
-//                 updatedBy: colaborador,
-//             },
-//         )
-
-//         if (updated == false) return resUpdateFalse(res)
-
-//         res.json({ code: 0 })
-//     } catch (error) {
-//         res.status(500).json({ code: -1, msg: error.message, error })
-//     }
-// }
 
 const findPendientes = async (req, res) => {
     try {
