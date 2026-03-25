@@ -5,6 +5,7 @@ import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('Transaccion')
 const TransaccionItemRepo = new Repository('TransaccionItem')
+const LoteRepo = new Repository('Lote')
 const KardexRepo = new Repository('Kardex')
 
 const find = async (req, res) => {
@@ -65,37 +66,12 @@ const create = async (req, res) => {
 
     try {
         const { colaborador, empresa } = req.user
-        const {
-            tipo,
-            fecha,
-            socio_pedido,
-            socio,
-            guia,
-            factura,
-            pago_condicion,
-            moneda,
-            tipo_cambio,
-            monto,
-            observacion,
-            estado,
-            transaccion_items,
-        } = req.body
+        const body = req.body
 
         // ----- CREAR ----- //
         const nuevo = await repository.create(
             {
-                tipo,
-                fecha,
-                socio_pedido,
-                socio,
-                guia,
-                factura,
-                pago_condicion,
-                moneda,
-                tipo_cambio,
-                monto,
-                observacion,
-                estado,
+                ...body,
                 empresa,
                 createdBy: colaborador,
             },
@@ -103,66 +79,37 @@ const create = async (req, res) => {
         )
 
         // ----- GUARDAR ITEMS ----- //
-        const items = transaccion_items.map((a, i) => ({
-            id: a.id,
-            orden: i,
-            articulo: a.articulo,
-            cantidad: a.cantidad,
-
-            pu: a.pu,
-            igv_afectacion: a.igv_afectacion,
-            igv_porcentaje: a.igv_porcentaje,
-
-            lote: a.lote,
-            fv: a.fv,
-
-            observacion: a.observacion,
-
+        const transaccion_items = body.transaccion_items.map((a, i) => ({
+            ...a,
             transaccion: nuevo.id,
             empresa,
             createdBy: colaborador,
         }))
+        await TransaccionItemRepo.createBulk(transaccion_items, transaction)
 
-        await TransaccionItemRepo.createBulk(items, transaction)
+        //--- CUANDO SON LOTES NUEVOS ---//
+        if (body.tipo == '1') {
+            const lotes = []
+            const kardexes = []
+            for (const a of body.transaccion_items) {
+                for (const b of a.lotes) {
+                    lotes.push({
+                        ...b,
+                        articulo: a.articulo,
+                        stock: b.cantidad,
+                        transaccion_item: a.id,
+                        empresa,
+                        createdBy: colaborador,
+                    })
 
-        // ----- GUARDAR KARDEX ----- //
-        let kardex_items = []
-        if (tipo == 1) {
-            kardex_items = transaccion_items.map((a) => ({
-                tipo,
-                fecha,
-                articulo: a.articulo,
-                cantidad: a.cantidad,
-
-                pu: a.pu,
-                igv_afectacion: a.igv_afectacion,
-                igv_porcentaje: a.igv_porcentaje,
-                moneda,
-                tipo_cambio,
-
-                lote: a.lote,
-                fv: a.fv,
-
-                is_lote_padre: true,
-                stock: a.cantidad,
-
-                transaccion_item: a.id,
-                transaccion: nuevo.id,
-                empresa,
-                createdBy: colaborador,
-            }))
-        } else {
-            for (const a of transaccion_items) {
-                for (const b of a.kardexes) {
-                    kardex_items.push({
-                        tipo,
-                        fecha,
-                        articulo: b.articulo,
+                    kardexes.push({
+                        tipo: body.tipo,
+                        fecha: body.fecha,
+                        articulo: a.articulo,
                         cantidad: b.cantidad,
-
-                        is_lote_padre: false,
-                        lote_padre: b.lote_padre,
-
+                        lote_id: b.id,
+                        // origen: body.origen,
+                        // destino: body.destino,
                         transaccion_item: a.id,
                         transaccion: nuevo.id,
                         empresa,
@@ -170,18 +117,42 @@ const create = async (req, res) => {
                     })
                 }
             }
+
+            await LoteRepo.createBulk(lotes, transaction)
+            await KardexRepo.createBulk(kardexes, transaction)
         }
 
-        await KardexRepo.createBulk(kardex_items, transaction)
+        //--- CUANDO SE USA LOTES EXISTENTES ---//
+        if (body.tipo == '5' || body.tipo == 'abastacer_maquila') {
+            const kardexes = []
+            for (const a of body.transaccion_items) {
+                for (const b of a.lotes) {
+                    kardexes.push({
+                        tipo: body.tipo,
+                        fecha,
+                        articulo: b.articulo,
+                        cantidad: b.cantidad,
+                        lote_id: b.id,
+                        // origen: body.origen,
+                        // destino: body.destino,
+                        transaccion_item: a.id,
+                        transaccion: nuevo.id,
+                        empresa,
+                        createdBy: colaborador,
+                    })
+                }
+            }
+            await KardexRepo.createBulk(kardexes, transaction)
+        }
 
-        // ----- ACTUALIZAR CANTIDAD ENTREGADA ----- //
-        if (tipo == 1 || tipo == 5) {
-            if (socio_pedido) {
-                const cases = transaccion_items
+        // ----- ACTUALIZAR CANTIDAD ENTREGADA EN PEDIDO ----- //
+        if (body.tipo == 1 || body.tipo == 5) {
+            if (body.socio_pedido) {
+                const cases = body.transaccion_items
                     .map((a) => `WHEN '${a.articulo}' THEN ${a.cantidad}`)
                     .join(' ')
 
-                const articulos = transaccion_items.map((a) => `'${a.articulo}'`).join(',')
+                const articulos = body.transaccion_items.map((a) => `'${a.articulo}'`).join(',')
 
                 await sequelize.query(
                     `
@@ -190,7 +161,7 @@ const create = async (req, res) => {
                             ${cases}
                             ELSE 0
                         END
-                        WHERE socio_pedido = '${socio_pedido}'
+                        WHERE socio_pedido = '${body.socio_pedido}'
                         AND articulo IN (${articulos})
                     `,
                     { transaction },
@@ -198,28 +169,28 @@ const create = async (req, res) => {
             }
         }
 
-        // ----- SI ES UNA VENTA ----- //
-        if (tipo == 5 || tipo == 'abastacer_maquila') {
-            const kardexMap = {}
+        //--- DESCONTAR STOCK DE LOTES ---//
+        if (body.tipo == '5' || body.tipo == 'abastacer_maquila') {
+            const lotesMap = {}
 
-            for (const a of transaccion_items) {
-                for (const b of a.kardexes) {
-                    kardexMap[b.lote_padre] = (kardexMap[b.lote_padre] || 0) + b.cantidad
+            for (const a of body.transaccion_items) {
+                for (const b of a.lotes) {
+                    lotesMap[b.id] = (lotesMap[b.id] || 0) + b.cantidad
                 }
             }
 
-            const kardexes = Object.entries(kardexMap).map(([lote_padre, cantidad]) => ({
-                lote_padre,
+            const lotes = Object.entries(lotesMap).map(([lote_id, cantidad]) => ({
+                lote_id,
                 cantidad,
             }))
 
-            const cases = kardexes.map((k) => `WHEN '${k.lote_padre}' THEN ${k.cantidad}`).join(' ')
+            const cases = lotes.map((a) => `WHEN '${a.lote_id}' THEN ${a.cantidad}`).join(' ')
 
-            const ids = kardexes.map((k) => `'${k.lote_padre}'`).join(',')
+            const ids = lotes.map((a) => `'${a.lote_id}'`).join(',')
 
             await sequelize.query(
                 `
-                UPDATE kardexes
+                UPDATE lotes
                     SET stock = COALESCE(stock, 0) - CASE id
                         ${cases}
                         ELSE 0
@@ -246,36 +217,12 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const {
-            tipo,
-            fecha,
-            socio_pedido,
-            socio,
-            guia,
-            factura,
-            pago_condicion,
-            moneda,
-            tipo_cambio,
-            monto,
-            observacion,
-            estado,
-        } = req.body
+        const body = req.body
 
         const updated = await repository.update(
             { id },
             {
-                tipo,
-                fecha,
-                socio_pedido,
-                socio,
-                guia,
-                factura,
-                pago_condicion,
-                moneda,
-                tipo_cambio,
-                monto,
-                observacion,
-                estado,
+                ...body,
                 updatedBy: colaborador,
             },
         )

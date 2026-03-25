@@ -157,6 +157,12 @@ const include1 = {
         attributes: [],
         required: false,
     },
+    kardexes_all: {
+        model: Kardex,
+        as: 'kardexes',
+        attributes: ['id', 'tipo', 'fecha', 'articulo', 'cantidad', 'lote_id'],
+        required: false,
+    },
     lote1: {
         model: Lote,
         as: 'lote1',
@@ -190,6 +196,11 @@ const include1 = {
         as: 'lote_padre1',
         attributes: [],
         required: false,
+    },
+    lotes: {
+        model: Lote,
+        as: 'lotes',
+        attributes: ['id', 'codigo', 'fv', 'vu', 'igv_afectacion', 'igv_porcentaje', 'stock'],
     },
     maquina1: {
         model: Maquina,
@@ -421,7 +432,7 @@ export class Repository {
             delete findProps.attributes
             const data = await this.model.findByPk(qry.id, findProps)
 
-            if (tojson) {
+            if (data && tojson) {
                 return data.toJSON()
             } else {
                 return data
