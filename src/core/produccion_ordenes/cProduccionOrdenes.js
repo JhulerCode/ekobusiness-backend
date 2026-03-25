@@ -162,44 +162,16 @@ const delet = async (req, res) => {
     }
 }
 
-const terminar = async (req, res) => {
+const abrirCerrar = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { ids } = req.body
-
-        //--- CERRAR ---//
-        const updated = await repository.update(
-            { id: ids },
-            {
-                estado: 2,
-                updatedBy: colaborador,
-            },
-        )
-
-        if (updated == false) return resUpdateFalse(res)
-
-        const estados = arrayMap('produccion_orden_estados')
-        const data = {
-            id: ids,
-            estado1: estados['2'],
-        }
-
-        res.json({ code: 0, data })
-    } catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const abrir = async (req, res) => {
-    try {
-        const { colaborador } = req.user
-        const { ids } = req.body
+        const { ids, estado } = req.body
 
         // ----- ABRIR ----- //
         const updated = await repository.update(
             { id: ids },
             {
-                estado: 1,
+                estado,
                 updatedBy: colaborador,
             },
         )
@@ -209,7 +181,7 @@ const abrir = async (req, res) => {
         const estados = arrayMap('produccion_orden_estados')
         const data = {
             id: ids,
-            estado1: estados['1'],
+            estado1: estados[estado],
         }
 
         res.json({ code: 0, data })
@@ -329,8 +301,7 @@ export default {
     create,
     update,
     delet,
-    terminar,
-    abrir,
+    abrirCerrar,
     setInicio,
     setFin,
     findTrazabilidad,

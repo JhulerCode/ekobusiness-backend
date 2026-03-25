@@ -5,14 +5,13 @@ import { Colaborador } from './Colaborador.js'
 
 export const Lote = sequelize.define('lotes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    articulo: { type: DataTypes.STRING }, // FK
-    numero: { type: DataTypes.STRING }, // Código del lote (ej: LOT-001)
-    fv: { type: DataTypes.DATEONLY }, // Fecha de vencimiento
-    pu_compra: { type: DataTypes.DOUBLE }, // Precio unitario de compra (valorización)
-    stock: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 }, // Stock actual del lote
-    
-    // Para multialmacén (esto se puede expandir luego a una tabla de Ubicaciones/Almacenes)
-    almacen: { type: DataTypes.STRING }, 
+    articulo: { type: DataTypes.STRING },
+    codigo: { type: DataTypes.STRING },
+    fv: { type: DataTypes.DATEONLY },
+    stock: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
+    vu: { type: DataTypes.DOUBLE },
+    igv_afectacion: { type: DataTypes.STRING },
+    igv_porcentaje: { type: DataTypes.DOUBLE },
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },

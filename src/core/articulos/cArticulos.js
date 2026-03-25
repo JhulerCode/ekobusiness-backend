@@ -117,14 +117,14 @@ const update = async (req, res) => {
         const body = req.body
 
         // 1️⃣ Obtener el artículo actual
-        const currentArticulo = await repository.find({ id }, true)
-        if (!currentArticulo) {
+        const currentRecord = await repository.find({ id }, true)
+        if (!currentRecord) {
             await transaction.rollback()
             return res.status(404).json({ code: -1, msg: 'Artículo no encontrado' })
         }
 
         // 2️⃣ Verificar si el nuevo nombre ya existe (si cambió)
-        if (body.nombre && body.nombre !== currentArticulo.nombre) {
+        if (body.nombre && body.nombre !== currentRecord.nombre) {
             if ((await repository.existe({ nombre: body.nombre, id, empresa }, res)) == true) {
                 await transaction.rollback()
                 return
@@ -132,7 +132,7 @@ const update = async (req, res) => {
         }
 
         // 3️⃣ Detectar columnas modificadas
-        const diff = repository.getDiff(currentArticulo, body)
+        const diff = repository.getDiff(currentRecord, body)
         if (diff) {
             diff.updatedBy = colaborador
             await repository.update({ id }, diff, transaction)
@@ -153,7 +153,7 @@ const update = async (req, res) => {
             )
         }
 
-        // // 5️⃣ Actualizar Relaciones (Componentes de Combo)
+        // 5️⃣ Actualizar Relaciones (Componentes de Combo)
         if (body.combo_componentes) {
             await repository.syncHasMany(
                 {
@@ -161,7 +161,8 @@ const update = async (req, res) => {
                     foreignKey: 'articulo_principal',
                     parentId: id,
                     newData: body.combo_componentes,
-                    updateFields: ['articulo', 'cantidad', 'orden', 'updatedBy'],
+                    empresa,
+                    colaborador,
                 },
                 transaction,
             )

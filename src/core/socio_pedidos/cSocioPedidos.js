@@ -59,10 +59,6 @@ const findById = async (req, res) => {
         if (data) {
             const documentos_identidadMap = arrayMap('documentos_identidad')
 
-            if (data.socio_datos.doc_tipo) {
-                data.socio_datos.doc_tipo1 = documentos_identidadMap[data.socio_datos.doc_tipo]
-            }
-
             if (data.socio_pedido_items) data.socio_pedido_items.sort((a, b) => a.orden - b.orden)
         }
 
@@ -76,53 +72,22 @@ const create = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
+        const { nombre_comercial } = req.empresa
         const { empresa } = req.user
-        const {
-            tipo,
-            origin,
-            fecha,
-            codigo,
+        const body = req.body
 
-            socio_datos,
-            contacto,
-            contacto_datos,
-
-            moneda,
-            monto,
-
-            entrega_tipo,
-            fecha_entrega,
-            entrega_ubigeo,
-            direccion_entrega,
-            entrega_direccion_datos,
-            entrega_costo,
-
-            pago_condicion,
-            pago_metodo,
-            pago_id,
-
-            comprobante_tipo,
-            comprobante_ruc,
-            comprobante_razon_social,
-
-            observacion,
-            estado,
-            empresa_datos,
-            socio_pedido_items,
-        } = req.body
-
-        let { socio } = req.body
         let colaborador,
             is_maquila = false
 
-        if (origin == 'ecommerce') {
-            if (!socio) socio = req.user.id
+        if (body.origin == 'ecommerce') {
+            if (!body.socio) body.socio = req.user.id
         } else {
             colaborador = req.user.colaborador
 
+            //--- PARA MAQUILA ---//
             const qry = {
                 fltr: {
-                    socio: { op: 'Es', val: socio },
+                    socio: { op: 'Es', val: body.socio },
                     'mrp_bom1.articulo': {
                         op: 'Es',
                         val: socio_pedido_items.map((a) => a.articulo),
@@ -139,39 +104,7 @@ const create = async (req, res) => {
         // ----- GUARDAR ----- //
         const nuevo = await repository.create(
             {
-                tipo,
-                origin,
-                fecha,
-                codigo,
-                is_maquila,
-
-                socio,
-                socio_datos,
-                contacto,
-                contacto_datos,
-
-                moneda,
-                monto,
-
-                entrega_tipo,
-                fecha_entrega,
-                entrega_ubigeo,
-                direccion_entrega,
-                entrega_direccion_datos,
-                entrega_costo,
-
-                pago_condicion,
-                pago_metodo,
-                pago_id,
-
-                comprobante_tipo,
-                comprobante_ruc,
-                comprobante_razon_social,
-
-                observacion,
-                estado,
-                etapas,
-                empresa_datos,
+                ...body,
                 empresa,
                 createdBy: colaborador,
             },
@@ -179,14 +112,13 @@ const create = async (req, res) => {
         )
 
         // ----- GUARDAR ITEMS ----- //
-        const items = socio_pedido_items.map((a, i) => ({
+        const socio_pedido_items = body.socio_pedido_items.map((a, i) => ({
             ...a,
-            orden: i,
             socio_pedido: nuevo.id,
             empresa,
             createdBy: colaborador,
         }))
-        await SocioPedidoItemRepo.createBulk(items, transaction)
+        await SocioPedidoItemRepo.createBulk(socio_pedido_items, transaction)
 
         await transaction.commit()
 
@@ -205,7 +137,7 @@ const create = async (req, res) => {
             )
             const nodemailer = nodeMailer()
             const result = await nodemailer.sendMail({
-                from: `${sistemaData.empresa.nombre_comercial} <${config.SOPORTE_EMAIL}>`,
+                from: `${nombre_comercial} <${config.SOPORTE_EMAIL}>`,
                 to: socio_datos.correo,
                 subject: `Confirmación de compra - Código ${codigo}`,
                 html,
@@ -225,159 +157,46 @@ const create = async (req, res) => {
 }
 
 const update = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { id } = req.params
-        const {
-            tipo,
-            origin,
-            fecha,
-            codigo,
+        const body = req.body
 
-            socio,
-            socio_datos,
-            contacto,
-            contacto_datos,
+        // Obtener el artículo actual
+        const currentRecord = await repository.find({ id }, true)
+        if (!currentRecord) {
+            await transaction.rollback()
+            return res.status(404).json({ code: -1, msg: 'Artículo no encontrado' })
+        }
 
-            moneda,
-            monto,
+        // Detectar columnas modificadas
+        const diff = repository.getDiff(currentRecord, body)
+        if (diff) {
+            diff.updatedBy = colaborador
+            await repository.update({ id }, diff, transaction)
+        }
 
-            entrega_tipo,
-            fecha_entrega,
-            entrega_ubigeo,
-            direccion_entrega,
-            entrega_direccion_datos,
-            entrega_costo,
+        // Actualizar Relaciones (Items)
+        if (body.socio_pedido_items) {
+            await repository.syncHasMany(
+                {
+                    model: 'SocioPedidoItem',
+                    foreignKey: 'socio_pedido',
+                    parentId: id,
+                    newData: body.socio_pedido_items,
+                    empresa,
+                    colaborador,
+                },
+                transaction,
+            )
+        }
 
-            pago_condicion,
-            pago_metodo,
-            pago_id,
+        await transaction.commit()
 
-            comprobante_tipo,
-            comprobante_ruc,
-            comprobante_razon_social,
-
-            observacion,
-            estado,
-            empresa_datos,
-            socio_pedido_items,
-        } = req.body
-
-        //--- ACTUALIZAR ---//
-        const updated = await repository.update(
-            { id },
-            {
-                tipo,
-                origin,
-                fecha,
-                codigo,
-
-                socio,
-                socio_datos,
-                contacto,
-                contacto_datos,
-
-                moneda,
-                monto,
-
-                entrega_tipo,
-                fecha_entrega,
-                entrega_ubigeo,
-                direccion_entrega,
-                entrega_direccion_datos,
-                entrega_costo,
-
-                pago_condicion,
-                pago_metodo,
-                pago_id,
-
-                comprobante_tipo,
-                comprobante_ruc,
-                comprobante_razon_social,
-
-                observacion,
-                estado,
-                empresa_datos,
-                updatedBy: colaborador,
-            },
-        )
-
-        // // ----- OBTENER ITEMS QUE ESTABAN ----- //
-        // const socio_pedido_items_past = await SocioPedidoItem.findAll({
-        //     where: { socio_pedido: id }
-        // })
-
-        // // ----- ELIMINAR ITEMS QUE YA NO ESTÁN ----- //
-        // const idsItemsNew = socio_pedido_items.map(a => a.articulo)
-
-        // const idsItemsGone = socio_pedido_items_past
-        //     .filter(a => !idsItemsNew.includes(a.articulo))
-        //     .map(a => a.articulo)
-
-        // if (idsItemsGone.length > 0) {
-        //     await SocioPedidoItem.destroy({
-        //         where: {
-        //             socio_pedido: id,
-        //             articulo: { [Op.in]: idsItemsGone },
-        //         },
-        //         transaction
-        //     })
-        // }
-
-        // const agregarItems = []
-
-        // for (const a of socio_pedido_items) {
-        //     const i = socio_pedido_items_past.findIndex(b => b.articulo == a.articulo)
-
-        //     if (i === -1) {
-        //         // ----- CREAR ARRAY DE ITEMS NUEVOS ----- //
-        //         agregarItems.push({
-        //             articulo: a.articulo,
-        //             nombre: a.nombre,
-        //             unidad: a.unidad,
-        //             has_fv: a.has_fv,
-
-        //             cantidad: a.cantidad,
-
-        //             pu: a.pu,
-        //             igv_afectacion: a.igv_afectacion,
-        //             igv_porcentaje: a.igv_porcentaje,
-
-        //             nota: a.nota,
-        //             socio_pedido: id,
-        //         })
-        //     }
-        //     else {
-        //         // ----- ACTUALIZAR ITEMS QUE ESTABAN ----- //
-        //         await SocioPedidoItem.update(
-        //             {
-        //                 nombre: a.nombre,
-        //                 unidad: a.unidad,
-        //                 has_fv: a.has_fv,
-
-        //                 cantidad: a.cantidad,
-
-        //                 pu: a.pu,
-
-        //                 nota: a.nota,
-        //             },
-        //             {
-        //                 where: { id: a.id },
-        //                 transaction
-        //             }
-        //         )
-        //     }
-        // }
-
-        // // ----- CREAR ITEMS NUEVOS ----- //
-        // if (agregarItems.length > 0) {
-        //     await SocioPedidoItem.bulkCreate(agregarItems, { transaction })
-        // }
-
-        // ----- DEVOLVER ----- //
-        const data = await loadOne(id)
-
-        res.json({ code: 0, data })
+        // const data = await loadOne(id)
+        res.json({ code: 0 })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -482,26 +301,53 @@ const confirmarEntrega = async (req, res) => {
     }
 }
 
-const terminar = async (req, res) => {
+const abrirCerrar = async (req, res) => {
     try {
         const { colaborador } = req.user
-        const { id } = req.params
+        const { ids, estado } = req.body
 
         const updated = await repository.update(
-            { id },
+            { id: ids },
             {
-                estado: 2,
+                estado,
                 updatedBy: colaborador,
             },
         )
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
+        const estados = arrayMap('pedido_estados')
+        const data = {
+            id: ids,
+            estado1: estados[estado],
+        }
+
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
+
+// const terminar = async (req, res) => {
+//     try {
+//         const { colaborador } = req.user
+//         const { ids } = req.boby
+
+//         const updated = await repository.update(
+//             { id },
+//             {
+//                 estado: 2,
+//                 updatedBy: colaborador,
+//             },
+//         )
+
+//         if (updated == false) return resUpdateFalse(res)
+
+//         res.json({ code: 0 })
+//     } catch (error) {
+//         res.status(500).json({ code: -1, msg: error.message, error })
+//     }
+// }
 
 const findPendientes = async (req, res) => {
     try {
@@ -616,7 +462,7 @@ export default {
     confirmarPago,
     confirmarListo,
     confirmarEntrega,
-    terminar,
+    abrirCerrar,
 
     findPendientes,
 }

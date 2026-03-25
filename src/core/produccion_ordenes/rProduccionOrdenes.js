@@ -32,15 +32,9 @@ router.patch(
 )
 
 router.patch(
-    '/terminar/:id',
-    verifyPermiso(['vPrograma:terminar', 'vProduccionHistorial:terminar']),
-    controller.terminar,
-)
-
-router.patch(
-    '/abrir/:id',
-    verifyPermiso(['vPrograma:terminar', 'vProduccionHistorial:terminar']),
-    controller.abrir,
+    '/abrir-cerrar/:id',
+    verifyPermiso(['vPrograma:abrirCerrar', 'vProduccionHistorial:abrirCerrar']),
+    controller.abrirCerrar,
 )
 
 router.patch('/inicio/:id', controller.setInicio)
