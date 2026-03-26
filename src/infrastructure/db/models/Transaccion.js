@@ -57,16 +57,24 @@ export const Transaccion = sequelize.define('transacciones', {
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
 })
 
-SocioPedido.hasMany(Transaccion, { foreignKey: 'socio_pedido', as: 'transacciones', onDelete: 'RESTRICT' })
+SocioPedido.hasMany(Transaccion, {
+    foreignKey: 'socio_pedido',
+    as: 'transacciones',
+    onDelete: 'RESTRICT',
+})
 Transaccion.belongsTo(SocioPedido, { foreignKey: 'socio_pedido', as: 'socio_pedido1' })
 
 Socio.hasMany(Transaccion, { foreignKey: 'socio', as: 'transacciones', onDelete: 'RESTRICT' })
 Transaccion.belongsTo(Socio, { foreignKey: 'socio', as: 'socio1' })
 
-ProduccionOrden.hasMany(Transaccion, { foreignKey: 'produccion_orden', as: 'transacciones', onDelete: 'RESTRICT' })
+ProduccionOrden.hasMany(Transaccion, {
+    foreignKey: 'produccion_orden',
+    as: 'transacciones',
+    onDelete: 'RESTRICT',
+})
 Transaccion.belongsTo(ProduccionOrden, { foreignKey: 'produccion_orden', as: 'produccion_orden1' })
 
 Moneda.hasMany(Transaccion, { foreignKey: 'moneda', as: 'transacciones', onDelete: 'RESTRICT' })
@@ -77,18 +85,16 @@ Transaccion.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' }
 Colaborador.hasMany(Transaccion, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
 Transaccion.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })
 
-
-
 export const TransaccionItem = sequelize.define('transaccion_items', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     orden: { type: DataTypes.INTEGER }, //required
     articulo: { type: DataTypes.STRING }, //required //linked
     cantidad: { type: DataTypes.DOUBLE }, //required
 
+    //--- POR BORRAR ---//
     pu: { type: DataTypes.DOUBLE }, //required
     igv_afectacion: { type: DataTypes.STRING }, //required
     igv_porcentaje: { type: DataTypes.DOUBLE }, //required
-
     lote: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
     fv1: {
@@ -97,6 +103,7 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
             return formatDate(this.getDataValue('fv'))
         },
     },
+    //--- POR BORRAR ---//
 
     observacion: { type: DataTypes.STRING },
     calidad_revisado: { type: DataTypes.STRING },
@@ -121,22 +128,49 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     // maquina: { type: DataTypes.STRING }, //--- Eliminar ---//
 })
 
-Articulo.hasMany(TransaccionItem, { foreignKey: 'articulo', as: 'transaccion_items', onDelete: 'RESTRICT' })
+Articulo.hasMany(TransaccionItem, {
+    foreignKey: 'articulo',
+    as: 'transaccion_items',
+    onDelete: 'RESTRICT',
+})
 TransaccionItem.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 
-Moneda.hasMany(TransaccionItem, { foreignKey: 'moneda', as: 'transaccion_items', onDelete: 'RESTRICT' })
+Moneda.hasMany(TransaccionItem, {
+    foreignKey: 'moneda',
+    as: 'transaccion_items',
+    onDelete: 'RESTRICT',
+})
 TransaccionItem.belongsTo(Moneda, { foreignKey: 'moneda', as: 'moneda1' })
 
-TransaccionItem.hasMany(TransaccionItem, { foreignKey: 'lote_padre', as: 'lote_padre_items', onDelete: 'RESTRICT' })
+TransaccionItem.hasMany(TransaccionItem, {
+    foreignKey: 'lote_padre',
+    as: 'lote_padre_items',
+    onDelete: 'RESTRICT',
+})
 TransaccionItem.belongsTo(TransaccionItem, { foreignKey: 'lote_padre', as: 'lote_padre1' })
 
-Transaccion.hasMany(TransaccionItem, { foreignKey: 'transaccion', as: 'transaccion_items', onDelete: 'RESTRICT' })
+Transaccion.hasMany(TransaccionItem, {
+    foreignKey: 'transaccion',
+    as: 'transaccion_items',
+    onDelete: 'RESTRICT',
+})
 TransaccionItem.belongsTo(Transaccion, { foreignKey: 'transaccion', as: 'transaccion1' })
 
-ProduccionOrden.hasMany(TransaccionItem, { foreignKey: 'produccion_orden', as: 'transaccion_items', onDelete: 'RESTRICT' })
-TransaccionItem.belongsTo(ProduccionOrden, { foreignKey: 'produccion_orden', as: 'produccion_orden1' })
+ProduccionOrden.hasMany(TransaccionItem, {
+    foreignKey: 'produccion_orden',
+    as: 'transaccion_items',
+    onDelete: 'RESTRICT',
+})
+TransaccionItem.belongsTo(ProduccionOrden, {
+    foreignKey: 'produccion_orden',
+    as: 'produccion_orden1',
+})
 
-Maquina.hasMany(TransaccionItem, { foreignKey: 'maquina', as: 'transaccion_items', onDelete: 'RESTRICT' })
+Maquina.hasMany(TransaccionItem, {
+    foreignKey: 'maquina',
+    as: 'transaccion_items',
+    onDelete: 'RESTRICT',
+})
 TransaccionItem.belongsTo(Maquina, { foreignKey: 'maquina', as: 'maquina1' })
 
 Colaborador.hasMany(TransaccionItem, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })

@@ -8,11 +8,15 @@ const find = async (req, res) => {
         const { empresa } = req.user
         const qry = req.query.qry ? JSON.parse(req.query.qry) : {}
 
-        if (!qry.fltr) qry.fltr = {}
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
         const response = await repository.find(qry, true)
-        res.json({ code: 0, ...response })
+
+        const hasPage = qry?.page
+        const data = hasPage ? response.data : response
+        const meta = hasPage ? response.meta : null
+
+        res.json({ code: 0, data, meta })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -50,7 +54,8 @@ const delet = async (req, res) => {
     try {
         const { id } = req.params
         const deleted = await repository.delete({ id })
-        if (deleted === false) return res.status(400).json({ code: -1, msg: 'No se pudo eliminar el lote' })
+        if (deleted === false)
+            return res.status(400).json({ code: -1, msg: 'No se pudo eliminar el lote' })
 
         res.json({ code: 0 })
     } catch (error) {

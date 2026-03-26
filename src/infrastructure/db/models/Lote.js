@@ -19,6 +19,38 @@ export const Lote = sequelize.define('lotes', {
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
+
+    lote_fv_stock: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            const codigo = this.codigo
+            const fv = this.fv
+            const stock = this.stock
+
+            if (fv) {
+                const [año, mes, dia] = fv.split('-')
+                const fecha_vencimiento = `${dia}-${mes}-${año}`
+                return `${codigo} | ${fecha_vencimiento} | ${stock}`
+            } else {
+                return `${codigo} | ${stock}`
+            }
+        },
+    },
+    lote_fv: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            const codigo = this.codigo
+            const fv = this.fv
+
+            if (fv) {
+                const [año, mes, dia] = fv.split('-')
+                const fecha_vencimiento = `${dia}-${mes}-${año}`
+                return `${codigo} | ${fecha_vencimiento}`
+            } else {
+                return `${codigo}`
+            }
+        },
+    },
 })
 
 Articulo.hasMany(Lote, { foreignKey: 'articulo', as: 'lotes', onDelete: 'RESTRICT' })

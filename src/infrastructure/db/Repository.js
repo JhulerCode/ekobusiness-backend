@@ -166,7 +166,17 @@ const include1 = {
     lote1: {
         model: Lote,
         as: 'lote1',
-        attributes: ['id', 'numero', 'fv', 'pu_compra', 'stock', 'almacen'],
+        attributes: [
+            'id',
+            'codigo',
+            'fv',
+            'vu',
+            'igv_afectacion',
+            'igv_porcentaje',
+            'stock',
+            'lote_fv_stock',
+            'lote_fv',
+        ],
     },
     lote_padre_items: {
         model: Kardex,
@@ -200,7 +210,17 @@ const include1 = {
     lotes: {
         model: Lote,
         as: 'lotes',
-        attributes: ['id', 'codigo', 'fv', 'vu', 'igv_afectacion', 'igv_porcentaje', 'stock'],
+        attributes: [
+            'id',
+            'codigo',
+            'fv',
+            'vu',
+            'igv_afectacion',
+            'igv_porcentaje',
+            'stock',
+            'lote_fv_stock',
+            'lote_fv',
+        ],
     },
     maquina1: {
         model: Maquina,

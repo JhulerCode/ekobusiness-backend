@@ -90,7 +90,7 @@ const create = async (req, res) => {
                     socio: { op: 'Es', val: body.socio },
                     'mrp_bom1.articulo': {
                         op: 'Es',
-                        val: socio_pedido_items.map((a) => a.articulo),
+                        val: body.socio_pedido_items.map((a) => a.articulo),
                     },
                 },
                 incl: ['mrp_bom1'],
@@ -124,22 +124,24 @@ const create = async (req, res) => {
 
         // ----- ENVIAR CORREO ----- //
         let send_email_err = null
-        if (origin == 'ecommerce') {
+        if (body.origin == 'ecommerce') {
             // console.log('Enviando correo')
-            const entrega_tipo1 = sistemaData.entrega_tipos.find((a) => a.id == entrega_tipo).nombre
+            const entrega_tipo1 = sistemaData.entrega_tipos.find(
+                (a) => a.id == body.entrega_tipo,
+            ).nombre
             const html = htmlConfirmacionCompra(
-                socio_datos.nombres,
-                socio_datos.apellidos,
-                codigo,
+                body.socio_datos.nombres,
+                body.socio_datos.apellidos,
+                body.codigo,
                 entrega_tipo1,
-                monto,
+                body.monto,
                 socio_pedido_items,
             )
             const nodemailer = nodeMailer()
             const result = await nodemailer.sendMail({
                 from: `${nombre_comercial} <${config.SOPORTE_EMAIL}>`,
-                to: socio_datos.correo,
-                subject: `Confirmación de compra - Código ${codigo}`,
+                to: body.socio_datos.correo,
+                subject: `Confirmación de compra - Código ${body.codigo}`,
                 html,
             })
             // console.log(result)
@@ -150,9 +152,8 @@ const create = async (req, res) => {
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data, send_email_err })
     } catch (error) {
-        await transaction.rollback()
-
         res.status(500).json({ code: -1, msg: error.message, error })
+        await transaction.rollback()
     }
 }
 

@@ -92,9 +92,9 @@ const create = async (req, res) => {
             const lotes = []
             const kardexes = []
             for (const a of body.transaccion_items) {
-                for (const b of a.lotes) {
+                for (const b of a.kardexes) {
                     lotes.push({
-                        ...b,
+                        ...b.lote1,
                         articulo: a.articulo,
                         stock: b.cantidad,
                         transaccion_item: a.id,
@@ -107,7 +107,7 @@ const create = async (req, res) => {
                         fecha: body.fecha,
                         articulo: a.articulo,
                         cantidad: b.cantidad,
-                        lote_id: b.id,
+                        lote_id: b.lote1.id,
                         // origen: body.origen,
                         // destino: body.destino,
                         transaccion_item: a.id,
@@ -126,13 +126,13 @@ const create = async (req, res) => {
         if (body.tipo == '5' || body.tipo == 'abastacer_maquila') {
             const kardexes = []
             for (const a of body.transaccion_items) {
-                for (const b of a.lotes) {
+                for (const b of a.kardexes) {
                     kardexes.push({
                         tipo: body.tipo,
-                        fecha,
-                        articulo: b.articulo,
+                        fecha: body.fecha,
+                        articulo: a.articulo,
                         cantidad: b.cantidad,
-                        lote_id: b.id,
+                        lote_id: b.lote_id,
                         // origen: body.origen,
                         // destino: body.destino,
                         transaccion_item: a.id,
@@ -174,8 +174,8 @@ const create = async (req, res) => {
             const lotesMap = {}
 
             for (const a of body.transaccion_items) {
-                for (const b of a.lotes) {
-                    lotesMap[b.id] = (lotesMap[b.id] || 0) + b.cantidad
+                for (const b of a.kardexes) {
+                    lotesMap[b.lote_id] = (lotesMap[b.lote_id] || 0) + b.cantidad
                 }
             }
 
