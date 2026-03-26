@@ -87,12 +87,13 @@ const create = async (req, res) => {
         }))
         await TransaccionItemRepo.createBulk(transaccion_items, transaction)
 
-        //--- CUANDO SON LOTES NUEVOS ---//
-        if (body.tipo == '1') {
-            const lotes = []
-            const kardexes = []
-            for (const a of body.transaccion_items) {
-                for (const b of a.kardexes) {
+        //--- CREAR KARDEXES ---//
+        const lotes = []
+        const kardexes = []
+        for (const a of body.transaccion_items) {
+            for (const b of a.kardexes) {
+                //--- CUANDO SON LOTES NUEVOS ---//
+                if (body.tipo == '1') {
                     lotes.push({
                         ...b.lote1,
                         articulo: a.articulo,
@@ -101,49 +102,25 @@ const create = async (req, res) => {
                         empresa,
                         createdBy: colaborador,
                     })
-
-                    kardexes.push({
-                        tipo: body.tipo,
-                        fecha: body.fecha,
-                        articulo: a.articulo,
-                        cantidad: b.cantidad,
-                        lote_id: b.lote1.id,
-                        // origen: body.origen,
-                        // destino: body.destino,
-                        transaccion_item: a.id,
-                        transaccion: nuevo.id,
-                        empresa,
-                        createdBy: colaborador,
-                    })
                 }
-            }
 
-            await LoteRepo.createBulk(lotes, transaction)
-            await KardexRepo.createBulk(kardexes, transaction)
-        }
-
-        //--- CUANDO SE USA LOTES EXISTENTES ---//
-        if (body.tipo == '5' || body.tipo == 'abastacer_maquila') {
-            const kardexes = []
-            for (const a of body.transaccion_items) {
-                for (const b of a.kardexes) {
-                    kardexes.push({
-                        tipo: body.tipo,
-                        fecha: body.fecha,
-                        articulo: a.articulo,
-                        cantidad: b.cantidad,
-                        lote_id: b.lote_id,
-                        // origen: body.origen,
-                        // destino: body.destino,
-                        transaccion_item: a.id,
-                        transaccion: nuevo.id,
-                        empresa,
-                        createdBy: colaborador,
-                    })
-                }
+                kardexes.push({
+                    tipo: body.tipo,
+                    fecha: body.fecha,
+                    articulo: b.articulo,
+                    cantidad: b.cantidad,
+                    lote_id: b.lote1.id,
+                    // origen: body.origen,
+                    // destino: body.destino,
+                    transaccion_item: a.id,
+                    transaccion: nuevo.id,
+                    empresa,
+                    createdBy: colaborador,
+                })
             }
-            await KardexRepo.createBulk(kardexes, transaction)
         }
+        await LoteRepo.createBulk(lotes, transaction)
+        await KardexRepo.createBulk(kardexes, transaction)
 
         // ----- ACTUALIZAR CANTIDAD ENTREGADA EN PEDIDO ----- //
         if (body.tipo == 1 || body.tipo == 5) {
