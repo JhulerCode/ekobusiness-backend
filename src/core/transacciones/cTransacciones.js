@@ -241,29 +241,86 @@ const delet = async (req, res) => {
 
     try {
         const { id } = req.params
-        const { tipo, estado } = req.body
+        const { tipo, estado, socio_pedido } = req.body
 
+        //--- TRAER ITEMS DE LA TRANSACCION --//
+        const transaccion_items = await TransaccionItemRepo.find({
+            fltr: { transaccion: { op: 'Es', val: id } },
+            cols: ['id', 'articulo', 'cantidad'],
+        })
+
+        //--- RECUPERAR KARDEXES SI ES VENTA PARA DEVOLVER STOCK ---//
+        let kardexes = []
+        if (tipo == 5) {
+            kardexes = await KardexRepo.find({
+                fltr: { transaccion: { op: 'Es', val: id } },
+                cols: ['id', 'lote_id', 'cantidad'],
+            })
+        }
+
+        //--- BORRAR TRANSACCION Y RELACIONES --//
         await KardexRepo.delete({ transaccion: id }, transaction)
-
+        await LoteRepo.delete({ transaccion_item: transaccion_items.map((a) => a.id) }, transaction)
         await TransaccionItemRepo.delete({ transaccion: id }, transaction)
-
         await repository.delete({ id }, transaction)
 
-        // ----- SI ES UNA VENTA ----- //
-        if (tipo == 5) {
-            const qry = {
-                fltr: { transaccion: { op: 'Es', val: id } },
-                cols: ['id', 'lote_padre', 'cantidad'],
+        //--- ACTUALIZAR CANTIDAD ENTREGADA EN PEDIDO ---//
+        if (socio_pedido) {
+            const articleQty = {}
+            for (const item of transaccion_items) {
+                articleQty[item.articulo] = (articleQty[item.articulo] || 0) + item.cantidad
             }
-            const kardexes = await KardexRepo.find(qry)
 
-            for (const a of kardexes) {
-                await KardexRepo.update(
-                    { id: a.lote_padre },
-                    { stock: sequelize.literal(`COALESCE(stock, 0) + ${a.cantidad}`) },
-                    transaction,
+            const cases = Object.entries(articleQty)
+                .map(([articulo, cantidad]) => `WHEN '${articulo}' THEN ${cantidad}`)
+                .join(' ')
+
+            const articulos = Object.keys(articleQty)
+                .map((a) => `'${a}'`)
+                .join(',')
+
+            if (articulos.length > 0) {
+                await sequelize.query(
+                    `
+                        UPDATE socio_pedido_items
+                        SET entregado = COALESCE(entregado, 0) - CASE articulo
+                            ${cases}
+                            ELSE 0
+                        END
+                        WHERE socio_pedido = '${socio_pedido}'
+                        AND articulo IN (${articulos})
+                    `,
+                    { transaction },
                 )
             }
+        }
+
+        //--- SI ES UNA VENTA, DEVOLVER STOCK A LOTES ---//
+        if (tipo == 5 && kardexes.length > 0) {
+            const loteQty = {}
+            for (const a of kardexes) {
+                loteQty[a.lote_id] = (loteQty[a.lote_id] || 0) + a.cantidad
+            }
+
+            const cases = Object.entries(loteQty)
+                .map(([lote_id, cantidad]) => `WHEN '${lote_id}' THEN ${cantidad}`)
+                .join(' ')
+
+            const ids = Object.keys(loteQty)
+                .map((id) => `'${id}'`)
+                .join(',')
+
+            await sequelize.query(
+                `
+                    UPDATE lotes
+                    SET stock = COALESCE(stock, 0) + CASE id
+                        ${cases}
+                        ELSE 0
+                    END
+                    WHERE id IN (${ids})
+                `,
+                { transaction },
+            )
         }
 
         await transaction.commit()
