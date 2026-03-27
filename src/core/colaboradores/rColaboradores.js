@@ -18,9 +18,9 @@ router.get(
         'vPrograma:crear',
         'vPrograma:ver',
         'vPrograma:editar',
-        'vProduccionHistorial:crear',
-        'vProduccionHistorial:ver',
-        'vProduccionHistorial:editar',
+        'vProduccionOrdenes:crear',
+        'vProduccionOrdenes:ver',
+        'vProduccionOrdenes:editar',
     ]),
     controller.find,
 )

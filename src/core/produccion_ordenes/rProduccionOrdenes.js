@@ -4,13 +4,9 @@ import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.get('/', verifyPermiso(['vPrograma:listar', 'vProduccionHistorial:listar']), controller.find)
+router.get('/', verifyPermiso(['vPrograma:listar', 'vProduccionOrdenes:listar']), controller.find)
 
-router.post(
-    '/',
-    verifyPermiso(['vPrograma:crear', 'vProduccionHistorial:crear']),
-    controller.create,
-)
+router.post('/', verifyPermiso(['vPrograma:crear', 'vProduccionOrdenes:crear']), controller.create)
 
 router.get(
     '/uno/:id',
@@ -18,22 +14,22 @@ router.get(
         'vPrograma:ver',
         'vPrograma:editar',
         'vPrograma:salidaInsumos',
-        'vProduccionHistorial:ver',
-        'vProduccionHistorial:editar',
-        'vProduccionHistorial:salidaInsumos',
+        'vProduccionOrdenes:ver',
+        'vProduccionOrdenes:editar',
+        'vProduccionOrdenes:salidaInsumos',
     ]),
     controller.findById,
 )
 
 router.patch(
     '/:id',
-    verifyPermiso(['vPrograma:editar', 'vProduccionHistorial:editar']),
+    verifyPermiso(['vPrograma:editar', 'vProduccionOrdenes:editar']),
     controller.update,
 )
 
 router.patch(
     '/abrir-cerrar/:id',
-    verifyPermiso(['vPrograma:abrirCerrar', 'vProduccionHistorial:abrirCerrar']),
+    verifyPermiso(['vPrograma:abrirCerrar', 'vProduccionOrdenes:abrirCerrar']),
     controller.abrirCerrar,
 )
 
@@ -43,13 +39,13 @@ router.patch('/fin/:id', controller.setFin)
 
 router.delete(
     '/:id',
-    verifyPermiso(['vPrograma:eliminar', 'vProduccionHistorial:eliminar']),
+    verifyPermiso(['vPrograma:eliminar', 'vProduccionOrdenes:eliminar']),
     controller.delet,
 )
 
 router.get(
     '/trazabilidad/:id',
-    verifyPermiso(['vProduccionHistorial:trazabilidad', 'vPtsIngresos:trazabilidad']),
+    verifyPermiso(['vProduccionOrdenes:trazabilidad', 'vPtsIngresos:trazabilidad']),
     controller.findTrazabilidad,
 )
 

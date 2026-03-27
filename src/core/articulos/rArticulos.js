@@ -27,7 +27,7 @@ router.get(
         'vPrograma:salidaInsumos',
         // 'vProgramaGranel:crear', 'vProgramaGranel:editar', 'vProgramaGranel:salidaInsumos',
         // 'vProgramaLuxury:crear', 'vProgramaLuxury:editar', 'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
+        'vProduccionOrdenes:salidaInsumos',
         'vFormatosBpm:crear',
         'vFormatosBpm:ver',
         'vFormatosBpm:editar',

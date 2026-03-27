@@ -220,24 +220,29 @@ const delet = async (req, res) => {
         const { id } = req.params
         const { tipo, estado, socio_pedido } = req.body
 
-        //--- TRAER ITEMS DE LA TRANSACCION --//
-        const transaccion_items = await TransaccionItemRepo.find({
-            fltr: { transaccion: { op: 'Es', val: id } },
-            cols: ['id', 'articulo', 'cantidad'],
-        })
+        //--- RECUPERAR ITEMS DE LA TRANSACCION --//
+        const transaccion_items = await TransaccionItemRepo.find(
+            {
+                fltr: { transaccion: { op: 'Es', val: id } },
+                cols: ['id', 'articulo', 'cantidad'],
+            },
+            true,
+        )
 
-        //--- RECUPERAR KARDEXES SI ES VENTA PARA DEVOLVER STOCK ---//
-        let kardexes = []
-        if (tipo == 5) {
-            kardexes = await KardexRepo.find({
+        //--- RECUPERAR KARDEXES ---//
+        const kardexes = await KardexRepo.find(
+            {
                 fltr: { transaccion: { op: 'Es', val: id } },
                 cols: ['id', 'lote_id', 'cantidad'],
-            })
-        }
+            },
+            true,
+        )
 
         //--- BORRAR TRANSACCION Y RELACIONES --//
         await KardexRepo.delete({ transaccion: id }, transaction)
-        await LoteRepo.delete({ transaccion_item: transaccion_items.map((a) => a.id) }, transaction)
+        if (tipo == 1) {
+            await LoteRepo.delete({ id: kardexes.map((a) => a.lote_id) }, transaction)
+        }
         await TransaccionItemRepo.delete({ transaccion: id }, transaction)
         await repository.delete({ id }, transaction)
 

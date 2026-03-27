@@ -15,8 +15,8 @@ router.post(
     verifyPermiso([
         'vCompraItems:inspeccion',
         'vVentas:controlDespacho',
-        'vProduccionHistorial:controlPesos',
-        'vProduccionHistorial:controlPpc',
+        'vProduccionOrdenes:controlPesos',
+        'vProduccionOrdenes:controlPpc',
         'vPtsIngresos:liberar_lote',
         'vFormatosBpm:crear',
         'vFormatosPhs:crear',
@@ -30,8 +30,8 @@ router.get(
     verifyPermiso([
         'vCompraItems:inspeccion',
         'vVentas:controlDespacho',
-        'vProduccionHistorial:controlPesos',
-        'vProduccionHistorial:controlPpc',
+        'vProduccionOrdenes:controlPesos',
+        'vProduccionOrdenes:controlPpc',
         'vPtsIngresos:liberar_lote',
         'vFormatosBpm:ver',
         'vFormatosBpm:editar',
@@ -48,8 +48,8 @@ router.patch(
     verifyPermiso([
         'vCompraItems:inspeccion',
         'vVentas:controlDespacho',
-        'vProduccionHistorial:controlPesos',
-        'vProduccionHistorial:controlPpc',
+        'vProduccionOrdenes:controlPesos',
+        'vProduccionOrdenes:controlPpc',
         'vPtsIngresos:liberar_lote',
         'vFormatosBpm:editar',
         'vFormatosPhs:editar',

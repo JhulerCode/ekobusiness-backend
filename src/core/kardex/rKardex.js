@@ -15,7 +15,7 @@ router.get(
     //     'vPrograma:salidaInsumos',
     //     'vPrograma:salidaInsumosCompartidos',
 
-    //     'vProduccionHistorial:salidaInsumos',
+    //     'vProduccionOrdenes:salidaInsumos',
     // ]),
     controller.find,
 )
@@ -29,12 +29,12 @@ router.post(
         'vPrograma:salidaInsumos',
         // 'vProgramaGranel:salidaInsumos',
         // 'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
+        'vProduccionOrdenes:salidaInsumos',
 
         'vPrograma:productosTerminados',
         // 'vProgramaGranel:productosTerminados',
         // 'vProgramaLuxury:productosTerminados',
-        // 'vProduccionHistorial:productosTerminados',
+        // 'vProduccionOrdenes:productosTerminados',
 
         'vPrograma:salidaInsumosCompartidos',
     ]),
@@ -47,7 +47,7 @@ router.patch(
         'vPrograma:productosTerminados',
         // 'vProgramaGranel:productosTerminados',
         // 'vProgramaLuxury:productosTerminados',
-        // 'vProduccionHistorial:productosTerminados',
+        // 'vProduccionOrdenes:productosTerminados',
     ]),
     controller.update,
 )
@@ -58,12 +58,12 @@ router.delete(
         'vPrograma:salidaInsumos',
         // 'vProgramaGranel:salidaInsumos',
         // 'vProgramaLuxury:salidaInsumos',
-        'vProduccionHistorial:salidaInsumos',
+        'vProduccionOrdenes:salidaInsumos',
 
         'vPrograma:productosTerminados',
         // 'vProgramaGranel:productosTerminados',
         // 'vProgramaLuxury:productosTerminados',
-        'vProduccionHistorial:productosTerminados',
+        'vProduccionOrdenes:productosTerminados',
 
         'vPrograma:salidaInsumosCompartidos',
     ]),
