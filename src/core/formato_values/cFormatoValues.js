@@ -118,7 +118,7 @@ const create = async (req, res) => {
             colaborador,
         } = req.body
 
-        // ----- CREAR ----- //
+        //--- CREAR ----- //
         const nuevo = await FormatoValue.create(
             {
                 codigo,
@@ -235,7 +235,7 @@ const update = async (req, res) => {
             colaborador,
         } = req.body
 
-        // ----- ACTUALIZAR ----- //
+        //--- ACTUALIZAR ----- //
         await FormatoValue.update(
             {
                 codigo,
@@ -355,7 +355,7 @@ const find = async (req, res) => {
             if (qry.cols) {
                 findProps.attributes = findProps.attributes.concat(qry.cols)
 
-                // ----- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
+                //--- AGREAGAR LOS REF QUE SI ESTÁN EN LA BD ----- //
                 if (qry.cols.includes('transaccion_item'))
                     findProps.include.push(includes.transaccion_item1)
                 if (qry.cols.includes('produccion_orden'))

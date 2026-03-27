@@ -79,7 +79,7 @@ const create = async (req, res) => {
             }
         }
 
-        // ----- CREAR ----- //
+        //--- CREAR ----- //
         const nuevo = await repository.create({
             tipo,
             nombre,
@@ -137,7 +137,7 @@ const update = async (req, res) => {
             }
         }
 
-        // ----- ACTUALIZAR ----- //
+        //--- ACTUALIZAR ----- //
         const updated = await repository.update(
             { id },
             {

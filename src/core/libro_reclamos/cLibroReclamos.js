@@ -1,6 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import config from '../../config.js'
-import { nodeMailer } from "#mail/nodeMailer.js"
+import { nodeMailer } from '#mail/nodeMailer.js'
 import { companyName, htmlLibroReclamos } from '#mail/templates.js'
 
 const repository = new Repository('LibroReclamos')
@@ -13,40 +13,68 @@ const create = async (req, res) => {
         }
 
         const {
-            nombres, apellidos, doc_tipo, doc_numero, correo, direccion, menor_edad,
-            pedido_codigo, monto, producto_descripcion,
-            tipo, resumen, detalle,
+            nombres,
+            apellidos,
+            doc_tipo,
+            doc_numero,
+            correo,
+            direccion,
+            menor_edad,
+            pedido_codigo,
+            monto,
+            producto_descripcion,
+            tipo,
+            resumen,
+            detalle,
             fecha_recepcion,
         } = req.body
 
         const codigo = `LR-${new Date().getFullYear()}-${Date.now()}`
-        const html = htmlLibroReclamos(nombres, apellidos, codigo, fecha_recepcion, tipo, resumen, detalle)
+        const html = htmlLibroReclamos(
+            nombres,
+            apellidos,
+            codigo,
+            fecha_recepcion,
+            tipo,
+            resumen,
+            detalle,
+        )
 
-        // ----- GUARDAR ----- //
+        //--- GUARDAR ----- //
         await repository.create({
-            codigo, estado: 1, fecha_recepcion,
-            nombres, apellidos, doc_tipo, doc_numero, correo, direccion, menor_edad,
-            pedido_codigo, monto, producto_descripcion,
-            tipo, resumen, detalle,
+            codigo,
+            estado: 1,
+            fecha_recepcion,
+            nombres,
+            apellidos,
+            doc_tipo,
+            doc_numero,
+            correo,
+            direccion,
+            menor_edad,
+            pedido_codigo,
+            monto,
+            producto_descripcion,
+            tipo,
+            resumen,
+            detalle,
         })
 
-        // ----- ENVIAR CORREO ---- //
+        //--- ENVIAR CORREO ---- //
         const nodemailer = nodeMailer()
         const result = await nodemailer.sendMail({
             from: `${companyName} <${config.SOPORTE_EMAIL}>`,
             to: correo,
             subject: `Confirmación de registro Libro de reclamaciones - Código ${codigo}`,
-            html
+            html,
         })
-        
+
         if (result.error) {
-            return res.json({ code: 1, msg: "No se pudo enviar el correo", error: result.error });
-        }
-        else {
+            return res.json({ code: 1, msg: 'No se pudo enviar el correo', error: result.error })
+        } else {
             res.json({ code: 0 })
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

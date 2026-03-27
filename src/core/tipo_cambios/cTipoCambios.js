@@ -78,7 +78,7 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     } catch (error) {
@@ -125,7 +125,7 @@ const update = async (req, res) => {
 
         await transaction.commit()
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(id)
         res.json({ code: 0, data })
     } catch (error) {

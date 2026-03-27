@@ -63,7 +63,7 @@ const create = async (req, res) => {
             documentos,
         } = req.body
 
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
+        //--- VERIFY SI EXISTE NOMBRE ----- //
         if (doc_numero) {
             if (
                 (await repository.existe(
@@ -86,7 +86,7 @@ const create = async (req, res) => {
                 return
         }
 
-        // ----- CREAR ----- //
+        //--- CREAR ----- //
         const nuevo = await repository.create({
             tipo,
             doc_tipo,
@@ -139,7 +139,7 @@ const update = async (req, res) => {
             comes_from,
         } = req.body
 
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
+        //--- VERIFY SI EXISTE NOMBRE ----- //
         if (doc_numero) {
             if (
                 (await repository.existe(

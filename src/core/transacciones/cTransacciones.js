@@ -68,7 +68,7 @@ const create = async (req, res) => {
         const { colaborador, empresa } = req.user
         const body = req.body
 
-        // ----- CREAR ----- //
+        //--- CREAR ----- //
         const nuevo = await repository.create(
             {
                 ...body,
@@ -78,7 +78,7 @@ const create = async (req, res) => {
             transaction,
         )
 
-        // ----- GUARDAR ITEMS ----- //
+        //--- GUARDAR ITEMS ----- //
         const transaccion_items = body.transaccion_items.map((a, i) => ({
             ...a,
             transaccion: nuevo.id,
@@ -122,7 +122,7 @@ const create = async (req, res) => {
         await LoteRepo.createBulk(lotes, transaction)
         await KardexRepo.createBulk(kardexes, transaction)
 
-        // ----- ACTUALIZAR CANTIDAD ENTREGADA EN PEDIDO ----- //
+        //--- ACTUALIZAR CANTIDAD ENTREGADA EN PEDIDO ----- //
         if (body.tipo == 1 || body.tipo == 5) {
             if (body.socio_pedido) {
                 const cases = body.transaccion_items
@@ -180,7 +180,7 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     } catch (error) {

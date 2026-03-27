@@ -392,6 +392,14 @@ const sqls1 = {
         )`),
         'stock',
     ],
+    mrp_bom_line_articulo_stock: [
+        Sequelize.literal(`(
+            SELECT COALESCE(SUM(k.stock), 0)
+            FROM kardexes AS k
+            WHERE k.articulo = mrp_bom_lines.articulo AND k.is_lote_padre = TRUE
+        )`),
+        'mrp_bom_line_articulo_stock',
+    ],
     productos_terminados: [
         Sequelize.literal(`(
             SELECT COALESCE(SUM(k.cantidad), 0)

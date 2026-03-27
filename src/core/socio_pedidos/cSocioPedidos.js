@@ -101,7 +101,7 @@ const create = async (req, res) => {
 
         const etapas = [{ id: 1, fecha: dayjs() }]
 
-        // ----- GUARDAR ----- //
+        //--- GUARDAR ----- //
         const nuevo = await repository.create(
             {
                 ...body,
@@ -111,7 +111,7 @@ const create = async (req, res) => {
             transaction,
         )
 
-        // ----- GUARDAR ITEMS ----- //
+        //--- GUARDAR ITEMS ----- //
         const socio_pedido_items = body.socio_pedido_items.map((a, i) => ({
             ...a,
             socio_pedido: nuevo.id,
@@ -122,7 +122,7 @@ const create = async (req, res) => {
 
         await transaction.commit()
 
-        // ----- ENVIAR CORREO ----- //
+        //--- ENVIAR CORREO ----- //
         let send_email_err = null
         if (body.origin == 'ecommerce') {
             // console.log('Enviando correo')
@@ -148,7 +148,7 @@ const create = async (req, res) => {
             if (result.error) send_email_err = result.error
         }
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data, send_email_err })
     } catch (error) {

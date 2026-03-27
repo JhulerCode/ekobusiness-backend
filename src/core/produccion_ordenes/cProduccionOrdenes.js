@@ -1,3 +1,4 @@
+import sequelize from '#db/sequelize.js'
 import { Repository } from '#db/Repository.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
 import { formatDate } from '#shared/dayjs.js'
@@ -37,115 +38,97 @@ const findById = async (req, res) => {
         const { id } = req.params
         const qry = req.query.qry ? JSON.parse(req.query.qry) : null
 
-        const data = await repository.find({ id, ...qry })
+        const data = await repository.find({ id, ...qry }, true)
 
-        res.json({ code: 0, data })
+        res.json({
+            code: 0,
+            data: { ...data, produccion_orden_insumos: [], produccion_orden_pts: [] },
+        })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const create = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { colaborador, empresa } = req.user
-        const {
-            fecha,
-            articulo,
-            cantidad,
-            mrp_bom,
-            orden,
-            responsable,
+        const body = req.body
 
-            linea,
-            maquina,
-            maquina_info,
+        //--- CREAR ----- //
+        const nuevo = await repository.create(
+            {
+                ...body,
+                empresa,
+                createdBy: colaborador,
+            },
+            transaction,
+        )
 
-            observacion,
-            estado,
-
-            articulo_info,
-        } = req.body
-
-        // ----- CREAR ----- //
-        const nuevo = await repository.create({
-            fecha,
-            articulo,
-            cantidad,
-            mrp_bom,
-            orden,
-            responsable,
-
-            linea,
-            maquina,
-            maquina_info,
-
-            observacion,
-            estado,
-
-            articulo_info,
-            empresa,
-            createdBy: colaborador,
+        const produccion_orden_insumos = body.produccion_orden_insumos.map((a) => {
+            return {
+                ...a,
+                produccion_orden: nuevo.id,
+                empresa,
+                createdBy: colaborador,
+            }
         })
+        await KardexRep.createBulk(produccion_orden_insumos, transaction)
+
+        await transaction.commit()
 
         const data = await loadOne(nuevo.id)
 
         res.json({ code: 0, data })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
 
 const update = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const {
-            fecha,
-            articulo,
-            cantidad,
-            mrp_bom,
-            orden,
-            responsable,
-
-            linea,
-            maquina,
-            maquina_info,
-
-            observacion,
-            estado,
-
-            articulo_info,
-        } = req.body
+        const body = req.body
 
         //--- ACTUALIZAR ---//
         const updated = await repository.update(
             { id },
             {
-                fecha,
-                articulo,
-                cantidad,
-                mrp_bom,
-                orden,
-                responsable,
-
-                linea,
-                maquina,
-                maquina_info,
-
-                observacion,
-                estado,
-
-                articulo_info,
+                ...body,
                 updatedBy: colaborador,
             },
+            transaction,
         )
 
-        if (updated == false) return resUpdateFalse(res)
+        if (updated == false) {
+            await transaction.rollback()
+            return resUpdateFalse(res)
+        }
+
+        // const produccion_orden_insumos = body.produccion_orden_insumos.map((a) => {
+        //     return {
+        //         ...a,
+        //         produccion_orden: id,
+        //         empresa,
+        //         createdBy: colaborador,
+        //     }
+        // })
+        // await KardexRep.createBulk(produccion_orden_insumos, transaction)
+
+        await transaction.commit()
 
         const data = await loadOne(id)
 
         res.json({ code: 0, data })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -167,7 +150,7 @@ const abrirCerrar = async (req, res) => {
         const { colaborador } = req.user
         const { ids, estado } = req.body
 
-        // ----- ABRIR ----- //
+        //--- ABRIR ----- //
         const updated = await repository.update(
             { id: ids },
             {
@@ -197,7 +180,7 @@ const setInicio = async (req, res) => {
         const { id } = req.params
         const { inicio } = req.body
 
-        // ----- ABRIR ----- //
+        //--- ABRIR ----- //
         const updated = await repository.update(
             { id },
             {
@@ -220,7 +203,7 @@ const setFin = async (req, res) => {
         const { id } = req.params
         const { fin } = req.body
 
-        // ----- ABRIR ----- //
+        //--- ABRIR ----- //
         const updated = await repository.update(
             { id },
             {

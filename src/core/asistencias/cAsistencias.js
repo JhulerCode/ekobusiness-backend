@@ -46,7 +46,7 @@ const create = async (req, res) => {
         const { empresa } = req.user
         const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
 
-        // ----- CREAR ----- //
+        //--- CREAR ----- //
         const nuevo = await repository.create({
             colaborador,
             fecha_entrada,
@@ -70,7 +70,7 @@ const update = async (req, res) => {
         const { id } = req.params
         const { colaborador, fecha_entrada, fecha_salida, hora_entrada, hora_salida } = req.body
 
-        // ----- ACTUALIZAR -----//
+        //--- ACTUALIZAR -----//
         const updated = await repository.update(
             { id },
             {

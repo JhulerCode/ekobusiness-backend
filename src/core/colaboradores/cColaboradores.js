@@ -72,7 +72,7 @@ const create = async (req, res) => {
 
         let { usuario, contrasena } = req.body
 
-        // ----- VERIFY SI EXISTE NOMBRE ----- //
+        //--- VERIFY SI EXISTE NOMBRE ----- //
         if ((await repository.existe({ nombres, empresa }, res)) == true) return
 
         if (has_signin) {
@@ -83,7 +83,7 @@ const create = async (req, res) => {
             contrasena = null
         }
 
-        // ----- CREAR ----- //
+        //--- CREAR ----- //
         const nuevo = await repository.create({
             nombres,
             doc_tipo,
@@ -107,7 +107,7 @@ const create = async (req, res) => {
             createdBy: colaborador,
         })
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     } catch (error) {

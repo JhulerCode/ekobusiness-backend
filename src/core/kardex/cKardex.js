@@ -9,6 +9,7 @@ const repository = new Repository('Kardex')
 const ProduccionOrdenRep = new Repository('ProduccionOrden')
 const ArticuloRep = new Repository('Articulo')
 const RecetaInsumoRep = new Repository('RecetaInsumo')
+const LoteRepo = new Repository('Lote')
 
 const find = async (req, res) => {
     try {
@@ -17,7 +18,7 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const virtuals = ['tipo', 'fecha', 'fv']
+        const virtuals = ['tipo', 'fecha', 'fv', 'cantidad']
 
         virtuals.forEach((v) => {
             if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
@@ -36,7 +37,8 @@ const find = async (req, res) => {
             for (const a of data) {
                 //--- Datos del lote padre ---//
                 if (a.tipo) {
-                    a.cantidad *= a.tipo1.operacion
+                    // a.cantidad_real *= a.tipo1.operacion
+                    a.cantidad = Number(a.cantidad)
 
                     const loteFuente = a.is_lote_padre ? a : a.lote_padre1 || {}
 
@@ -86,77 +88,52 @@ const create = async (req, res) => {
     try {
         const { empresa } = req.user
         const { colaborador } = req.user
-        const {
-            tipo,
-            fecha,
-            articulo,
-            cantidad,
-            pu,
-            igv_afectacion,
-            igv_porcentaje,
-            moneda,
-            tipo_cambio,
-            lote,
-            fv,
-            is_lote_padre,
-            stock,
-            lote_padre,
-            observacion,
-            transaccion,
-            transaccion_item,
-            produccion_orden,
-            maquina,
-        } = req.body
+        const body = req.body
 
-        // ----- CREAR ---
+        //--- CREAR LOTES ---//
+        if (body.tipo == 4) {
+            const lote = await LoteRepo.create(
+                {
+                    ...body.lote1,
+                    stock: body.cantidad,
+                    empresa,
+                    createdBy: colaborador,
+                },
+                transaction,
+            )
+        }
+
+        //--- CREAR ---
         const nuevo = await repository.create(
             {
-                tipo,
-                fecha,
-                articulo,
-                cantidad,
-                pu,
-                igv_afectacion,
-                igv_porcentaje,
-                moneda,
-                tipo_cambio,
-                lote,
-                fv,
-                is_lote_padre,
-                stock,
-                lote_padre,
-                observacion,
-                transaccion,
-                transaccion_item,
-                produccion_orden,
-                maquina,
+                ...body,
                 empresa,
                 createdBy: colaborador,
             },
             transaction,
         )
 
-        const transaccion_tiposMap = arrayMap('kardex_operaciones')
-        const tipoInfo = transaccion_tiposMap[tipo]
+        //--- ACTUALIZAR STOCK ---//
+        if (body.tipo == 4) {
+        } else {
+            if (body.lote_id) {
+                const transaccion_tiposMap = arrayMap('kardex_operaciones')
+                const tipoInfo = transaccion_tiposMap[body.tipo]
+                const signo = tipoInfo.operacion == 1 ? '+' : '-'
+                const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${body.cantidad}`)
 
-        // ----- ACTUALIZAR STOCK ---
-        if (lote_padre) {
-            const signo = tipoInfo.operacion == 1 ? '+' : '-'
-            const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)
-
-            await repository.update({ id: lote_padre }, { stock }, transaction)
+                await LoteRepo.update({ id: body.lote_id }, { stock }, transaction)
+            }
         }
 
         await transaction.commit()
 
-        // ----- DEVOLVER ---
-        const incl = [2, 3, 5].includes(Number(tipo)) ? ['articulo1', 'lote_padre1'] : []
-        const data = await repository.find({ id: nuevo.id, incl }, true)
+        //--- DEVOLVER ---
+        // const incl = [2, 3, 5].includes(Number(body.tipo)) ? ['articulo1', 'lote1'] : []
+        const data = await repository.find({ id: nuevo.id }, true)
 
         if (data) {
-            data.cantidad = tipoInfo.operacion * data.cantidad
-
-            if (tipo == 4) {
+            if (body.tipo == 4) {
                 const cuarentena_productos_estadosMap = arrayMap('cuarentena_productos_estados')
                 data.producto_estado = data.is_lote_padre ? 2 : 1
                 data.producto_estado1 = cuarentena_productos_estadosMap[data.producto_estado]
@@ -175,50 +152,12 @@ const update = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const {
-            tipo,
-            fecha,
-            articulo,
-            cantidad,
-            pu,
-            igv_afectacion,
-            igv_porcentaje,
-            moneda,
-            tipo_cambio,
-            lote,
-            fv,
-            is_lote_padre,
-            stock,
-            lote_padre,
-            observacion,
-            transaccion,
-            transaccion_item,
-            produccion_orden,
-            maquina,
-        } = req.body
+        const body = req.body
 
         const updated = await repository.update(
             { id },
             {
-                tipo,
-                fecha,
-                articulo,
-                cantidad,
-                pu,
-                igv_afectacion,
-                igv_porcentaje,
-                moneda,
-                tipo_cambio,
-                lote,
-                fv,
-                is_lote_padre,
-                stock,
-                lote_padre,
-                observacion,
-                transaccion,
-                transaccion_item,
-                produccion_orden,
-                maquina,
+                ...body,
                 updatedBy: colaborador,
             },
         )
@@ -238,19 +177,23 @@ const delet = async (req, res) => {
 
     try {
         const { id } = req.params
-        const { tipo, lote_padre, cantidad } = req.body
+        const { tipo, lote_id, cantidad } = req.body
 
-        // ----- ELIMINAR ---
+        //--- ELIMINAR ---
         if ((await repository.delete({ id }, transaction)) == false) return
 
-        // ----- ACTUALIZAR STOCK ---
-        if (lote_padre) {
-            const transaccion_tiposMap = arrayMap('kardex_operaciones')
-            const tipoInfo = transaccion_tiposMap[tipo]
-            const signo = tipoInfo.operacion == 1 ? '-' : '+'
-            const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)
+        if (tipo == 4) {
+            await LoteRepo.delete({ id: lote_id }, transaction)
+        } else {
+            //--- ACTUALIZAR STOCK ---
+            if (lote_id) {
+                const transaccion_tiposMap = arrayMap('kardex_operaciones')
+                const tipoInfo = transaccion_tiposMap[tipo]
+                const signo = tipoInfo.operacion == 1 ? '-' : '+'
+                const stock = sequelize.literal(`COALESCE(stock, 0) ${signo} ${cantidad}`)
 
-            await repository.update({ id: lote_padre }, { stock }, transaction)
+                await LoteRepo.update({ id: lote_id }, { stock }, transaction)
+            }
         }
 
         await transaction.commit()

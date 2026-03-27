@@ -61,7 +61,7 @@ const create = async (req, res) => {
             createdBy: colaborador,
         })
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(nuevo.id)
         res.json({ code: 0, data })
     } catch (error) {
@@ -93,7 +93,7 @@ const update = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        // ----- DEVOLVER ----- //
+        //--- DEVOLVER ----- //
         const data = await loadOne(id)
         res.json({ code: 0, data })
     } catch (error) {

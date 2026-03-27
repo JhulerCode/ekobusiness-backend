@@ -1,7 +1,7 @@
 import { Repository } from '#db/Repository.js'
 import config from '../../config.js'
-import { minioPutObject } from "#infrastructure/minioClient.js"
-import { nodeMailer } from "#mail/nodeMailer.js"
+import { minioPutObject } from '#infrastructure/minioClient.js'
+import { nodeMailer } from '#mail/nodeMailer.js'
 // import { Resend } from 'resend'
 import { companyName, htmlArco } from '#mail/templates.js'
 
@@ -15,10 +15,20 @@ const create = async (req, res) => {
         }
 
         const {
-            nombres, apellidos, doc_tipo, doc_numero, email, domicilio,
-            rep_nombres, rep_apellidos, rep_doc_tipo, rep_doc_numero,
-            tipo, detalle,
-            captcha, fecha_recepcion,
+            nombres,
+            apellidos,
+            doc_tipo,
+            doc_numero,
+            email,
+            domicilio,
+            rep_nombres,
+            rep_apellidos,
+            rep_doc_tipo,
+            rep_doc_numero,
+            tipo,
+            detalle,
+            captcha,
+            fecha_recepcion,
         } = req.body
 
         const secretKey = config.RECAPTCHA_PRIVATE_KEY
@@ -26,7 +36,7 @@ const create = async (req, res) => {
         // console.log(archivos)
         // throw error
 
-        // ----- VERIFY EL CAPTCHA ----- //
+        //--- VERIFY EL CAPTCHA ----- //
         const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -36,7 +46,7 @@ const create = async (req, res) => {
         const data = await response.json()
 
         if (data.success) {
-            // ----- SUBIR DOCUMENTOS ---- //
+            //--- SUBIR DOCUMENTOS ---- //
             let doc_file, rep_doc_file, extras_doc
             if (archivos.doc_file) doc_file = await minioPutObject(archivos.doc_file[0])
             if (archivos.rep_doc_file) rep_doc_file = await minioPutObject(archivos.rep_doc_file[0])
@@ -45,22 +55,35 @@ const create = async (req, res) => {
             const codigo = `ARCO-${new Date().getFullYear()}-${Date.now()}`
             const html = htmlArco(nombres, apellidos, codigo, fecha_recepcion, tipo, email)
 
-            // ----- GUARDAR ----- //
+            //--- GUARDAR ----- //
             await repository.create({
-                codigo, estado: 1, fecha_recepcion,
-                nombres, apellidos, doc_tipo, doc_numero, email, domicilio,
-                rep_nombres, rep_apellidos, rep_doc_tipo, rep_doc_numero,
-                tipo, detalle,
-                doc_file, rep_doc_file, extras_doc,
+                codigo,
+                estado: 1,
+                fecha_recepcion,
+                nombres,
+                apellidos,
+                doc_tipo,
+                doc_numero,
+                email,
+                domicilio,
+                rep_nombres,
+                rep_apellidos,
+                rep_doc_tipo,
+                rep_doc_numero,
+                tipo,
+                detalle,
+                doc_file,
+                rep_doc_file,
+                extras_doc,
             })
 
-            // ----- ENVIAR CORREO ---- //
+            //--- ENVIAR CORREO ---- //
             const nodemailer = nodeMailer()
             const result = await nodemailer.sendMail({
                 from: `${companyName} <${config.SOPORTE_EMAIL}>`,
                 to: email,
                 subject: `Confirmación de su solicitud de Derechos ARCO – Código ${codigo}`,
-                html
+                html,
             })
 
             // const resend = new Resend(config.RESEND_API_KEY)
@@ -72,16 +95,18 @@ const create = async (req, res) => {
             // })
 
             if (result.error) {
-                return res.json({ code: 2, msg: "No se pudo enviar el correo", error: result.error });
-            }
-            else {
+                return res.json({
+                    code: 2,
+                    msg: 'No se pudo enviar el correo',
+                    error: result.error,
+                })
+            } else {
                 res.json({ code: 0 })
             }
         } else {
             res.json({ code: 1, error: data['error-codes'] })
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

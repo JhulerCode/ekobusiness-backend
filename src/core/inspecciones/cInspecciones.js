@@ -70,7 +70,7 @@ const update = async (req, res) => {
         const { id } = req.params
         const { fecha, socio, puntuacion, puntuacion_maxima, correcciones } = req.body
 
-        // ----- ACTUALIZAR ----- //
+        //--- ACTUALIZAR ----- //
         const updated = await repository.update(
             { id },
             {

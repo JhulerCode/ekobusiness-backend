@@ -34,6 +34,12 @@ export const Kardex = sequelize.define('kardexes', {
 
     articulo: { type: DataTypes.STRING },
     cantidad: { type: DataTypes.DECIMAL(10, 2) },
+    cantidad1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this.getDataValue('cantidad') * this.tipo1.operacion
+        },
+    },
 
     lote_id: { type: DataTypes.STRING }, // required //linked
     origen: { type: DataTypes.STRING }, // required //linked

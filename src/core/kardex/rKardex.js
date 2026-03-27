@@ -70,14 +70,14 @@ router.delete(
     controller.delet,
 )
 
-///// ----- PARA PRODUCCION PRODUCTOS ----- /////
+/////--- PARA PRODUCCION PRODUCTOS ----- /////
 router.post(
     '/produccion-productos-terminados',
     verifyPermiso(['vPtsIngresos:listar']),
     controller.ingresarProduccionProductos,
 )
 
-///// ----- PARA PRODUCCIÓN ----- /////
+/////--- PARA PRODUCCIÓN ----- /////
 router.get('/produccion/:linea&:f1&:f2', controller.findReporteProduccion)
 
 //--- Inventario hasta fecha ---///
