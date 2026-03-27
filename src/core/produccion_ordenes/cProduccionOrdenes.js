@@ -181,6 +181,7 @@ const abrirCerrar = async (req, res) => {
         const estados = arrayMap('produccion_orden_estados')
         const data = {
             id: ids,
+            estado,
             estado1: estados[estado],
         }
 
