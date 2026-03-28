@@ -209,6 +209,11 @@ const sistemaData = {
         { id: 'POR VENCER', nombre: 'POR VENCER', color: 'amarillo' },
         { id: 'VENCIDO', nombre: 'VENCIDO', color: 'rojo' },
     ],
+
+    pt_cuarentena_estados: [
+        { id: true, nombre: 'EN CUARENTENA', color: 'amarillo' },
+        { id: false, nombre: 'APROBADO', color: 'verde' },
+    ],
 }
 
 function arrayMap(array) {

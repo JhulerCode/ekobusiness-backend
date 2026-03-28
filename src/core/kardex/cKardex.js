@@ -18,7 +18,7 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const virtuals = ['tipo', 'fecha', 'fv', 'cantidad']
+        const virtuals = ['tipo', 'fecha', 'fv', 'cantidad', 'pt_cuarentena']
 
         virtuals.forEach((v) => {
             if (qry?.cols?.includes(v)) qry.cols.push(`${v}1`)
@@ -211,15 +211,15 @@ const ingresarProduccionProductos = async (req, res) => {
 
     try {
         const { colaborador } = req.user
-        const { fecha, transaccion_items } = req.body
+        const { fecha, produccion_productos_pts_reales } = req.body
 
         const produccion_ordenes_ids = []
-        for (const a of transaccion_items) {
+        for (const a of produccion_productos_pts_reales) {
             const send = {
                 fecha: fecha,
+                tipo: 4,
                 cantidad: a.cantidad_real,
-                is_lote_padre: true,
-                stock: a.cantidad_real,
+                pt_cuarentena: false,
                 updatedBy: colaborador,
             }
             await repository.update({ id: a.id }, send, transaction)

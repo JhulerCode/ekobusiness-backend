@@ -13,6 +13,7 @@ import { arrayMap } from '#store/system.js'
 
 const systemMaps = {
     kardex_operaciones: arrayMap('kardex_operaciones'),
+    pt_cuarentena_estados: arrayMap('pt_cuarentena_estados'),
 }
 
 export const Kardex = sequelize.define('kardexes', {
@@ -31,19 +32,37 @@ export const Kardex = sequelize.define('kardexes', {
             return formatDate(this.getDataValue('fecha'))
         },
     },
-
     articulo: { type: DataTypes.STRING },
     cantidad: { type: DataTypes.DECIMAL(10, 2) },
     cantidad1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return this.getDataValue('cantidad') * this.tipo1.operacion
+            const tipoInfo = systemMaps.kardex_operaciones[this.getDataValue('tipo')]
+            return this.getDataValue('cantidad') * tipoInfo?.operacion
         },
     },
 
-    lote_id: { type: DataTypes.STRING }, // required //linked
-    origen: { type: DataTypes.STRING }, // required //linked
-    destino: { type: DataTypes.STRING }, // required //linked
+    lote_id: { type: DataTypes.STRING },
+    origen: { type: DataTypes.STRING },
+    destino: { type: DataTypes.STRING },
+
+    observacion: { type: DataTypes.TEXT },
+    transaccion: { type: DataTypes.STRING }, //linked
+    transaccion_item: { type: DataTypes.STRING }, //linked
+
+    produccion_orden: { type: DataTypes.STRING }, //linked
+    maquina: { type: DataTypes.STRING }, // linked
+    pt_cuarentena: { type: DataTypes.BOOLEAN },
+    pt_cuarentena1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return systemMaps.pt_cuarentena_estados[this.getDataValue('pt_cuarentena')]
+        },
+    },
+
+    empresa: { type: DataTypes.STRING },
+    createdBy: { type: DataTypes.STRING },
+    updatedBy: { type: DataTypes.STRING },
 
     /* --- DEPRECADO: MANTENIENDO PARA MIGRACIÓN --- */
     pu: { type: DataTypes.DOUBLE }, //required
@@ -62,17 +81,6 @@ export const Kardex = sequelize.define('kardexes', {
     is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked
     stock: { type: DataTypes.DECIMAL(10, 2) }, //required
     lote_padre: { type: DataTypes.STRING }, //required //linked
-    /* --- DEPRECADO: MANTENIENDO PARA MIGRACIÓN --- */
-
-    observacion: { type: DataTypes.TEXT },
-    transaccion: { type: DataTypes.STRING }, //linked
-    transaccion_item: { type: DataTypes.STRING }, //linked
-    produccion_orden: { type: DataTypes.STRING }, //linked
-    maquina: { type: DataTypes.STRING }, // linked
-
-    empresa: { type: DataTypes.STRING },
-    createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING },
 
     lote_fv_stock: {
         type: DataTypes.VIRTUAL,
@@ -90,6 +98,7 @@ export const Kardex = sequelize.define('kardexes', {
             }
         },
     },
+    /* --- DEPRECADO: MANTENIENDO PARA MIGRACIÓN --- */
 })
 
 Articulo.hasMany(Kardex, { foreignKey: 'articulo', as: 'kardexes', onDelete: 'RESTRICT' })

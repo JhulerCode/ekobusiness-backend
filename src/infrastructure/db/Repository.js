@@ -170,6 +170,7 @@ const include1 = {
             'id',
             'codigo',
             'fv',
+            'fv1',
             'vu',
             'igv_afectacion',
             'igv_porcentaje',

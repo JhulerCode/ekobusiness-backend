@@ -23,6 +23,8 @@ export const Empresa = sequelize.define('empresas', {
     whatsapp_ventas: { type: DataTypes.STRING },
     whatsapp_ventas_url: { type: DataTypes.STRING },
 
+    produccion_pt_cuarentena: { type: DataTypes.BOOLEAN },
+
     subdominio: { type: DataTypes.STRING },
     modulos: { type: DataTypes.JSON },
     updatedBy: { type: DataTypes.STRING },

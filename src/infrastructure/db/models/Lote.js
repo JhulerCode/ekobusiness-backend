@@ -3,11 +3,18 @@ import sequelize from '../sequelize.js'
 import { Articulo } from './Articulo.js'
 import { Colaborador } from './Colaborador.js'
 import { TransaccionItem } from './Transaccion.js'
+import { formatDate } from '#shared/dayjs.js'
 
 export const Lote = sequelize.define('lotes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     codigo: { type: DataTypes.STRING },
     fv: { type: DataTypes.DATEONLY },
+    fv1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fv'))
+        },
+    },
     vu: { type: DataTypes.DOUBLE },
     igv_afectacion: { type: DataTypes.STRING },
     igv_porcentaje: { type: DataTypes.DOUBLE },
@@ -28,9 +35,7 @@ export const Lote = sequelize.define('lotes', {
             const stock = this.stock
 
             if (fv) {
-                const [año, mes, dia] = fv.split('-')
-                const fecha_vencimiento = `${dia}-${mes}-${año}`
-                return `${codigo} | ${fecha_vencimiento} | ${stock}`
+                return `${codigo} | ${formatDate(fv)} | ${stock}`
             } else {
                 return `${codigo} | ${stock}`
             }
@@ -43,9 +48,7 @@ export const Lote = sequelize.define('lotes', {
             const fv = this.fv
 
             if (fv) {
-                const [año, mes, dia] = fv.split('-')
-                const fecha_vencimiento = `${dia}-${mes}-${año}`
-                return `${codigo} | ${fecha_vencimiento}`
+                return `${codigo} | ${formatDate(fv)}`
             } else {
                 return `${codigo}`
             }
