@@ -149,25 +149,62 @@ const create = async (req, res) => {
 }
 
 const update = async (req, res) => {
+    const transaction = await sequelize.transaction()
+
     try {
         const { colaborador } = req.user
         const { id } = req.params
         const body = req.body
 
-        const updated = await repository.update(
-            { id },
-            {
-                ...body,
-                updatedBy: colaborador,
-            },
-        )
+        const currentRecord = await repository.find({ id }, true)
+        if (!currentRecord) {
+            await transaction.rollback()
+            return res.status(404).json({ code: -1, msg: 'Registro no encontrado' })
+        }
 
-        if (updated == false) return resUpdateFalse(res)
+        const diff = repository.getDiff(currentRecord, body)
+        if (diff) {
+            diff.updatedBy = colaborador
+            await repository.update({ id }, diff, transaction)
+        }
+
+        if (body.tipo == 2) {
+            const oldLoteId = currentRecord.lote_id
+            const oldCantidad = Number(currentRecord.cantidad)
+            const newLoteId = body.lote_id
+            const newCantidad = Number(body.cantidad)
+
+            if (oldLoteId !== newLoteId) {
+                // Devolvemos al lote antiguo
+                const stockOld = sequelize.literal(`COALESCE(stock, 0) + ${oldCantidad}`)
+                await LoteRepo.update({ id: oldLoteId }, { stock: stockOld }, transaction)
+
+                // Restamos del nuevo lote
+                const stockNew = sequelize.literal(`COALESCE(stock, 0) - ${newCantidad}`)
+                await LoteRepo.update({ id: newLoteId }, { stock: stockNew }, transaction)
+            } else if (oldCantidad !== newCantidad) {
+                // Ajustamos la diferencia (Salida -> restamos el incremento)
+                const diffCant = newCantidad - oldCantidad
+                const stock = sequelize.literal(`COALESCE(stock, 0) - ${diffCant}`)
+                await LoteRepo.update({ id: oldLoteId }, { stock }, transaction)
+            }
+        }
+        if (body.tipo == 4) {
+            await LoteRepo.update(
+                { id: body.lote_id },
+                { codigo: body.lote1.codigo, fv: body.lote1.fv, stock: body.cantidad },
+                transaction,
+            )
+        }
+
+        await transaction.commit()
 
         const data = await repository.find({ id })
 
         res.json({ code: 0, data })
     } catch (error) {
+        await transaction.rollback()
+
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }
@@ -182,9 +219,7 @@ const delet = async (req, res) => {
         //--- ELIMINAR ---
         if ((await repository.delete({ id }, transaction)) == false) return
 
-        if (tipo == 4) {
-            await LoteRepo.delete({ id: lote_id }, transaction)
-        } else {
+        if (tipo == 2) {
             //--- ACTUALIZAR STOCK ---
             if (lote_id) {
                 const transaccion_tiposMap = arrayMap('kardex_operaciones')
@@ -194,6 +229,10 @@ const delet = async (req, res) => {
 
                 await LoteRepo.update({ id: lote_id }, { stock }, transaction)
             }
+        }
+
+        if (tipo == 4) {
+            await LoteRepo.delete({ id: lote_id }, transaction)
         }
 
         await transaction.commit()
@@ -211,22 +250,55 @@ const ingresarProduccionProductos = async (req, res) => {
 
     try {
         const { colaborador } = req.user
-        const { fecha, produccion_productos_pts_reales } = req.body
+        const { fecha, produccion_ordenes_pts_reales } = req.body
 
-        const produccion_ordenes_ids = []
-        for (const a of produccion_productos_pts_reales) {
-            const send = {
-                fecha: fecha,
-                tipo: 4,
-                cantidad: a.cantidad_real,
-                pt_cuarentena: false,
-                updatedBy: colaborador,
-            }
-            await repository.update({ id: a.id }, send, transaction)
-
-            produccion_ordenes_ids.push(a.produccion_orden1.id)
+        if (!produccion_ordenes_pts_reales || produccion_ordenes_pts_reales.length === 0) {
+            await transaction.rollback()
+            return res.json({ code: 0, msg: 'No hay datos para procesar' })
         }
 
+        const ids = produccion_ordenes_pts_reales.map((a) => a.id)
+        const loteIds = produccion_ordenes_pts_reales.map((a) => a.lote_id)
+        const produccion_ordenes_ids = [
+            ...new Set(produccion_ordenes_pts_reales.map((a) => a.produccion_orden1.id)),
+        ]
+
+        //--- 1. Actualizar Kardex con CASE (Optimizado) ---
+        let caseCantidad = 'CASE id '
+        for (const a of produccion_ordenes_pts_reales) {
+            caseCantidad += `WHEN ${sequelize.escape(a.id)} THEN ${Number(a.cantidad_real)} `
+        }
+        caseCantidad += 'END'
+
+        await repository.update(
+            { id: ids },
+            {
+                cantidad: sequelize.literal(caseCantidad),
+                fecha: fecha,
+                // tipo: 4,
+                pt_cuarentena: false,
+                updatedBy: colaborador,
+            },
+            transaction,
+        )
+
+        //--- 2. Actualizar stock de los Lotas con CASE (Optimizado) ---
+        let caseStock = 'CASE id '
+        for (const a of produccion_ordenes_pts_reales) {
+            caseStock += `WHEN ${sequelize.escape(a.lote_id)} THEN ${Number(a.cantidad_real)} `
+        }
+        caseStock += 'END'
+
+        await LoteRepo.update(
+            { id: loteIds },
+            {
+                stock: sequelize.literal(caseStock),
+                updatedBy: colaborador,
+            },
+            transaction,
+        )
+
+        //--- 3. Actualizar estado de las ordenes ---
         await ProduccionOrdenRep.update({ id: produccion_ordenes_ids }, { estado: 2 }, transaction)
 
         await transaction.commit()
