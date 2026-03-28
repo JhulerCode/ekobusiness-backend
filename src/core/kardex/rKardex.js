@@ -27,14 +27,10 @@ router.post(
         'vProductosTerminados:ajusteStock',
 
         'vPrograma:salidaInsumos',
-        // 'vProgramaGranel:salidaInsumos',
-        // 'vProgramaLuxury:salidaInsumos',
         'vProduccionOrdenes:salidaInsumos',
 
         'vPrograma:productosTerminados',
-        // 'vProgramaGranel:productosTerminados',
-        // 'vProgramaLuxury:productosTerminados',
-        // 'vProduccionOrdenes:productosTerminados',
+        'vProduccionOrdenes:productosTerminados',
 
         'vPrograma:salidaInsumosCompartidos',
     ]),

@@ -37,7 +37,6 @@ const find = async (req, res) => {
             for (const a of data) {
                 //--- Datos del lote padre ---//
                 if (a.tipo) {
-                    // a.cantidad_real *= a.tipo1.operacion
                     a.cantidad = Number(a.cantidad)
 
                     const loteFuente = a.is_lote_padre ? a : a.lote_padre1 || {}
@@ -107,6 +106,7 @@ const create = async (req, res) => {
         const nuevo = await repository.create(
             {
                 ...body,
+                lote_id: body.lote_id || body.lote1.id,
                 empresa,
                 createdBy: colaborador,
             },
@@ -129,8 +129,8 @@ const create = async (req, res) => {
         await transaction.commit()
 
         //--- DEVOLVER ---
-        // const incl = [2, 3, 5].includes(Number(body.tipo)) ? ['articulo1', 'lote1'] : []
-        const data = await repository.find({ id: nuevo.id }, true)
+        const incl = ['articulo1', 'lote1']
+        const data = await repository.find({ id: nuevo.id, incl }, true)
 
         if (data) {
             if (body.tipo == 4) {

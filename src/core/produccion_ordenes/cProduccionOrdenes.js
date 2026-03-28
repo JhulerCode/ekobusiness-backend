@@ -66,15 +66,15 @@ const create = async (req, res) => {
             transaction,
         )
 
-        const produccion_orden_insumos = body.produccion_orden_insumos.map((a) => {
-            return {
-                ...a,
-                produccion_orden: nuevo.id,
-                empresa,
-                createdBy: colaborador,
-            }
-        })
-        await KardexRep.createBulk(produccion_orden_insumos, transaction)
+        // const produccion_orden_insumos = body.produccion_orden_insumos.map((a) => {
+        //     return {
+        //         ...a,
+        //         produccion_orden: nuevo.id,
+        //         empresa,
+        //         createdBy: colaborador,
+        //     }
+        // })
+        // await KardexRep.createBulk(produccion_orden_insumos, transaction)
 
         await transaction.commit()
 
@@ -92,34 +92,38 @@ const update = async (req, res) => {
     const transaction = await sequelize.transaction()
 
     try {
-        const { colaborador } = req.user
+        const { colaborador, empresa } = req.user
         const { id } = req.params
         const body = req.body
 
-        //--- ACTUALIZAR ---//
-        const updated = await repository.update(
-            { id },
-            {
-                ...body,
-                updatedBy: colaborador,
-            },
-            transaction,
-        )
-
-        if (updated == false) {
+        //--- Obtener el artículo actual ---//
+        const currentRecord = await repository.find({ id }, true)
+        if (!currentRecord) {
             await transaction.rollback()
-            return resUpdateFalse(res)
+            return res.status(404).json({ code: -1, msg: 'Orden de producción no encontrada' })
         }
 
-        // const produccion_orden_insumos = body.produccion_orden_insumos.map((a) => {
-        //     return {
-        //         ...a,
-        //         produccion_orden: id,
-        //         empresa,
-        //         createdBy: colaborador,
-        //     }
-        // })
-        // await KardexRep.createBulk(produccion_orden_insumos, transaction)
+        //--- Detectar columnas modificadas ---//
+        const diff = repository.getDiff(currentRecord, body)
+        if (diff) {
+            diff.updatedBy = colaborador
+            await repository.update({ id }, diff, transaction)
+        }
+
+        //--- Si el articulo es diferente, eliminar los kardex y crear nuevos ---//
+        // if (diff.articulo) {
+        //     await KardexRep.delete({ produccion_orden: id }, transaction)
+
+        //     const produccion_orden_insumos = body.produccion_orden_insumos.map((a) => {
+        //         return {
+        //             ...a,
+        //             produccion_orden: id,
+        //             empresa,
+        //             createdBy: colaborador,
+        //         }
+        //     })
+        //     await KardexRep.createBulk(produccion_orden_insumos, transaction)
+        // }
 
         await transaction.commit()
 

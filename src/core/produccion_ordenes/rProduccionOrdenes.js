@@ -4,7 +4,15 @@ import verifyPermiso from '#http/middlewares/verifyPermiso.js'
 
 const router = Router()
 
-router.get('/', verifyPermiso(['vPrograma:listar', 'vProduccionOrdenes:listar']), controller.find)
+router.get(
+    '/',
+    verifyPermiso([
+        'vPrograma:listar',
+        'vProduccionOrdenes:listar',
+        'vProduccionOrdenes:listar:responsable',
+    ]),
+    controller.find,
+)
 
 router.post('/', verifyPermiso(['vPrograma:crear', 'vProduccionOrdenes:crear']), controller.create)
 

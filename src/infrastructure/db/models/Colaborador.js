@@ -73,7 +73,7 @@ export const Colaborador = sequelize.define('colaboradores', {
     theme: { type: DataTypes.STRING, defaultValue: '1' },
     color: { type: DataTypes.STRING, defaultValue: '#2492c2' },
     format_date: { type: DataTypes.STRING, defaultValue: 'DD-MM-YYYY' },
-    menu_visible: { type: DataTypes.BOOLEAN, defaultValue: true },
+    menu_visible: { type: DataTypes.BOOLEAN, defaultValue: false },
 
     tables: { type: DataTypes.JSON, defaultValue: {} },
     avances: { type: DataTypes.JSON, defaultValue: {} },
