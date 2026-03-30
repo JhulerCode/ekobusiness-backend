@@ -14,7 +14,14 @@ const find = async (req, res) => {
 
         qry.fltr.empresa = { op: 'Es', val: empresa }
 
-        const virtuals = ['fecha', 'estado', 'estado_calidad_revisado', 'estado_cf_ppc']
+        const virtuals = [
+            'fecha',
+            'estado',
+            'estado_calidad_revisado',
+            'estado_cf_ppc',
+            'inicio',
+            'fin',
+        ]
 
         virtuals.forEach((v) => {
             if (qry?.cols?.includes(v) || qry?.cols?.includes(v.replace('estado_', '')))
@@ -184,12 +191,18 @@ const inicioFin = async (req, res) => {
         const { id } = req.params
         const { inicio, fin } = req.body
 
-        let send = { id, updatedBy: colaborador }
-        if (inicio) send.inicio = inicio
-        if (fin) send.fin = fin
+        const data = { id, updatedBy: colaborador }
+        if (inicio) {
+            data.inicio = inicio
+            data.inicio1 = formatDate(inicio, 'HH:mm:ss')
+        }
+        if (fin) {
+            data.fin = fin
+            data.fin1 = formatDate(fin, 'HH:mm:ss')
+        }
 
         //--- ABRIR ----- //
-        const updated = await repository.update({ id }, send)
+        const updated = await repository.update({ id }, data)
 
         if (updated == false) return resUpdateFalse(res)
 

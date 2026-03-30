@@ -29,7 +29,19 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     responsable: { type: DataTypes.STRING },
 
     inicio: { type: DataTypes.DATE },
+    inicio1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('inicio'), 'HH:mm:ss')
+        },
+    },
     fin: { type: DataTypes.DATE },
+    fin1: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return formatDate(this.getDataValue('fin'), 'HH:mm:ss')
+        },
+    },
 
     linea: { type: DataTypes.STRING },
     maquina: { type: DataTypes.STRING }, //required //linked
