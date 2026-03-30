@@ -29,7 +29,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     },
 
     codigo: { type: DataTypes.STRING }, //required
-    is_maquila: { type: DataTypes.BOOLEAN }, //required
+    is_maquila: { type: DataTypes.BOOLEAN, defaultValue: false }, //required
 
     socio: { type: DataTypes.STRING }, //required //linked
     socio_datos: { type: DataTypes.JSON },

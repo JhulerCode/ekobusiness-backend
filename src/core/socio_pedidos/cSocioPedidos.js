@@ -6,7 +6,7 @@ import { resUpdateFalse } from '#http/helpers.js'
 import config from '../../config.js'
 import { nodeMailer } from '#mail/nodeMailer.js'
 import { htmlConfirmacionCompra } from '#infrastructure/mail/templates.js'
-import dayjs, { formatDate } from '#shared/dayjs.js'
+import dayjs from '#shared/dayjs.js'
 
 const repository = new Repository('SocioPedido')
 const SocioPedidoItemRepo = new Repository('SocioPedidoItem')
@@ -57,8 +57,6 @@ const findById = async (req, res) => {
         const data = await repository.find({ id, ...qry }, true)
 
         if (data) {
-            const documentos_identidadMap = arrayMap('documentos_identidad')
-
             if (data.socio_pedido_items) data.socio_pedido_items.sort((a, b) => a.orden - b.orden)
         }
 
@@ -76,27 +74,13 @@ const create = async (req, res) => {
         const { empresa } = req.user
         const body = req.body
 
-        let colaborador,
-            is_maquila = false
+        let colaborador
+        // is_maquila = false
 
         if (body.origin == 'ecommerce') {
             if (!body.socio) body.socio = req.user.id
         } else {
             colaborador = req.user.colaborador
-
-            //--- PARA MAQUILA ---//
-            const qry = {
-                fltr: {
-                    socio: { op: 'Es', val: body.socio },
-                    'mrp_bom1.articulo': {
-                        op: 'Es',
-                        val: body.socio_pedido_items.map((a) => a.articulo),
-                    },
-                },
-                incl: ['mrp_bom1'],
-            }
-            const mrp_bom_socios = await MrpBomSocioRepo.find(qry, true)
-            if (mrp_bom_socios.length > 0) is_maquila = true
         }
 
         const etapas = [{ id: 1, fecha: dayjs() }]
