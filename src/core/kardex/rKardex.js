@@ -26,13 +26,9 @@ router.post(
         'vArticulos:ajusteStock',
         'vProductosTerminados:ajusteStock',
 
-        'vPrograma:salidaInsumos',
         'vProduccionOrdenes:salidaInsumos',
-
-        'vPrograma:productosTerminados',
         'vProduccionOrdenes:productosTerminados',
-
-        'vPrograma:salidaInsumosCompartidos',
+        'vProduccionOrdenes:salidaInsumosCompartidos',
     ]),
     controller.create,
 )
