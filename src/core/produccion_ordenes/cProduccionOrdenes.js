@@ -178,47 +178,22 @@ const abrirCerrar = async (req, res) => {
     }
 }
 
-const setInicio = async (req, res) => {
+const inicioFin = async (req, res) => {
     try {
         const { colaborador } = req.user
         const { id } = req.params
-        const { inicio } = req.body
+        const { inicio, fin } = req.body
+
+        let send = { id, updatedBy: colaborador }
+        if (inicio) send.inicio = inicio
+        if (fin) send.fin = fin
 
         //--- ABRIR ----- //
-        const updated = await repository.update(
-            { id },
-            {
-                inicio,
-                updatedBy: colaborador,
-            },
-        )
+        const updated = await repository.update({ id }, send)
 
         if (updated == false) return resUpdateFalse(res)
 
-        res.json({ code: 0 })
-    } catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
-const setFin = async (req, res) => {
-    try {
-        const { colaborador } = req.user
-        const { id } = req.params
-        const { fin } = req.body
-
-        //--- ABRIR ----- //
-        const updated = await repository.update(
-            { id },
-            {
-                fin,
-                updatedBy: colaborador,
-            },
-        )
-
-        if (updated == false) return resUpdateFalse(res)
-
-        res.json({ code: 0 })
+        res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
@@ -290,7 +265,6 @@ export default {
     update,
     delet,
     abrirCerrar,
-    setInicio,
-    setFin,
+    inicioFin,
     findTrazabilidad,
 }

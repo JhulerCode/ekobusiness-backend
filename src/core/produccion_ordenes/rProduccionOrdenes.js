@@ -41,9 +41,7 @@ router.patch(
     controller.abrirCerrar,
 )
 
-router.patch('/inicio/:id', controller.setInicio)
-
-router.patch('/fin/:id', controller.setFin)
+router.patch('/inicio-fin/:id', controller.inicioFin)
 
 router.delete(
     '/:id',
