@@ -60,9 +60,7 @@ const signin = async (req, res) => {
         const accessToken = jwt.sign(
             { id: colaborador.id, empresa: empresa.id },
             config.tokenMyApi,
-            {
-                expiresIn: '15s',
-            },
+            { expiresIn: '15m' },
         )
 
         const refreshToken = crypto.randomBytes(64).toString('hex')
@@ -107,9 +105,7 @@ const refresh = async (req, res) => {
         const accessToken = jwt.sign(
             { id: userId, empresa: userSession.empresa },
             config.tokenMyApi,
-            {
-                expiresIn: '15s',
-            },
+            { expiresIn: '15m' },
         )
 
         // Update session with new accessToken
