@@ -43,16 +43,6 @@ const findById = async (req, res) => {
 
         if (data) {
             if (data.transaccion_items) data.transaccion_items.sort((a, b) => a.orden - b.orden)
-
-            // for (const a of data.transaccion_items) {
-            //     if (a.lote_padre) {
-            //         // a.lotes = [...a.],
-            //         a.lotes = [{
-            //             id: a.lote_padre1.id,
-            //             lote_fv_stock: a.lote_padre1.lote + (a.lote_padre1.fv ? ` | ${a.lote_padre1.fv}` : '') + (` | ${a.stock}`)
-            //         }]
-            //     }
-            // }
         }
 
         res.json({ code: 0, data })

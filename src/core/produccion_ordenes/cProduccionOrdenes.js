@@ -212,55 +212,6 @@ const inicioFin = async (req, res) => {
     }
 }
 
-const findTrazabilidad = async (req, res) => {
-    try {
-        const { id } = req.params
-
-        // const data = await repository.find({ id, incl: ['articulo1', 'maquina1'] }, true)
-
-        const kardexes = await KardexRep.find(
-            {
-                cols: ['tipo', 'articulo', 'cantidad', 'lote', 'fv'],
-                incl: ['articulo1', 'lote_padre1'],
-                fltr: {
-                    produccion_orden: { op: 'Es', val: id },
-                },
-                ordr: [['articulo1', 'nombre', 'ASC']],
-            },
-            true,
-        )
-
-        const insumosMap = {}
-        const data = { productos_terminados: [] }
-
-        for (const a of kardexes) {
-            if (a.tipo == 2 || a.tipo == 3) {
-                const key = a.articulo + '-' + a.lote_padre
-
-                if (!insumosMap[key]) {
-                    insumosMap[key] = { ...a, cantidad: 0 }
-                }
-
-                if (a.tipo == 2) {
-                    insumosMap[key].cantidad += Number(a.cantidad)
-                } else if (a.tipo == 3) {
-                    insumosMap[key].cantidad -= Number(a.cantidad)
-                }
-            }
-
-            if (a.tipo == 4) {
-                data.productos_terminados.push(a)
-            }
-        }
-
-        data.insumos = Object.values(insumosMap)
-
-        res.json({ code: 0, data })
-    } catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
 //--- Helpers ---//
 async function loadOne(id) {
     const data = await repository.find(
@@ -279,5 +230,4 @@ export default {
     delet,
     abrirCerrar,
     inicioFin,
-    findTrazabilidad,
 }

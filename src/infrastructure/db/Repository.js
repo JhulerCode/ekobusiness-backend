@@ -312,18 +312,6 @@ const include1 = {
 }
 
 const sqls1 = {
-    // lote_padre_movimientos_cantidad1: [
-    //     Sequelize.literal(`(
-    //         SELECT SUM(
-    //             CASE ${sistemaData.kardex_operaciones.map(t => `WHEN lote_padre_items.tipo = ${t.id} THEN lote_padre_items.cantidad * ${t.operacion}`).join(' ')}
-    //             ELSE 0 END
-    //         )
-    //         FROM kardexes AS lote_padre_items
-    //         WHERE lote_padre_items.lote_padre = kardexes.id
-    //     )`),
-    //     'movimientos'
-    // ],
-
     articulo_movimientos_valorizado: [
         Sequelize.fn(
             'COALESCE',

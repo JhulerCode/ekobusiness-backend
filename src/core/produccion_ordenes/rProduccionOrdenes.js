@@ -49,10 +49,4 @@ router.delete(
     controller.delet,
 )
 
-router.get(
-    '/trazabilidad/:id',
-    verifyPermiso(['vProduccionOrdenes:trazabilidad', 'vPtsIngresos:trazabilidad']),
-    controller.findTrazabilidad,
-)
-
 export default router

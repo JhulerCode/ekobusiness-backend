@@ -113,19 +113,6 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
     updatedBy: { type: DataTypes.STRING },
-
-    // tipo: { type: DataTypes.SMALLINT }, //required //--- Eliminar ---//
-    // fecha: { type: DataTypes.DATEONLY }, //required //--- Eliminar ---//
-
-    // moneda: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
-    // tipo_cambio: { type: DataTypes.DOUBLE }, //required //--- Eliminar ---//
-
-    // is_lote_padre: { type: DataTypes.BOOLEAN }, //required //linked //--- Eliminar ---//
-    // stock: { type: DataTypes.DOUBLE }, //--- Eliminar ---//
-    // lote_padre: { type: DataTypes.STRING }, //required //linked //--- Eliminar ---//
-
-    // produccion_orden: { type: DataTypes.STRING }, //linked //--- Eliminar ---//
-    // maquina: { type: DataTypes.STRING }, //--- Eliminar ---//
 })
 
 Articulo.hasMany(TransaccionItem, {
@@ -141,13 +128,6 @@ Moneda.hasMany(TransaccionItem, {
     onDelete: 'RESTRICT',
 })
 TransaccionItem.belongsTo(Moneda, { foreignKey: 'moneda', as: 'moneda1' })
-
-TransaccionItem.hasMany(TransaccionItem, {
-    foreignKey: 'lote_padre',
-    as: 'lote_padre_items',
-    onDelete: 'RESTRICT',
-})
-TransaccionItem.belongsTo(TransaccionItem, { foreignKey: 'lote_padre', as: 'lote_padre1' })
 
 Transaccion.hasMany(TransaccionItem, {
     foreignKey: 'transaccion',
