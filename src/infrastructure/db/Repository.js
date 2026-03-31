@@ -171,6 +171,7 @@ const include1 = {
             'codigo',
             'fv',
             'fv1',
+            'tipo_cambio',
             'vu',
             'igv_afectacion',
             'igv_porcentaje',

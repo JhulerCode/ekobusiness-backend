@@ -35,30 +35,26 @@ const find = async (req, res) => {
             const estadosMap = arrayMap('estados')
 
             for (const a of data) {
-                //--- Datos del lote padre ---//
                 if (a.tipo) {
                     a.cantidad = Number(a.cantidad)
 
-                    const loteFuente = a.is_lote_padre ? a : a.lote_padre1 || {}
+                    //--- calcular pu ---//
+                    if (a.lote1) {
+                        a.lote1.vu_real =
+                            a.lote1.tipo_cambio == null
+                                ? 'error'
+                                : cleanFloat((a.lote1.vu || 0) * a.lote1.tipo_cambio)
 
-                    a.vu = loteFuente.pu
-                    a.tipo_cambio = loteFuente.tipo_cambio
-                    a.igv_afectacion = loteFuente.igv_afectacion
-                    a.igv_porcentaje = loteFuente.igv_porcentaje
-                    a.lote = loteFuente.lote
-                    a.fv = loteFuente.fv
-                    a.fv1 = formatDate(a.fv)
-
-                    a.vu_real =
-                        a.tipo_cambio == null ? 'error' : cleanFloat((a.vu || 0) * a.tipo_cambio)
-
-                    if (a.igv_afectacion === '10') {
-                        a.pu =
-                            a.vu_real === 'error'
-                                ? a.vu_real
-                                : cleanFloat(a.vu_real * (1 + a.igv_porcentaje / 100))
-                    } else {
-                        a.pu = a.vu_real
+                        if (a.lote1.igv_afectacion === '10') {
+                            a.lote1.pu =
+                                a.lote1.vu_real === 'error'
+                                    ? a.lote1.vu_real
+                                    : cleanFloat(
+                                          a.lote1.vu_real * (1 + a.lote1.igv_porcentaje / 100),
+                                      )
+                        } else {
+                            a.lote1.pu = a.lote1.vu_real
+                        }
                     }
                 }
 
