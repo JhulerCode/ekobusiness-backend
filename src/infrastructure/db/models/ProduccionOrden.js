@@ -6,7 +6,7 @@ import { ArticuloLinea } from './ArticuloLinea.js'
 import { Maquina } from './Maquina.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly, formatDateTime } from '#shared/dayjs.js'
 
 const systemMaps = {
     produccion_orden_estados: arrayMap('produccion_orden_estados'),
@@ -19,7 +19,7 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     fecha1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha'))
+            return formatDateOnly(this.getDataValue('fecha'))
         },
     },
     articulo: { type: DataTypes.STRING }, //required //linked
@@ -32,14 +32,14 @@ export const ProduccionOrden = sequelize.define('produccion_ordenes', {
     inicio1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('inicio'), 'HH:mm:ss')
+            return formatDateTime(this.getDataValue('inicio'), 'HH:mm:ss')
         },
     },
     fin: { type: DataTypes.DATE },
     fin1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fin'), 'HH:mm:ss')
+            return formatDateTime(this.getDataValue('fin'), 'HH:mm:ss')
         },
     },
 

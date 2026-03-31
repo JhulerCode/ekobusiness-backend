@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { ArticuloLinea } from './ArticuloLinea.js'
 import { Colaborador } from './Colaborador.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 export const Maquina = sequelize.define('maquinas', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -13,7 +13,7 @@ export const Maquina = sequelize.define('maquinas', {
     fecha_compra1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_compra'))
+            return formatDateOnly(this.getDataValue('fecha_compra'))
         },
     },
 
@@ -24,7 +24,7 @@ export const Maquina = sequelize.define('maquinas', {
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
 })
 
 ArticuloLinea.hasMany(Maquina, { foreignKey: 'linea', as: 'maquinas', onDelete: 'RESTRICT' })

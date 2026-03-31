@@ -2,7 +2,7 @@ import sequelize from '../sequelize.js'
 import { DataTypes } from 'sequelize'
 import { Empresa } from './Empresa.js'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 const systemMaps = {
     generos: arrayMap('generos'),
@@ -27,7 +27,7 @@ export const Colaborador = sequelize.define('colaboradores', {
     fecha_nacimiento1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_nacimiento'))
+            return formatDateOnly(this.getDataValue('fecha_nacimiento'))
         },
     },
     sexo: { type: DataTypes.STRING },

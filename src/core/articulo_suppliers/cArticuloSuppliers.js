@@ -1,5 +1,4 @@
 import { Repository } from '#db/Repository.js'
-import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('ArticuloSupplier')
 

@@ -23,4 +23,6 @@ export default {
     IZIPAY_MERCHANT_ID: process.env.IZIPAY_MERCHANT_ID || '',
     IZIPAY_SECRET_KEY: process.env.IZIPAY_SECRET_KEY || '',
     IZIPAY_HMAC_SHA_256: process.env.IZIPAY_HMAC_SHA_256 || '',
+
+    REDIS_URI: process.env.REDIS_URI || '',
 }

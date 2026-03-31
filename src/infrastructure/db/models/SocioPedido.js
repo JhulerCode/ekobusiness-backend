@@ -5,7 +5,7 @@ import { Moneda } from './Moneda.js'
 import { Articulo } from './Articulo.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 const systemMaps = {
     pedido_estados: arrayMap('pedido_estados'),
@@ -24,7 +24,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     fecha1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha'))
+            return formatDateOnly(this.getDataValue('fecha'))
         },
     },
 
@@ -80,7 +80,7 @@ export const SocioPedido = sequelize.define('socio_pedidos', {
     fecha_entrega1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_entrega'))
+            return formatDateOnly(this.getDataValue('fecha_entrega'))
         },
     },
     entrega_ubigeo: { type: DataTypes.STRING }, //required

@@ -3,7 +3,7 @@ import sequelize from '../sequelize.js'
 import { Empresa } from './Empresa.js'
 import { Colaborador } from './Colaborador.js'
 import { Moneda } from './Moneda.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 import { arrayMap } from '#store/system.js'
 import dayjs from '#shared/dayjs.js'
 
@@ -23,14 +23,14 @@ export const Suscripcion = sequelize.define('suscripciones', {
     fecha_inicio1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_inicio'))
+            return formatDateOnly(this.getDataValue('fecha_inicio'))
         },
     },
     fecha_vencimiento: { type: DataTypes.DATEONLY },
     fecha_vencimiento1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_vencimiento'))
+            return formatDateOnly(this.getDataValue('fecha_vencimiento'))
         },
     },
     // fecha_ultimo_pago: { type: DataTypes.DATEONLY },
@@ -38,7 +38,7 @@ export const Suscripcion = sequelize.define('suscripciones', {
     // prox_fecha_pago1: {
     //     type: DataTypes.VIRTUAL,
     //     get() {
-    //         return formatDate(this.getDataValue('prox_fecha_pago'))
+    //         return formatDateOnly(this.getDataValue('prox_fecha_pago'))
     //     },
     // },
     estado: {

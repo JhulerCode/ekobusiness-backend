@@ -4,7 +4,7 @@ import { Socio } from './Socio.js'
 import { Articulo } from './Articulo.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 const helpdesk_estados_map = arrayMap('helpdesk_estados')
 
@@ -20,7 +20,7 @@ export const HelpdeskTicket = sequelize.define('helpdesk_tickets', {
     reclamo_fecha1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('reclamo_fecha'))
+            return formatDateOnly(this.getDataValue('reclamo_fecha'))
         },
     },
     reclamo_fuente: { type: DataTypes.STRING },
@@ -41,7 +41,11 @@ export const HelpdeskTicket = sequelize.define('helpdesk_tickets', {
 Socio.hasMany(HelpdeskTicket, { foreignKey: 'socio', as: 'helpdesk_tickets', onDelete: 'RESTRICT' })
 HelpdeskTicket.belongsTo(Socio, { foreignKey: 'socio', as: 'socio1' })
 
-Articulo.hasMany(HelpdeskTicket, { foreignKey: 'articulo', as: 'helpdesk_tickets', onDelete: 'RESTRICT' })
+Articulo.hasMany(HelpdeskTicket, {
+    foreignKey: 'articulo',
+    as: 'helpdesk_tickets',
+    onDelete: 'RESTRICT',
+})
 HelpdeskTicket.belongsTo(Articulo, { foreignKey: 'articulo', as: 'articulo1' })
 
 Colaborador.hasMany(HelpdeskTicket, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })

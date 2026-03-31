@@ -3,7 +3,7 @@ import sequelize from '../sequelize.js'
 import { CajaApertura } from './CajaApertura.js'
 import { Colaborador } from './Colaborador.js'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 const systemMaps = {
     comprobante_tipos: arrayMap('comprobante_tipos'),
@@ -15,7 +15,7 @@ export const CajaMovimiento = sequelize.define('caja_movimientos', {
     fecha1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha'))
+            return formatDateOnly(this.getDataValue('fecha'))
         },
     },
     tipo: { type: DataTypes.STRING }, //required
@@ -34,13 +34,17 @@ export const CajaMovimiento = sequelize.define('caja_movimientos', {
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
 })
 
-CajaApertura.hasMany(CajaMovimiento, { foreignKey: 'caja_apertura', as: 'caja_movimientos', onDelete: 'RESTRICT' })
+CajaApertura.hasMany(CajaMovimiento, {
+    foreignKey: 'caja_apertura',
+    as: 'caja_movimientos',
+    onDelete: 'RESTRICT',
+})
 CajaMovimiento.belongsTo(CajaApertura, { foreignKey: 'caja_apertura', as: 'caja_apertura1' })
 
-Colaborador.hasMany(CajaMovimiento, {foreignKey:'createdBy', onDelete:'RESTRICT'})
-CajaMovimiento.belongsTo(Colaborador, {foreignKey:'createdBy', as:'createdBy1'})
-Colaborador.hasMany(CajaMovimiento, {foreignKey:'updatedBy', onDelete:'RESTRICT'})
-CajaMovimiento.belongsTo(Colaborador, {foreignKey:'updatedBy', as:'updatedBy1'})
+Colaborador.hasMany(CajaMovimiento, { foreignKey: 'createdBy', onDelete: 'RESTRICT' })
+CajaMovimiento.belongsTo(Colaborador, { foreignKey: 'createdBy', as: 'createdBy1' })
+Colaborador.hasMany(CajaMovimiento, { foreignKey: 'updatedBy', onDelete: 'RESTRICT' })
+CajaMovimiento.belongsTo(Colaborador, { foreignKey: 'updatedBy', as: 'updatedBy1' })

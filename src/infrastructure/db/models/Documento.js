@@ -3,7 +3,7 @@ import sequelize from '../sequelize.js'
 import { Colaborador } from './Colaborador.js'
 import { tzDate } from '@formkit/tempo'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 import dayjs from '#shared/dayjs.js'
 
 const systemMaps = {
@@ -24,14 +24,14 @@ export const Documento = sequelize.define('documentos', {
     fecha_emision1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_emision'))
+            return formatDateOnly(this.getDataValue('fecha_emision'))
         },
     },
     fecha_vencimiento: { type: DataTypes.DATEONLY }, //required
     fecha_vencimiento1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_vencimiento'))
+            return formatDateOnly(this.getDataValue('fecha_vencimiento'))
         },
     },
     recordar_dias: { type: DataTypes.INTEGER }, //required

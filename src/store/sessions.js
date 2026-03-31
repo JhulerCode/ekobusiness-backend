@@ -6,7 +6,7 @@ function guardarSesion(userId, sessionData) {
 }
 
 function obtenerSesion(userId) {
-    return sessionStore.get(userId);
+    return sessionStore.get(userId)
 }
 
 function borrarSesion(userId) {
@@ -26,10 +26,4 @@ function actualizarSesion(id, values) {
     })
 }
 
-export {
-    sessionStore,
-    guardarSesion,
-    obtenerSesion,
-    borrarSesion,
-    actualizarSesion,
-}
+export { sessionStore, guardarSesion, obtenerSesion, borrarSesion, actualizarSesion }

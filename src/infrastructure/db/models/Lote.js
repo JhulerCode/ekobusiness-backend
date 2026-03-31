@@ -3,7 +3,7 @@ import sequelize from '../sequelize.js'
 import { Articulo } from './Articulo.js'
 import { Colaborador } from './Colaborador.js'
 import { TransaccionItem } from './Transaccion.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 export const Lote = sequelize.define('lotes', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -12,7 +12,7 @@ export const Lote = sequelize.define('lotes', {
     fv1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fv'))
+            return formatDateOnly(this.getDataValue('fv'))
         },
     },
 
@@ -38,7 +38,7 @@ export const Lote = sequelize.define('lotes', {
             const stock = this.stock
 
             if (fv) {
-                return `${codigo} | ${formatDate(fv)} | ${stock}`
+                return `${codigo} | ${formatDateOnly(fv)} | ${stock}`
             } else {
                 return `${codigo} | ${stock}`
             }
@@ -51,7 +51,7 @@ export const Lote = sequelize.define('lotes', {
             const fv = this.fv
 
             if (fv) {
-                return `${codigo} | ${formatDate(fv)}`
+                return `${codigo} | ${formatDateOnly(fv)}`
             } else {
                 return `${codigo}`
             }

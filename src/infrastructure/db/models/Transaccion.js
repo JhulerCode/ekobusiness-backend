@@ -8,7 +8,7 @@ import { SocioPedido } from './SocioPedido.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { arrayMap } from '#store/system.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 const systemMaps = {
     pago_condiciones: arrayMap('pago_condiciones'),
@@ -22,7 +22,7 @@ export const Transaccion = sequelize.define('transacciones', {
     fecha1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha'))
+            return formatDateOnly(this.getDataValue('fecha'))
         },
     },
 
@@ -100,7 +100,7 @@ export const TransaccionItem = sequelize.define('transaccion_items', {
     fv1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fv'))
+            return formatDateOnly(this.getDataValue('fv'))
         },
     },
     //--- POR BORRAR ---//

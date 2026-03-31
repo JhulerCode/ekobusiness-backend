@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../sequelize.js'
 import { Colaborador } from './Colaborador.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 export const Asistencia = sequelize.define('asistencias', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -10,14 +10,14 @@ export const Asistencia = sequelize.define('asistencias', {
     fecha_entrada1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_entrada'))
+            return formatDateOnly(this.getDataValue('fecha_entrada'))
         },
     },
     fecha_salida: { type: DataTypes.DATEONLY }, //required
     fecha_salida1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('fecha_salida'))
+            return formatDateOnly(this.getDataValue('fecha_salida'))
         },
     },
     hora_entrada: { type: DataTypes.STRING }, //required
@@ -25,7 +25,7 @@ export const Asistencia = sequelize.define('asistencias', {
 
     empresa: { type: DataTypes.STRING },
     createdBy: { type: DataTypes.STRING },
-    updatedBy: { type: DataTypes.STRING }
+    updatedBy: { type: DataTypes.STRING },
 })
 
 Colaborador.hasMany(Asistencia, { foreignKey: 'colaborador', onDelete: 'RESTRICT' })

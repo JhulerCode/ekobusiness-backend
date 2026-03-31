@@ -4,12 +4,11 @@ const find = async (req, res) => {
     try {
         const data = Array.from(sessionStore.entries()).map(([key, value]) => ({
             key,
-            ...value
+            ...value,
         }))
 
         res.json({ code: 0, data })
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
     }
 }

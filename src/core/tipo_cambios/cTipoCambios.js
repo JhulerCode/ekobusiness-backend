@@ -1,7 +1,6 @@
 import { Repository } from '#db/Repository.js'
 import sequelize from '#db/sequelize.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
-import { formatDate } from '#shared/dayjs.js'
 
 const repository = new Repository('TipoCambio')
 const TransaccionRepo = new Repository('Transaccion')

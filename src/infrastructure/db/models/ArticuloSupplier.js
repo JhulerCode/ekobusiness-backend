@@ -4,7 +4,7 @@ import { Articulo } from './Articulo.js'
 import { Socio } from './Socio.js'
 import { Moneda } from './Moneda.js'
 import { Colaborador } from './Colaborador.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 
 export const ArticuloSupplier = sequelize.define('articulo_suppliers', {
     id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -19,14 +19,14 @@ export const ArticuloSupplier = sequelize.define('articulo_suppliers', {
     date_start1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('date_start'))
+            return formatDateOnly(this.getDataValue('date_start'))
         },
     },
     date_end: { type: DataTypes.DATEONLY },
     date_end1: {
         type: DataTypes.VIRTUAL,
         get() {
-            return formatDate(this.getDataValue('date_end'))
+            return formatDateOnly(this.getDataValue('date_end'))
         },
     },
     product_code: { type: DataTypes.STRING },

@@ -1,11 +1,10 @@
 import sequelize from '#db/sequelize.js'
 import { Repository } from '#db/Repository.js'
 import { resUpdateFalse, resDeleteFalse } from '#http/helpers.js'
-import { formatDate } from '#shared/dayjs.js'
+import { formatDateOnly } from '#shared/dayjs.js'
 import { arrayMap } from '#store/system.js'
 
 const repository = new Repository('ProduccionOrden')
-const KardexRep = new Repository('Kardex')
 
 const find = async (req, res) => {
     try {
@@ -194,11 +193,11 @@ const inicioFin = async (req, res) => {
         const data = { id, updatedBy: colaborador }
         if (inicio) {
             data.inicio = inicio
-            data.inicio1 = formatDate(inicio, 'HH:mm:ss')
+            data.inicio1 = formatDateOnly(inicio, 'HH:mm:ss')
         }
         if (fin) {
             data.fin = fin
-            data.fin1 = formatDate(fin, 'HH:mm:ss')
+            data.fin1 = formatDateOnly(fin, 'HH:mm:ss')
         }
 
         //--- ABRIR ----- //
