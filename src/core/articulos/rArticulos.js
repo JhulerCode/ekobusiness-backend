@@ -59,6 +59,7 @@ router.patch(
 router.get(
     '/uno/:id',
     verifyPermiso([
+        'vArticulos:ver',
         'vArticulos:editar',
         'vArticulos:clonar',
         'vProductosTerminados:editar',
