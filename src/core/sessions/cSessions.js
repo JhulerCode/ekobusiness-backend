@@ -1,8 +1,8 @@
-import { redis } from '#infrastructure/redis/index.js'
+import { redis, keys } from '#infrastructure/redis/index.js'
 
 const find = async (req, res) => {
     try {
-        const keysList = await redis.keys('user:*')
+        const keysList = await redis.keys(keys.userAll())
         const data = []
         for (const key of keysList) {
             const val = await redis.get(key)

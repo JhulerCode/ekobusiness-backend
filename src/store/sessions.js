@@ -1,8 +1,6 @@
 import { redis } from '#infrastructure/redis/index.js'
 import { keys } from '#infrastructure/redis/keys.js'
 
-const COMPANY_SESSIONS_PREFIX = 'empresa_sessions:'
-
 async function obtenerSesion(userId) {
     const data = await redis.get(keys.user(userId))
     return data ? JSON.parse(data) : null
@@ -12,15 +10,29 @@ async function guardarSesion(userId, sessionData) {
     const sessionKey = keys.user(userId)
     await redis.set(sessionKey, JSON.stringify(sessionData))
 
+    if (sessionData.refreshToken) {
+        await redis.set(
+            keys.refreshToken(sessionData.refreshToken),
+            userId,
+            'EX',
+            30 * 24 * 60 * 60,
+        )
+    }
+
     if (sessionData.empresa) {
-        await redis.sadd(`${COMPANY_SESSIONS_PREFIX}${sessionData.empresa}`, userId)
+        await redis.sadd(keys.companySessions(sessionData.empresa), userId)
     }
 }
 
 async function borrarSesion(userId) {
     const session = await obtenerSesion(userId)
-    if (session && session.empresa) {
-        await redis.srem(`${COMPANY_SESSIONS_PREFIX}${session.empresa}`, userId)
+    if (session) {
+        if (session.empresa) {
+            await redis.srem(keys.companySessions(session.empresa), userId)
+        }
+        if (session.refreshToken) {
+            await redis.del(keys.refreshToken(session.refreshToken))
+        }
     }
     await redis.del(keys.user(userId))
 }
@@ -39,7 +51,7 @@ async function actualizarSesion(id, values) {
 }
 
 async function obtenerSesionesActivasPorEmpresa(empresaId) {
-    return await redis.scard(`${COMPANY_SESSIONS_PREFIX}${empresaId}`)
+    return await redis.scard(keys.companySessions(empresaId))
 }
 
 export {

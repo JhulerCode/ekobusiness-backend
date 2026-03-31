@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 config()
 
 export default {
+    NODE_ENV: process.env.NODE_ENV || 'development',
     hostFrontend: process.env.HOST_FRONTEND || '',
     APP_VERSION: process.env.APP_VERSION || '',
     tokenMyApi: process.env.TOKEN_MY_API || '',

@@ -17,7 +17,7 @@ async function verifyToken(req, res, next) {
         const decoded = jwt.verify(token, config.tokenMyApi)
         let session = await obtenerSesion(decoded.id)
 
-        if (!session || session.token !== token) {
+        if (!session || session.accessToken !== token) {
             return res.status(401).json({ msg: 'Sesión no válida' })
         }
 

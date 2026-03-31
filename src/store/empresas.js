@@ -3,8 +3,6 @@ import { keys } from '#infrastructure/redis/keys.js'
 import { Repository } from '#db/Repository.js'
 import dayjs from '#shared/dayjs.js'
 
-const SUBDOMAIN_PREFIX = 'empresa_subdominio:'
-
 async function obtenerEmpresa(id) {
     const data = await redis.get(keys.empresa(id))
     return data ? JSON.parse(data) : null
@@ -14,14 +12,14 @@ async function guardarEmpresa(id, values) {
     await redis.set(keys.empresa(id), JSON.stringify(values))
 
     if (values.subdominio) {
-        await redis.set(`${SUBDOMAIN_PREFIX}${values.subdominio}`, id)
+        await redis.set(keys.subdomain(values.subdominio), id)
     }
 }
 
 async function borrarEmpresa(id) {
     const empresa = await obtenerEmpresa(id)
     if (empresa && empresa.subdominio) {
-        await redis.del(`${SUBDOMAIN_PREFIX}${empresa.subdominio}`)
+        await redis.del(keys.subdomain(empresa.subdominio))
     }
     await redis.del(keys.empresa(id))
 }
@@ -39,21 +37,16 @@ async function actualizarEmpresa(id, values) {
 
     await guardarEmpresa(id, empresa)
     if (oldSubdomain && oldSubdomain !== empresa.subdominio) {
-        await redis.del(`${SUBDOMAIN_PREFIX}${oldSubdomain}`)
+        await redis.del(keys.subdomain(oldSubdomain))
     }
 }
 
 async function buscarEmpresaPorSubdominio(subdominio) {
-    const id = await redis.get(`${SUBDOMAIN_PREFIX}${subdominio}`)
+    const id = await redis.get(keys.subdomain(subdominio))
     if (id) return obtenerEmpresa(id)
     return null
 }
 
-/**
- * Busca empresa en Redis, si no existe la consulta en DB,
- * carga sus suscripciones activas y la guarda en Redis.
- * @returns {{ empresa: object|null, error: string|null }}
- */
 async function obtenerEmpresaConSuscripciones(subdominio) {
     let empresa = await buscarEmpresaPorSubdominio(subdominio)
     if (empresa) return { empresa, error: null }
@@ -104,4 +97,3 @@ export {
     buscarEmpresaPorSubdominio,
     obtenerEmpresaConSuscripciones,
 }
-
