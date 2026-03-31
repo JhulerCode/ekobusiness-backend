@@ -5,7 +5,7 @@ import dayjs from '#shared/dayjs.js'
 const getInfoEmpresa = async (req, res) => {
     try {
         const subdominio = req.headers['x-empresa']
-        let empresa = await buscarEmpresaPorSubdominio(subdominio)
+        let empresa = buscarEmpresaPorSubdominio(subdominio)
 
         if (!empresa) {
             const EmpresaRepository = new Repository('Empresa')
@@ -49,7 +49,7 @@ const getInfoEmpresa = async (req, res) => {
                     }))
                 }
 
-                await guardarEmpresa(empresa.id, empresa)
+                guardarEmpresa(empresa.id, empresa)
             }
         }
 

@@ -1,21 +1,16 @@
 import bcrypt from 'bcrypt'
 import dayjs from '#shared/dayjs.js'
 import config from '../../config.js'
+// import jat from '#shared/jat.js'
 import jwt from 'jsonwebtoken'
 import {
     guardarEmpresa,
-    obtenerEmpresa,
+    actualizarEmpresa,
+    empresasStore,
     buscarEmpresaPorSubdominio,
 } from '#store/empresas.js'
-import {
-    guardarSesion,
-    borrarSesion,
-    obtenerSesion,
-    obtenerSesionesActivasPorEmpresa,
-} from '#store/sessions.js'
+import { guardarSesion, borrarSesion, sessionStore } from '#store/sessions.js'
 import { Repository } from '#db/Repository.js'
-import { redis } from '#infrastructure/redis/index.js'
-import { keys } from '#infrastructure/redis/keys.js'
 
 const EmpresaRepository = new Repository('Empresa')
 const ColaboradorRepository = new Repository('Colaborador')
@@ -26,7 +21,7 @@ const signin = async (req, res) => {
 
         // --- VERIFICAR EMPRESA --- //
         const xEmpresa = req.headers['x-empresa']
-        let empresa = await buscarEmpresaPorSubdominio(xEmpresa)
+        let empresa = buscarEmpresaPorSubdominio(xEmpresa)
 
         if (!empresa) {
             const qry = {
@@ -69,7 +64,7 @@ const signin = async (req, res) => {
                 }))
             }
 
-            await guardarEmpresa(empresa.id, empresa)
+            guardarEmpresa(empresa.id, empresa)
         }
 
         // --- VERIFICAR COLABORADOR --- //
@@ -98,10 +93,13 @@ const signin = async (req, res) => {
                 return sum
             }, 0)
 
-            const sesionesActivas = await obtenerSesionesActivasPorEmpresa(empresa.id)
-            const sesionExistente = await obtenerSesion(colaborador.id)
+            let sesionesActivas = 0
+            for (const s of sessionStore.values()) {
+                if (s.empresa === empresa.id) sesionesActivas++
+            }
 
-            if (!sesionExistente && sesionesActivas >= totalCupos) {
+            const isRecuperandoSesion = sessionStore.has(colaborador.id)
+            if (!isRecuperandoSesion && sesionesActivas >= totalCupos) {
                 return res.json({
                     code: 1,
                     msg: 'Ha alcanzado el límite de usuarios concurrentes.',
@@ -113,9 +111,10 @@ const signin = async (req, res) => {
         if (!correct) return res.json({ code: 1, msg: 'Usuario o contraseña incorrecta' })
 
         // --- GUARDAR SESSION --- //
+        // const token = jat.encrypt({ id: colaborador.id }, config.tokenMyApi)
         const token = jwt.sign({ id: colaborador.id }, config.tokenMyApi, { expiresIn: '7d' })
         delete colaborador.contrasena
-        await guardarSesion(colaborador.id, { token, loginAt: dayjs(), ...colaborador })
+        guardarSesion(colaborador.id, { token, loginAt: dayjs(), ...colaborador })
 
         res.json({ code: 0, token })
     } catch (error) {
@@ -126,7 +125,7 @@ const signin = async (req, res) => {
 const logout = async (req, res) => {
     try {
         const { id } = req.body
-        await borrarSesion(id)
+        borrarSesion(id)
 
         res.json({ code: 0 })
     } catch (error) {
@@ -136,12 +135,7 @@ const logout = async (req, res) => {
 
 const getEmpresas = async (req, res) => {
     try {
-        const keysList = await redis.keys('empresa:*')
-        const data = []
-        for (const key of keysList) {
-            const val = await redis.get(key)
-            if (val) data.push(JSON.parse(val))
-        }
+        const data = Array.from(empresasStore.values())
         res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -150,12 +144,7 @@ const getEmpresas = async (req, res) => {
 
 const getSessions = async (req, res) => {
     try {
-        const keysList = await redis.keys('user:*')
-        const data = []
-        for (const key of keysList) {
-            const val = await redis.get(key)
-            if (val) data.push(JSON.parse(val))
-        }
+        const data = Array.from(sessionStore.values())
         res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })

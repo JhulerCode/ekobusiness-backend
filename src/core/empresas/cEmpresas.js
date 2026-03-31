@@ -153,7 +153,7 @@ const update = async (req, res) => {
 
         if (req.file && logo?.id) await minioRemoveObject(logo.id)
 
-        actualizarEmpresa(id, { razon_social, ...send })
+        await actualizarEmpresa(id, { razon_social, ...send })
 
         res.json({ code: 0 })
     } catch (error) {

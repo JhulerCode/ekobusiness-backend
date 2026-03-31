@@ -154,7 +154,7 @@ const update = async (req, res) => {
             usuario = null
             contrasena = null
 
-            await borrarSesion(id)
+            borrarSesion(id)
         }
 
         //--- ACTUALIZAR ---//
@@ -186,7 +186,7 @@ const update = async (req, res) => {
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
-        await actualizarSesion(id, data)
+        actualizarSesion(id, data)
         res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -199,7 +199,8 @@ const delet = async (req, res) => {
 
         if ((await repository.delete({ id })) == false) return resDeleteFalse(res)
 
-        await borrarSesion(id)
+        borrarSesion(id)
+
         res.json({ code: 0 })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -218,7 +219,8 @@ const reloadUsuario = async (req, res) => {
     try {
         const { id } = req.user
         const data = await loadOne(id)
-        await actualizarSesion(id, data)
+        actualizarSesion(id, data)
+
         res.json({ code: 0, data, empresa: req.empresa })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -234,7 +236,7 @@ const preferencias = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        await actualizarSesion(id, { theme, color, format_date, menu_visible })
+        actualizarSesion(id, { theme, color, format_date, menu_visible })
 
         res.json({ code: 0 })
     } catch (error) {
@@ -249,7 +251,7 @@ const tables = async (req, res) => {
 
         const updated = await repository.update({ id }, { tables })
         if (updated == false) return resUpdateFalse(res)
-        await actualizarSesion(id, { tables })
+        actualizarSesion(id, { tables })
 
         res.json({ code: 0 })
     } catch (error) {
@@ -266,7 +268,7 @@ const avances = async (req, res) => {
 
         if (updated == false) return resUpdateFalse(res)
 
-        await actualizarSesion(id, { avances })
+        actualizarSesion(id, { avances })
 
         res.json({ code: 0 })
     } catch (error) {

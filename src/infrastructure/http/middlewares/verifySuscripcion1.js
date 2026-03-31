@@ -1,10 +1,4 @@
 import dayjs from '#shared/dayjs.js'
-import {
-    obtenerSesion,
-    borrarSesion,
-    obtenerSesionesActivasPorEmpresa,
-} from '#store/sessions.js'
-import { redis } from '#infrastructure/redis/index.js'
 
 async function verifySuscripcion(req, res, next) {
     const { empresa } = req
@@ -28,26 +22,22 @@ async function verifySuscripcion(req, res, next) {
         }
 
         // --- VALIDAR SESIONES VIGENTES EN CASO DE BAJA DE CUPO --- //
-        const numSesiones = await obtenerSesionesActivasPorEmpresa(empresa.id)
+        const { sessionStore, borrarSesion } = await import('#store/sessions.js')
 
-        if (numSesiones > totalCupos) {
-            // Obtener todos los IDs de usuarios en esta empresa
-            const usersIds = await redis.smembers(`empresa_sessions:${empresa.id}`)
-            const sesionesActivas = []
+        let sesionesActivas = []
+        for (const s of sessionStore.values()) {
+            if (s.empresa === empresa.id) sesionesActivas.push(s)
+        }
 
-            for (const uid of usersIds) {
-                const s = await obtenerSesion(uid)
-                if (s) sesionesActivas.push(s)
-            }
-
+        if (sesionesActivas.length > totalCupos) {
             // Ordenamos por fecha de login (los primeros en entrar tienen prioridad)
-            sesionesActivas.sort((a, b) => dayjs(a.loginAt).unix() - dayjs(b.loginAt).unix())
+            sesionesActivas.sort((a, b) => a.loginAt - b.loginAt)
 
             // Nos quedamos solo con los IDs de los permitidos
             const permitidos = sesionesActivas.slice(0, totalCupos).map((s) => s.id)
 
             if (!permitidos.includes(req.user.colaborador)) {
-                await borrarSesion(req.user.colaborador)
+                borrarSesion(req.user.colaborador)
                 return res.status(403).json({
                     code: 1,
                     msg: 'Ha alcanzado el límite de usuarios concurrentes.',

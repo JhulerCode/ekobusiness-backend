@@ -93,7 +93,7 @@ const update = async (req, res) => {
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
-        if (comes_from == 'ecommerce') actualizarSesion(id, data)
+        if (comes_from == 'ecommerce') await actualizarSesion(id, data)
         res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })
@@ -163,7 +163,7 @@ const updatePassword = async (req, res) => {
             },
         )
 
-        actualizarSesion(id, { contrasena_updated_at })
+        await actualizarSesion(id, { contrasena_updated_at })
 
         res.json({ code: 0, data: { contrasena_updated_at } })
     } catch (error) {
@@ -182,7 +182,7 @@ const deleteUser = async (req, res) => {
             },
         )
 
-        borrarSesion(id)
+        await borrarSesion(id)
 
         res.json({ code: 0 })
     } catch (error) {

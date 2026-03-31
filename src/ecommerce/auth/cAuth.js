@@ -63,7 +63,7 @@ const createUser = async (req, res) => {
 
         const token = jat.encrypt({ id: data.id }, config.tokenMyApi)
 
-        guardarSesion(data.id, { token, ...data })
+        await guardarSesion(data.id, { token, ...data })
 
         res.json({ code: 0, token })
     } catch (error) {
@@ -96,7 +96,7 @@ const signin = async (req, res) => {
         const token = jat.encrypt({ id: cliente.id }, config.tokenMyApi)
 
         delete cliente.contrasena
-        guardarSesion(cliente.id, { token, ...cliente })
+        await guardarSesion(cliente.id, { token, ...cliente })
 
         res.json({ code: 0, token, data: cliente })
     } catch (error) {

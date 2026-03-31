@@ -198,7 +198,7 @@ async function syncEmpresaCache(empresaId) {
     }
     const suscripciones = await repository.find(qrySub)
 
-    await actualizarEmpresa(empresaId, {
+    actualizarEmpresa(empresaId, {
         suscripciones: suscripciones.map((s) => ({
             fecha_vencimiento: s.fecha_vencimiento,
             limite_usuarios: s.limite_usuarios || 0,

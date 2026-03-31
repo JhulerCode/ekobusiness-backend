@@ -1,11 +1,19 @@
-import { sessionStore } from '#store/sessions.js'
+import { redis } from '#infrastructure/redis/index.js'
 
 const find = async (req, res) => {
     try {
-        const data = Array.from(sessionStore.entries()).map(([key, value]) => ({
-            key,
-            ...value,
-        }))
+        const keysList = await redis.keys('user:*')
+        const data = []
+        for (const key of keysList) {
+            const val = await redis.get(key)
+            if (val) {
+                const sessionData = JSON.parse(val)
+                data.push({
+                    key: key.replace('user:', ''),
+                    ...sessionData,
+                })
+            }
+        }
 
         res.json({ code: 0, data })
     } catch (error) {

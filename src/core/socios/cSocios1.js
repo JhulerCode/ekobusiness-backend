@@ -189,7 +189,7 @@ const update = async (req, res) => {
         if (updated == false) return resUpdateFalse(res)
 
         const data = await loadOne(id)
-        if (comes_from == 'ecommerce') await actualizarSesion(id, data)
+        if (comes_from == 'ecommerce') actualizarSesion(id, data)
         res.json({ code: 0, data })
     } catch (error) {
         res.status(500).json({ code: -1, msg: error.message, error })

@@ -1,60 +1,13 @@
-import { buscarEmpresaPorSubdominio, guardarEmpresa } from '#store/empresas.js'
-import { Repository } from '#db/Repository.js'
-import dayjs from '#shared/dayjs.js'
+import { obtenerEmpresaConSuscripciones } from '#store/empresas.js'
 
 const getInfoEmpresa = async (req, res) => {
     try {
         const subdominio = req.headers['x-empresa']
-        let empresa = buscarEmpresaPorSubdominio(subdominio)
+        const { empresa, error } = await obtenerEmpresaConSuscripciones(subdominio)
 
-        if (!empresa) {
-            const EmpresaRepository = new Repository('Empresa')
-            const qry = {
-                fltr: {
-                    subdominio: { op: 'Igual', val: subdominio },
-                },
-                cols: { exclude: [] },
-            }
-            const empresas = await EmpresaRepository.find(qry, true)
-
-            if (empresas.length > 0) {
-                empresa = empresas[0]
-
-                // --- OBTENER SUSCRIPCIONES --- //
-                if (empresa.subdominio !== 'admin') {
-                    const SuscripcionRepository = new Repository('Suscripcion')
-                    const qrySub = {
-                        fltr: {
-                            empresa: { op: 'Es', val: empresa.id },
-                            fecha_vencimiento: {
-                                op: 'Es igual o posterior a',
-                                val: dayjs().format('YYYY-MM-DD'),
-                            },
-                        },
-                        cols: ['fecha_vencimiento', 'limite_usuarios'],
-                        sort: [['fecha_vencimiento', 'DESC']],
-                    }
-
-                    const suscripciones = await SuscripcionRepository.find(qrySub)
-                    if (suscripciones.length === 0) {
-                        return res.json({
-                            code: 1,
-                            msg: 'La empresa no cuenta con una suscripción activa',
-                        })
-                    }
-
-                    empresa.suscripciones = suscripciones.map((s) => ({
-                        fecha_vencimiento: s.fecha_vencimiento,
-                        limite_usuarios: s.limite_usuarios || 0,
-                    }))
-                }
-
-                guardarEmpresa(empresa.id, empresa)
-            }
-        }
-
-        if (!empresa) {
-            return res.status(404).json({ code: 404, msg: 'Empresa no encontrada' })
+        if (error || !empresa) {
+            const code = error === 'Empresa no encontrada' ? 404 : 1
+            return res.status(code === 404 ? 404 : 200).json({ code, msg: error })
         }
 
         return res.json({
