@@ -108,7 +108,12 @@ const create = async (req, res) => {
         )
 
         //--- ACTUALIZAR STOCK ---//
-        if (body.tipo == 2 || (body.tipo == 6 && !body.is_nuevo_lote) || body.tipo == 7) {
+        if (
+            body.tipo == 2 ||
+            body.tipo == 3 ||
+            (body.tipo == 6 && !body.is_nuevo_lote) ||
+            body.tipo == 7
+        ) {
             if (body.lote_id) {
                 const transaccion_tiposMap = arrayMap('kardex_operaciones')
                 const tipoInfo = transaccion_tiposMap[body.tipo]
@@ -212,7 +217,7 @@ const delet = async (req, res) => {
         //--- ELIMINAR ---
         if ((await repository.delete({ id }, transaction)) == false) return
 
-        if (tipo == 2) {
+        if (tipo == 2 || tipo == 3) {
             //--- ACTUALIZAR STOCK ---
             if (lote_id) {
                 const transaccion_tiposMap = arrayMap('kardex_operaciones')
