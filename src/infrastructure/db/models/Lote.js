@@ -15,6 +15,9 @@ export const Lote = sequelize.define('lotes', {
             return formatDate(this.getDataValue('fv'))
         },
     },
+
+    moneda: { type: DataTypes.STRING },
+    tipo_cambio: { type: DataTypes.DOUBLE },
     vu: { type: DataTypes.DOUBLE },
     igv_afectacion: { type: DataTypes.STRING },
     igv_porcentaje: { type: DataTypes.DOUBLE },

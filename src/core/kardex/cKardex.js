@@ -90,7 +90,7 @@ const create = async (req, res) => {
         const body = req.body
 
         //--- CREAR LOTE ---//
-        if (body.tipo == 4 || body.tipo == 6) {
+        if (body.tipo == 4 || (body.tipo == 6 && body.is_nuevo_lote)) {
             await LoteRepo.create(
                 {
                     ...body.lote1,
@@ -114,8 +114,7 @@ const create = async (req, res) => {
         )
 
         //--- ACTUALIZAR STOCK ---//
-        if (body.tipo == 4 || body.tipo == 7) {
-        } else {
+        if (body.tipo == 2 || (body.tipo == 6 && !body.is_nuevo_lote) || body.tipo == 7) {
             if (body.lote_id) {
                 const transaccion_tiposMap = arrayMap('kardex_operaciones')
                 const tipoInfo = transaccion_tiposMap[body.tipo]
