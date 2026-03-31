@@ -37,6 +37,7 @@ router.patch(
     '/:id',
     verifyPermiso([
         'vPrograma:productosTerminados',
+        'vProduccionOrdenes:salidaInsumos',
         // 'vProgramaGranel:productosTerminados',
         // 'vProgramaLuxury:productosTerminados',
         // 'vProduccionOrdenes:productosTerminados',
