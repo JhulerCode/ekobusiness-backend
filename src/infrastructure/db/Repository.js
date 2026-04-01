@@ -97,7 +97,16 @@ const include1 = {
     articulo1: {
         model: Articulo,
         as: 'articulo1',
-        attributes: ['id', 'nombre', 'type', 'purchase_ok', 'sale_ok', 'unidad', 'has_fv'],
+        attributes: [
+            'id',
+            'nombre',
+            'type',
+            'purchase_ok',
+            'sale_ok',
+            'unidad',
+            'has_fv',
+            'igv_afectacion',
+        ],
     },
     articulo_suppliers: {
         model: ArticuloSupplier,
@@ -180,6 +189,7 @@ const include1 = {
             'lote_fv',
         ],
     },
+    lote2: { model: Lote, as: 'lote1', attributes: [], required: false },
     lote_padre_items: {
         model: Kardex,
         as: 'lote_padre_items',
@@ -336,24 +346,42 @@ const sqls1 = {
     ],
     articulo_movimientos_cantidad: [
         Sequelize.fn(
-            'COALESCE',
-            Sequelize.fn(
-                'SUM',
-                Sequelize.literal(`
-                    CASE ${sistemaData.kardex_operaciones
-                        .map(
-                            (t) => `
-                            WHEN kardexes.tipo = '${t.id}'
-                            THEN kardexes.cantidad * ${t.operacion}`,
-                        )
-                        .join(' ')}
-                    ELSE 0 END
-                `),
-            ),
-            0,
+            'SUM',
+            Sequelize.literal(`
+                CASE kardexes.tipo
+                ${sistemaData.kardex_operaciones
+                    .map(
+                        (op) => `
+                            WHEN '${op.id}' THEN kardexes.cantidad * ${op.operacion}
+                        `,
+                    )
+                    .join('\n')}
+                ELSE 0
+                END
+            `),
         ),
-        'cantidad',
+        'articulo_movimientos_cantidad',
     ],
+    // articulo_movimientos_cantidad: [
+    //     Sequelize.fn(
+    //         'COALESCE',
+    //         Sequelize.fn(
+    //             'SUM',
+    //             Sequelize.literal(`
+    //                 CASE ${sistemaData.kardex_operaciones
+    //                     .map(
+    //                         (t) => `
+    //                         WHEN kardexes.tipo = '${t.id}'
+    //                         THEN kardexes.cantidad * ${t.operacion}`,
+    //                     )
+    //                     .join(' ')}
+    //                 ELSE 0 END
+    //             `),
+    //         ),
+    //         0,
+    //     ),
+    //     'cantidad',
+    // ],
     lote_padre_movimientos_cantidad: [
         Sequelize.fn(
             'COALESCE',
@@ -377,8 +405,8 @@ const sqls1 = {
     articulo_stock: [
         Sequelize.literal(`(
             SELECT COALESCE(SUM(k.stock), 0)
-            FROM kardexes AS k
-            WHERE k.articulo = articulos.id AND k.is_lote_padre = TRUE
+            FROM lotes AS k
+            WHERE k.articulo = articulos.id
         )`),
         'stock',
     ],

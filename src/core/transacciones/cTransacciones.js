@@ -85,7 +85,7 @@ const create = async (req, res) => {
                 if (body.tipo == '1') {
                     lotes.push({
                         ...b.lote1,
-                        articulo: a.articulo,
+                        articulo: b.articulo,
                         stock: b.cantidad,
                         transaccion_item: a.id,
                         empresa,
@@ -96,7 +96,7 @@ const create = async (req, res) => {
                 kardexes.push({
                     tipo: body.tipo,
                     fecha: body.fecha,
-                    articulo: a.articulo,
+                    articulo: b.articulo,
                     cantidad: b.cantidad,
                     lote_id: b.lote1.id,
                     // origen: body.origen,
