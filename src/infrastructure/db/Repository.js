@@ -325,22 +325,17 @@ const include1 = {
 const sqls1 = {
     articulo_movimientos_valorizado: [
         Sequelize.fn(
-            'COALESCE',
-            Sequelize.fn(
-                'SUM',
-                Sequelize.literal(`
-                    CASE ${sistemaData.kardex_operaciones
-                        .map(
-                            (t) => `
-                            WHEN kardexes.tipo = '${t.id}'
-                            THEN kardexes.cantidad * ${t.operacion} * COALESCE(\`kardexes->lote_padre1\`.pu, kardexes.pu) * COALESCE(\`kardexes->lote_padre1\`.tipo_cambio, kardexes.tipo_cambio)
-                        `,
-                        )
-                        .join(' ')}
-                    ELSE 0 END
-                `),
-            ),
-            0,
+            'SUM',
+            Sequelize.literal(`
+                CASE kardexes.tipo
+                ${sistemaData.kardex_operaciones
+                    .map(
+                        (op) =>
+                            `WHEN '${op.id}' THEN kardexes.cantidad * ${op.operacion} * \`kardexes->lote1\`.vu`,
+                    )
+                    .join(' ')}
+                ELSE 0 END
+            `),
         ),
         'articulo_movimientos_valorizado',
     ],
@@ -350,14 +345,9 @@ const sqls1 = {
             Sequelize.literal(`
                 CASE kardexes.tipo
                 ${sistemaData.kardex_operaciones
-                    .map(
-                        (op) => `
-                            WHEN '${op.id}' THEN kardexes.cantidad * ${op.operacion}
-                        `,
-                    )
-                    .join('\n')}
-                ELSE 0
-                END
+                    .map((op) => `WHEN '${op.id}' THEN kardexes.cantidad * ${op.operacion}`)
+                    .join(' ')}
+                ELSE 0 END
             `),
         ),
         'articulo_movimientos_cantidad',
