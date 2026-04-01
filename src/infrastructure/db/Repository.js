@@ -160,7 +160,7 @@ const include1 = {
     kardexes_all: {
         model: Kardex,
         as: 'kardexes',
-        attributes: ['id', 'tipo', 'fecha', 'articulo', 'cantidad', 'lote_id'],
+        attributes: ['id', 'tipo', 'fecha', 'articulo', 'cantidad', 'cantidad1', 'lote_id'],
         required: false,
     },
     lote1: {

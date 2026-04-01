@@ -76,7 +76,4 @@ router.get('/produccion/:linea&:f1&:f2', controller.findReporteProduccion)
 //--- Inventario hasta fecha ---///
 router.get('/inventario', verifyPermiso(['vStock:listar']), controller.findInventario)
 
-//--- PONER BIEN EL STOCK EN LOTES PADRE ---//
-router.post('/recalcular-stock', controller.recalcularStock)
-
 export default router

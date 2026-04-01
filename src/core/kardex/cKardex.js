@@ -308,52 +308,6 @@ const ingresarProduccionProductos = async (req, res) => {
     }
 }
 
-const recalcularStock = async (req, res) => {
-    try {
-        const qry = {
-            incl: ['lote_padre_items'],
-            cols: ['id', 'cantidad'],
-            sqls: ['lote_padre_movimientos_cantidad'],
-            fltr: {
-                is_lote_padre: { op: 'Es', val: true },
-                // fecha: { op: 'Está dentro de', val: '2025-11-15', val1: '2025-11-30' },
-                articulo: { op: 'Es', val: '8b40851b-e6c6-4607-936d-81be73a8f845' },
-            },
-            grop: ['id'],
-            ordr: [['fecha', 'ASC']],
-            // sqls: ['lote_padre_movimientos_cantidad']
-        }
-
-        const lotes_padre = await repository.find(qry, true)
-
-        if (lotes_padre.length > 0) {
-            console.log('Total a actualizar:', lotes_padre.length)
-            let i = 1
-
-            for (let a of lotes_padre) {
-                const stock = Number(a.cantidad) + Number(a.movimientos_cantidad)
-                console.log(
-                    'Actualizando ',
-                    i,
-                    `Cantidad: ${a.cantidad}`,
-                    `Movimientos: ${a.movimientos_cantidad}`,
-                    `Stock: ${stock}`,
-                )
-
-                await repository.update({ id: a.id }, { stock })
-
-                i++
-            }
-
-            console.log('Registros actualizados:', lotes_padre.length)
-        }
-
-        res.json({ code: 0 })
-    } catch (error) {
-        res.status(500).json({ code: -1, msg: error.message, error })
-    }
-}
-
 //--- Inventario hasta fecha ---//
 const findInventario = async (req, res) => {
     try {
@@ -542,5 +496,4 @@ export default {
     ingresarProduccionProductos,
     findInventario,
     findReporteProduccion,
-    recalcularStock,
 }

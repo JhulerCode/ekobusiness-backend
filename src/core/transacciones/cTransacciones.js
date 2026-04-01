@@ -96,7 +96,7 @@ const create = async (req, res) => {
                 kardexes.push({
                     tipo: body.tipo,
                     fecha: body.fecha,
-                    articulo: b.articulo,
+                    articulo: a.articulo,
                     cantidad: b.cantidad,
                     lote_id: b.lote1.id,
                     // origen: body.origen,
