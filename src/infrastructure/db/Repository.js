@@ -10,6 +10,7 @@ import { CajaApertura } from '#db/models/CajaApertura.js'
 import { CajaMovimiento } from '#db/models/CajaMovimiento.js'
 import { Colaborador } from '#db/models/Colaborador.js'
 import { ComboComponente } from './models/ComboComponente.js'
+import { Comprobante } from './models/Comprobante.js'
 import { DerechoArco } from '#db/models/DerechoArco.js'
 import { Documento } from '#db/models/Documento.js'
 import { FormatoValue } from '#db/models/FormatoValue.js'
@@ -50,6 +51,7 @@ export const models = {
     CajaMovimiento,
     Colaborador,
     ComboComponente,
+    Comprobante,
     DerechoArco,
     Documento,
     FormatoValue,

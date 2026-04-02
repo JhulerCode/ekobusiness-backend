@@ -5,6 +5,7 @@ import { Socio } from './Socio.js'
 import { Articulo } from './Articulo.js'
 import { Moneda } from './Moneda.js'
 import { SocioPedido } from './SocioPedido.js'
+import { Comprobante } from './Comprobante.js'
 import { ProduccionOrden } from './ProduccionOrden.js'
 import { Maquina } from './Maquina.js'
 import { arrayMap } from '#store/system.js'
@@ -29,6 +30,7 @@ export const Transaccion = sequelize.define('transacciones', {
     socio_pedido: { type: DataTypes.STRING }, //required //linked
     socio: { type: DataTypes.STRING }, //required //linked
     guia: { type: DataTypes.STRING }, //required
+    comprobante_id: { type: DataTypes.STRING },
     factura: { type: DataTypes.STRING }, //required
 
     pago_condicion: { type: DataTypes.STRING }, //required
@@ -69,6 +71,13 @@ Transaccion.belongsTo(SocioPedido, { foreignKey: 'socio_pedido', as: 'socio_pedi
 
 Socio.hasMany(Transaccion, { foreignKey: 'socio', as: 'transacciones', onDelete: 'RESTRICT' })
 Transaccion.belongsTo(Socio, { foreignKey: 'socio', as: 'socio1' })
+
+Comprobante.hasMany(Transaccion, {
+    foreignKey: 'comprobante_id',
+    as: 'transacciones',
+    onDelete: 'SET NULL',
+})
+Transaccion.belongsTo(Comprobante, { foreignKey: 'comprobante_id', as: 'comprobante1' })
 
 ProduccionOrden.hasMany(Transaccion, {
     foreignKey: 'produccion_orden',

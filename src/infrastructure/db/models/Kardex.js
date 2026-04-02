@@ -52,7 +52,7 @@ export const Kardex = sequelize.define('kardexes', {
 
     produccion_orden: { type: DataTypes.STRING }, //linked
     maquina: { type: DataTypes.STRING }, // linked
-    pt_cuarentena: { type: DataTypes.BOOLEAN },
+    pt_cuarentena: { type: DataTypes.BOOLEAN, defaultValue: false },
     pt_cuarentena1: {
         type: DataTypes.VIRTUAL,
         get() {
